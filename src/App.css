@@ -16,4 +16,7 @@ body {
 
 textarea {
   font-size: 150%;
+  line-height: 150%;
+  padding: 0.5em;
+  min-height: 5em;
 }

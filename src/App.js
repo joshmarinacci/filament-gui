@@ -11,17 +11,24 @@ function real_eval(code) {
         scalar: (v) => new NScalar(v),
         string: v => new NString(v),
         list: v => new NList(v),
-        color: v => new NColor(v)
+        color: v => new NColor(v),
+        size: SCOPE.size.impl,
+        sum: SCOPE.sum.impl,
+        average: SCOPE.average.impl,
+        map: SCOPE.map.impl,
     }
+
+    let lines = code.split("\n")
+    lines[lines.length-1] = 'return ' + lines[lines.length-1]
+
     let defines = Object.keys(scope).map(key => {
         return `    const ${key} = scope.${key}`
     }).join("\n")
     let gen_code = `
 "use strict"; 
 return function(scope) {
-    console.log('scope is',scope)
 ${defines}
-    return ${code}
+${lines.join("\n")}
 };
 `
     console.log("generated code is", gen_code)

@@ -198,7 +198,7 @@ export const SCOPE = {
             indexed:["List"]
         },
         returns:'scalar',
-        impl:(l) => l.length
+        impl:(l) => new NScalar(l.value.length),
     },
     "sum":{
         type:'function',
@@ -206,7 +206,7 @@ export const SCOPE = {
             indexed:["List"]
         },
         returns:'scalar',
-        impl:(l) => l.reduce((a,b)=>(a+b),0)
+        impl:(l) => new NScalar(l.value.reduce((acc,v)=>(acc + v.value),0))
     },
     "average":{
         type:'function',
@@ -214,7 +214,7 @@ export const SCOPE = {
             indexed:["List"]
         },
         returns:"scalar",
-        impl:(l) => SCOPE.sum.impl(l)/SCOPE.size.impl(l)
+        impl:(l) => new NScalar(SCOPE.sum.impl(l).value/SCOPE.size.impl(l).value)
     },
     "map":{
         type:"function",
@@ -222,7 +222,9 @@ export const SCOPE = {
             indexed:["List","lambda"]
         },
         returns:"list",
-        impl:(l,lam) => l.map(lam)
+        impl:(l,lam) => new NList(l.value.map((v)=>{
+            return new NScalar(lam(v.value))
+        }))
     },
     "circle":{
         type:"function",
