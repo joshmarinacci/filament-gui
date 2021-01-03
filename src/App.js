@@ -6,7 +6,8 @@ import {SCOPE} from "./test1.js"
 
 
 function real_eval(code) {
-  return null
+  let res = eval(code)
+  return res
 }
 
 function App() {
@@ -24,11 +25,14 @@ function App() {
     <HBox>
       <VBox>
         {EXAMPLES.map(ex => <button
-            onClick={()=>setCode(ex.code)}
+            onClick={()=>setCode(ex.code.split("\n")
+                .map(t => t.trim())
+                .filter(t => t.length > 0)
+                .join("\n"))}
         >{ex.title}</button>)}
       </VBox>
       <VBox>
-        <textarea value={code} rows={4} cols={80}>some code is here</textarea>
+        <textarea value={code} rows={8} cols={50}>some code is here</textarea>
         <button onClick={()=>doEval(code)}>eval</button>
         <ResultArea result={result}/>
       </VBox>
@@ -75,6 +79,7 @@ function ResultArea({result}) {
   if(is_string_result(result)) return <StringResult result={result}/>
   if(is_list_result(result))   return <ListResult result={result}/>
   if(is_color_result(result))  return <ColorResult result={result}/>
+  if(result === null) return <div>result is <b>null</b></div>
   return <div>unknown result here</div>
 }
 
