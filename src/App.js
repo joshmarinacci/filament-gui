@@ -104,7 +104,7 @@ const ScalarResult = ({result}) => <div>Scalar <b>{result.value}</b></div>
 const StringResult = ({result}) => <div>String <b>{result.value}</b></div>
 
 function ListResult({result}) {
-    return <div>List <b>list</b></div>
+    return <div>List {result.value.map(v => <ResultArea result={v}/>)}</div>
 }
 
 
