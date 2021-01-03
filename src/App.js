@@ -126,8 +126,8 @@ function ResultArea({result}) {
 }
 
 function ColorResult({result}) {
-    let col = '#'+result.value.toString(16)
-    return <div>Color <b style={{backgroundColor:col, padding:'0.25em'}}>{col}</b></div>
+    let col = result.toHexColorString()
+    return <div>Color <b style={{backgroundColor:col}}>{col}</b></div>
 }
 
 export default App

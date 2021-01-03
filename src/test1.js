@@ -78,8 +78,16 @@ export class NColor extends Primitive {
     constructor(value) {
         super();
         this.log("making color from",value)
-        this.value = parseInt(value.substring('#'.length),16)
-        this.log("parsed to",this.value)
+        this.r = parseInt(value.substring(1,3),16)
+        this.g = parseInt(value.substring(3,5),16)
+        this.b = parseInt(value.substring(5,7),16)
+        this.log("parsed to",this.r,this.g,this.b)
+    }
+    toHexColorString() {
+        return '#'+[this.r,this.g,this.b]
+            .map(c => c.toString(16))
+            .map(s => s.length<2?"0"+s:s)
+            .join("")
     }
 }
 
