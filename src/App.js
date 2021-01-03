@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import './App.css'
 
-import {EXAMPLES, NString, NScalar, NList} from "./test1.js"
+import {EXAMPLES, NString, NScalar, NList, NColor} from "./test1.js"
 import {SCOPE} from "./test1.js"
 
 
@@ -11,6 +11,7 @@ function real_eval(code) {
         scalar: (v) => new NScalar(v),
         string: v => new NString(v),
         list: v => new NList(v),
+        color: v => new NColor(v)
     }
     let defines = Object.keys(scope).map(key => {
         return `    const ${key} = scope.${key}`
@@ -92,10 +93,8 @@ const is_error_result = (result) => result instanceof Error
 const is_scalar = (val) => (val instanceof NScalar)
 const is_string = (val) => (val instanceof NString)
 const is_list_result = (val) => val instanceof NList
+const is_color_result = (val) => val instanceof NColor
 
-function is_color_result(result) {
-    return false
-}
 
 
 
@@ -120,7 +119,8 @@ function ResultArea({result}) {
 }
 
 function ColorResult({result}) {
-    return <div>Color <b>color</b></div>
+    let col = '#'+result.value.toString(16)
+    return <div>Color <b style={{backgroundColor:col, padding:'0.25em'}}>{col}</b></div>
 }
 
 export default App

@@ -74,9 +74,12 @@ export class NList extends Primitive {
 }
 
 
-class Color extends Primitive {
-    constructor() {
+export class NColor extends Primitive {
+    constructor(value) {
         super();
+        this.log("making color from",value)
+        this.value = parseInt(value.substring('#'.length),16)
+        this.log("parsed to",this.value)
     }
 }
 
