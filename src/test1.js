@@ -45,18 +45,30 @@ open questions
 class Primitive {
     constructor() {
     }
+    log(...args) {
+        console.log("Prim",...args)
+    }
 }
 
-class Scalar extends Primitive {
+export class NScalar extends Primitive {
     constructor(value) {
         super()
+        this.log("Making scalar",value)
+        this.value = value
+    }
+}
+export class NString extends Primitive {
+    constructor(value) {
+        super();
+        this.log("Making string",value)
         this.value = value
     }
 }
 
-class List extends Primitive {
+export class NList extends Primitive {
     constructor(value) {
         super()
+        this.log("making list from",value)
         this.value = value
     }
 }
