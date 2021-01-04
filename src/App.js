@@ -1,7 +1,7 @@
 import {useState, useRef, useEffect} from 'react'
 import './App.css'
 
-import {EXAMPLES, NString, NScalar, NList, NColor, NCircle, CanvasResult} from "./test1.js"
+import {EXAMPLES, NString, NScalar, NList, NColor, NCircle, CanvasResult, NGradient} from "./test1.js"
 import {SCOPE} from "./test1.js"
 
 
@@ -12,6 +12,7 @@ function real_eval(code) {
         string: v => new NString(v),
         list: v => new NList(v),
         color: v => new NColor(v),
+        gradient: v => new NGradient(v),
         size: SCOPE.size.impl,
         sum: SCOPE.sum.impl,
         average: SCOPE.average.impl,
@@ -127,6 +128,14 @@ function CanvasResultResult({result}) {
     return <canvas width={600} height={300} ref={ref}/>
 }
 
+function is_gradient(result) {
+    return result instanceof NGradient
+}
+
+function GradientResult({result}) {
+    return <div>gradient here</div>
+}
+
 function ResultArea({result}) {
     console.log('result is', result)
     if (is_error_result(result)) return <ErrorResult result={result}/>
@@ -134,6 +143,7 @@ function ResultArea({result}) {
     if (is_string(result)) return <StringResult result={result}/>
     if (is_list(result)) return <ListResult result={result}/>
     if (is_color(result)) return <ColorResult result={result}/>
+    if (is_gradient(result)) return <GradientResult result={result}/>
     if (is_canvas_result(result)) return <CanvasResultResult result={result}/>
     if (result === null) return <div>result is <b>null</b></div>
     return <div>unknown result here</div>

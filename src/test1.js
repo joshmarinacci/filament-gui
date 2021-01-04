@@ -122,6 +122,12 @@ export class NCircle extends NShape {
     }
 }
 
+export class NGradient extends Primitive {
+    constructor(list) {
+        super();
+        this.colors = unbox(list)
+    }
+}
 class Bounds {
     constructor(x,y,w,h) {
         this.x = x
