@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../node_modules/tinycolor2/dist/tinycolor-min.js"></script>
+    <style type="text/css">
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="canvas" width="600" height="600"></canvas>
+
+<script type="module">
+    let col = tinycolor({r:0,g:0,b:255})
+    console.log("tiny color is", col.toHexString())
+
+    function Circle(opts) {
+        return { ...opts}
+    }
+
+    function rando(min, max) {
+        return Math.random()*(max-min) + min
+    }
+
+    function Point(opts) {
+        return { ...opts}
+    }
+
+    function range(len) {
+        let arr = []
+        for(let i=0; i<len; i++) {
+            arr.push(i)
+        }
+        return arr
+    }
+
+    function draw(shapes) {
+        let canvas = document.querySelector('#canvas')
+        let c = canvas.getContext('2d')
+        c.save()
+        c.translate(50,50)
+        // c.fillStyle = 'white'
+        // c.fillRect(0,0,600,300)
+        shapes.forEach(sh => {
+            c.fillStyle = sh.fill.toHexString()
+            c.beginPath()
+            c.arc(sh.center.x,sh.center.y,sh.radius, 0, Math.PI*2)
+            c.closePath()
+            c.fill()
+        })
+        c.restore()
+    }
+
+    function randoRGBColor() {
+        return tinycolor({
+            r: rando(0,255),
+            g: rando(0,255),
+            b: rando(0,255),
+        })
+    }
+
+    let base = {r:0,g:255,b:255}
+
+    //mix colors using squares
+    function mixColor(c1, c2, weight) {
+        return {
+            r: Math.sqrt((1-weight)*Math.pow(c1.r,2) + weight*Math.pow(c2.r,2)),
+            g: Math.sqrt((1-weight)*Math.pow(c1.g,2) + weight*Math.pow(c2.g,2)),
+            b: Math.sqrt((1-weight)*Math.pow(c1.b,2) + weight*Math.pow(c2.b,2)),
+        }
+    }
+
+    console.log("base weight is",base)
+
+    //draw 100 circles with random positions and random colors
+    /*
+    draw(range(1000).map(()=>{
+        return Circle({
+            radius: rando(10,50),
+            center: Point({
+                x: rando(0,600),
+                y: rando(0,300),
+            }),
+            // fill: randoRGBColor()
+            // fill: tinycolor.mix(randoRGBColor(),base,50), //random color mixed with base of cyan
+            // fill: tinycolor({h:rando(0,60), s:100, l:50}), //random hue, 60 degrees
+            fill: tinycolor({h:0,s:rando(0,100),v:100}), //random saturation of red, from 80-100%
+            // fill: tinycolor({h:200, s:100, v: rando(0,100)}),//blue with random brightness 0 - 100%
+            // fill: tinycolor({h:rando(100,100), s:rando(0,100), v:rando(50,100)}), //green with partially random sat (50%-100%) & value (50%-100%)
+            fill: tinycolor({h:100, s:rando(0,100), l:rando(0,100)}), //green with random sat and lightness
+            // fill: Color(tinycolor.fromRatio({h:0,s:1.0, l:rando(0,1)}))
+        })
+    }))
+
+     */
+
+    function fillBand(start,size, fill) {
+        draw(range(50).map(()=>{
+            return Circle({
+                radius: rando(15,15),
+                center: Point({x:rando(0,500),y:rando(start,start+size)}),
+                fill: fill(),
+            })
+        }))
+    }
+    for(let i=0; i<10; i++) {
+        fillBand(i*50+25, 0, () => tinycolor({h: 160, s: rando(i*5,i*10), l: rando(0, 100)}))
+        // fillBand(100, 50, () => tinycolor({h: 100, s: rando(50, 100), l: rando(0, 100)}))
+    }
+    // fillBand(200,300)
+
+</script>
+</body>
+</html>
