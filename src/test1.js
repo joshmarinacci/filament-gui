@@ -218,9 +218,8 @@ export const EXAMPLES = [
     {
         title:'three circles packed',
         code:`
-            //let lis1 = list([scalar(1),scalar(2),scalar(3)])
-            //let lis2 = map(lis1,r=>circle({radius:scalar(r)}))
-            let lis2 = list([ circle({radius:scalar(5)}), circle({radius:scalar(10)}), circle({radius:scalar(15)})])
+            let lis1 = list([scalar(1),scalar(2),scalar(3)])
+            let lis2 = map(lis1,r=>circle({radius:scalar(r)}))
             let lis3 = pack_row(lis2)
             draw(lis3)
         `
@@ -233,6 +232,13 @@ function unbox(obj) {
     // console.log("unboxing",obj)
     return obj.value
 }
+function box(obj) {
+    // console.log("boxing",obj, obj instanceof Primitive)
+    if(obj instanceof Primitive) return obj
+    if(typeof obj === 'number') {
+        return new NScalar(obj)
+    }
+}
 
 export const SCOPE = {
     "size": {
@@ -242,7 +248,7 @@ export const SCOPE = {
             indexed:["List"]
         },
         returns:'scalar',
-        impl:(l) => new NScalar(l.value.length),
+        impl:(l) => new NScalar(unbox(l).length),
     },
     "sum":{
         type:'function',
@@ -250,7 +256,7 @@ export const SCOPE = {
             indexed:["List"]
         },
         returns:'scalar',
-        impl:(l) => new NScalar(l.value.reduce((acc,v)=>(acc + v.value),0))
+        impl:(l) => new NScalar(unbox(l).reduce((acc,v)=>(acc + unbox(v)),0))
     },
     "average":{
         type:'function',
@@ -258,7 +264,7 @@ export const SCOPE = {
             indexed:["List"]
         },
         returns:"scalar",
-        impl:(l) => new NScalar(SCOPE.sum.impl(l).value/SCOPE.size.impl(l).value)
+        impl:(l) => new NScalar(unbox(SCOPE.sum.impl(l))/unbox(SCOPE.size.impl(l)))
     },
     "map":{
         type:"function",
@@ -266,9 +272,7 @@ export const SCOPE = {
             indexed:["List","lambda"]
         },
         returns:"list",
-        impl:(l,lam) => new NList(l.value.map((v)=>{
-            return new NScalar(lam(v.value))
-        }))
+        impl:(l,lam) => new NList(unbox(l).map((v)=> box(lam(unbox(v)))))
     },
     "circle":{
         type:"function",
@@ -284,6 +288,7 @@ export const SCOPE = {
             c.fill = 'black'
             c.radius = radius
             c.center = new Point(0,0)
+            return c
         }
     },
     "pack_row":{
@@ -293,8 +298,7 @@ export const SCOPE = {
         },
         returns:"object",
         impl:(lx) => {
-            let l = unbox(lx)
-            l = l.slice()
+            let l = unbox(lx).slice()
             l.forEach((c,i) => {
                 if(i===0) {
                     c.center = new Point(c.radius,c.radius)
