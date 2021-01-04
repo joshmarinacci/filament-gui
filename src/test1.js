@@ -46,7 +46,7 @@ class Primitive {
     constructor() {
     }
     log(...args) {
-        console.log("Prim",...args)
+        // console.log(this.constructor.name,...args)
     }
 }
 
@@ -97,11 +97,28 @@ class Point {
         this.y = y
     }
 }
-class Circle extends Primitive {
-    constructor() {
+class NShape extends Primitive {
+    bounds() {
+        throw new Error("bounds not implemented on " + this.constructor.name)
+    }
+}
+export class NCircle extends NShape {
+    constructor(opts) {
         super();
+        this.fill = 'black'
+
         this.radius = 10;
-        this.center = new Point(0,0)
+        this.log("options",opts)
+        if(opts.radius) {
+            this.radius = unbox(opts.radius)
+        }
+
+        this.center = new Point(this.radius,this.radius)
+    }
+    bounds() {
+        let r = this.radius
+        let c = this.center
+        return new Bounds(c.x - r, c.y - r, r*2,r*2)
     }
 }
 
@@ -111,10 +128,24 @@ class Bounds {
         this.y = y
         this.w = w
         this.h = h
+        this.x2 = this.x+this.w
+        this.y2 = this.y+this.h
+    }
+    union(b) {
+        let x = Math.min(this.x,b.x)
+        let y = Math.min(this.y,b.y)
+        let x2 = Math.max(this.x2,b.x2)
+        let y2 = Math.max(this.y2,b.y2)
+        return new Bounds(x,y,x2-x,y2-y)
+    }
+    scaleInside(b) {
+        let sx = b.w/this.w
+        let sy = b.h/this.h;
+        return Math.min(sx,sy)
     }
 }
 
-class CanvasResult extends Primitive {
+export class CanvasResult extends Primitive {
     constructor(cb) {
         super()
         this.cb = cb
@@ -187,16 +218,21 @@ export const EXAMPLES = [
     {
         title:'three circles packed',
         code:`
-            let lis1 = list([scalar(1),scalar(2),scalar(3)])
-            let lis2 = map(lis1,r=>circle({radius:scalar(r)))
-            let lis3 = pack_row(lis2),
-            draw_scaled(lis3)
+            //let lis1 = list([scalar(1),scalar(2),scalar(3)])
+            //let lis2 = map(lis1,r=>circle({radius:scalar(r)}))
+            let lis2 = list([ circle({radius:scalar(5)}), circle({radius:scalar(10)}), circle({radius:scalar(15)})])
+            let lis3 = pack_row(lis2)
+            draw(lis3)
         `
     }
 
 ]
 
 
+function unbox(obj) {
+    // console.log("unboxing",obj)
+    return obj.value
+}
 
 export const SCOPE = {
     "size": {
@@ -244,7 +280,7 @@ export const SCOPE = {
         },
         returns:'object',
         impl:({radius}) => {
-            let c = new Circle()
+            let c = new NCircle()
             c.fill = 'black'
             c.radius = radius
             c.center = new Point(0,0)
@@ -256,7 +292,8 @@ export const SCOPE = {
             indexed:['list']
         },
         returns:"object",
-        impl:(l) => {
+        impl:(lx) => {
+            let l = unbox(lx)
             l = l.slice()
             l.forEach((c,i) => {
                 if(i===0) {
@@ -267,6 +304,7 @@ export const SCOPE = {
                 c.center.x = p.center.x+p.radius+c.radius
                 c.center.y = c.radius
             })
+            return new NList(l)
         }
     },
     "draw":{
@@ -275,29 +313,36 @@ export const SCOPE = {
             indexed:['list']
         },
         returns:'canvas_result',
-        impl:(l) => {
+        impl:(lx) => {
             return new CanvasResult(canvas => {
+                // console.log('drawing to canvas',canvas,lx)
+                let ll = unbox(lx)
                 let ctx = canvas.getContext('2d')
-                ctx.fill = 'gray'
+                ctx.save()
+                // ctx.translate(0,300)
+                // ctx.scale(1,-1)
+                ctx.fillStyle = '#f0f0f0'
                 ctx.fillRect(0,0,canvas.width,canvas.height)
 
                 let canvas_bounds = new Bounds(0,0,canvas.width,canvas.height)
 
-                let max_bounds = l.reduce((a,b)=>{
-                    if(!a) return b.bounds()
-                    return a.bounds().union(b.bounds())
+                let max_bounds = ll.reduce((acc,shape)=>{
+                    if(acc.bounds) acc = acc.bounds()
+                    return acc.union(shape.bounds())
                 })
                 let scale = max_bounds.scaleInside(canvas_bounds)
+                console.log("bounds",canvas_bounds, 'vs',max_bounds,'scales to',scale)
 
                 ctx.save()
                 ctx.scale(scale,scale)
-                l.forEach(c => {
-                    ctx.fill = c.fill
+                ll.forEach(c => {
+                    ctx.fillStyle = c.fill
                     ctx.beginPath()
                     ctx.arc(c.center.x,c.center.y,c.radius,0,Math.PI*2)
-                    ctx.close()
+                    ctx.closePath()
                     ctx.fill()
                 })
+                ctx.restore()
                 ctx.restore()
             })
         }

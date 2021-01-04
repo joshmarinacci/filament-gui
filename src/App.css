@@ -20,3 +20,8 @@ textarea {
   padding: 0.5em;
   min-height: 5em;
 }
+canvas {
+  border:1px solid black;
+  justify-self: center;
+  align-self: center;
+}

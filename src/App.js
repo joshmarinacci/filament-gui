@@ -1,7 +1,7 @@
-import {useState} from 'react'
+import {useState, useRef, useEffect} from 'react'
 import './App.css'
 
-import {EXAMPLES, NString, NScalar, NList, NColor} from "./test1.js"
+import {EXAMPLES, NString, NScalar, NList, NColor, NCircle, CanvasResult} from "./test1.js"
 import {SCOPE} from "./test1.js"
 
 
@@ -16,6 +16,9 @@ function real_eval(code) {
         sum: SCOPE.sum.impl,
         average: SCOPE.average.impl,
         map: SCOPE.map.impl,
+        circle: v => new NCircle(v),
+        pack_row:SCOPE.pack_row.impl,
+        draw: SCOPE.draw.impl,
     }
 
     let lines = code.split("\n")
@@ -45,9 +48,9 @@ function App() {
     const [result, setResult] = useState(null)
 
     const doEval = (code) => {
-        console.log("evaluating", code)
+        // console.log("evaluating", code)
         let res = real_eval(code)
-        console.log("result is", res)
+        // console.log("result is", res)
         setResult(res)
     }
 
@@ -99,9 +102,9 @@ const HBox = ({children, fill=false}) => {
 const is_error_result = (result) => result instanceof Error
 const is_scalar = (val) => (val instanceof NScalar)
 const is_string = (val) => (val instanceof NString)
-const is_list_result = (val) => val instanceof NList
-const is_color_result = (val) => val instanceof NColor
-
+const is_list   = (val) => val instanceof NList
+const is_color  = (val) => val instanceof NColor
+const is_canvas_result = (val) => val instanceof CanvasResult
 
 
 
@@ -114,13 +117,24 @@ function ListResult({result}) {
 }
 
 
+function CanvasResultResult({result}) {
+    let ref = useRef()
+    useEffect(()=>{
+        if(ref.current) {
+            result.cb(ref.current)
+        }
+    })
+    return <canvas width={600} height={300} ref={ref}/>
+}
+
 function ResultArea({result}) {
     console.log('result is', result)
     if (is_error_result(result)) return <ErrorResult result={result}/>
     if (is_scalar(result)) return <ScalarResult result={result}/>
     if (is_string(result)) return <StringResult result={result}/>
-    if (is_list_result(result)) return <ListResult result={result}/>
-    if (is_color_result(result)) return <ColorResult result={result}/>
+    if (is_list(result)) return <ListResult result={result}/>
+    if (is_color(result)) return <ColorResult result={result}/>
+    if (is_canvas_result(result)) return <CanvasResultResult result={result}/>
     if (result === null) return <div>result is <b>null</b></div>
     return <div>unknown result here</div>
 }
