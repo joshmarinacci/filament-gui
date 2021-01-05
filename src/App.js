@@ -12,7 +12,7 @@ import "codemirror/theme/mdn-like.css"
 import {} from "codemirror/mode/javascript/javascript.js"
 
 let editor = null
-function CodeEditor({value}) {
+function CodeEditor({value, onEval}) {
     const ref = useRef()
     useEffect(()=>{
         if(ref.current && editor === null) {
@@ -23,6 +23,12 @@ function CodeEditor({value}) {
                 mode:'javascript',
                 lineWrapping:true,
                 theme:'mdn-like',
+                extraKeys: {
+                    'Ctrl-Enter':()=>{
+                        console.log("doing enter")
+                        onEval(editor.getValue())
+                    }
+                }
             })
             editor.setValue('value')
         }
@@ -52,7 +58,7 @@ function App() {
                 >{ex.title}</button>)}
             </VBox>
             <VBox grow>
-                <CodeEditor value={code}/>
+                <CodeEditor value={code} onEval={(code)=>doEval(code)}/>
                 <button onClick={() => doEval(code)}>eval</button>
                 <ResultArea result={result}/>
             </VBox>
