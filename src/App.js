@@ -28,8 +28,8 @@ function App() {
                 <button onClick={() => doEval(code)}>eval</button>
                 <ResultArea result={result}/>
             </VBox>
-            <VBox>
-                {Object.values(SCOPE).map(fn => <div>docs for <b>{fn.title}</b> is </div>)}
+            <VBox classes={{docs:true}}>
+                {Object.values(SCOPE).map(fn => <div><b>{fn.title}</b>:<i>{fn.doc}</i></div>)}
             </VBox>
         </HBox>
     )

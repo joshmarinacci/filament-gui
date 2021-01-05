@@ -248,7 +248,8 @@ function box(obj) {
 
 export const SCOPE = {
     "size": {
-        title:'size',
+        title:'size(list)',
+        doc:"length of the list",
         type:'function',
         args:{
             indexed:["List"]
@@ -257,6 +258,8 @@ export const SCOPE = {
         impl:(l) => new NScalar(unbox(l).length),
     },
     "sum":{
+        title:'sum(list)',
+        doc:'add all numbers in the list',
         type:'function',
         args:{
             indexed:["List"]
@@ -265,6 +268,8 @@ export const SCOPE = {
         impl:(l) => new NScalar(unbox(l).reduce((acc,v)=>(acc + unbox(v)),0))
     },
     "average":{
+        title:'average(list)',
+        doc:'average of numbers in the list',
         type:'function',
         args:{
             indexed:["List"]
@@ -273,6 +278,8 @@ export const SCOPE = {
         impl:(l) => new NScalar(unbox(SCOPE.sum.impl(l))/unbox(SCOPE.size.impl(l)))
     },
     "map":{
+        title:'map(list, fun)',
+        doc:'applies `fun` to all elements in the list, returns new list',
         type:"function",
         args:{
             indexed:["List","lambda"]
@@ -282,6 +289,8 @@ export const SCOPE = {
     },
     "circle":{
         type:"function",
+        title:"circle()",
+        doc:'makes a circle shape',
         args:{
             named:{
                 name:"radius",
@@ -299,6 +308,8 @@ export const SCOPE = {
     },
     "pack_row":{
         type:'function',
+        title:'pack_row(list)',
+        doc:'packs list of shapes left to right, edge to edge',
         args:{
             indexed:['list']
         },

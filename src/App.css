@@ -18,10 +18,16 @@ textarea {
   font-size: 150%;
   line-height: 150%;
   padding: 0.5em;
-  min-height: 5em;
+  min-height: 10em;
 }
 canvas {
   border:1px solid black;
   justify-self: center;
   align-self: center;
+}
+
+.docs > div {
+  border: 0px solid red;
+  max-width: 20em;
+  margin: 0.25em;
 }
