@@ -4,14 +4,46 @@ import './App.css'
 import {EXAMPLES, SCOPE} from "./test1.js"
 import {HBox, VBox} from './ui.js'
 import {ResultArea} from './views.js'
-import {real_eval} from './lang.js'
+import {real_eval, scope} from './lang.js'
 
 import * as codemirror from 'codemirror';
 import "codemirror/lib/codemirror.css"
 import "codemirror/theme/mdn-like.css"
 import {} from "codemirror/mode/javascript/javascript.js"
+import {} from "codemirror/addon/edit/matchbrackets.js"
+import {} from "codemirror/addon/edit/closebrackets.js"
+
+import "codemirror/addon/hint/show-hint.css"
+import {} from "codemirror/addon/hint/show-hint.js"
+import {} from "codemirror/addon/hint/javascript-hint.js"
 
 let editor = null
+
+function synonyms(cm, option) {
+    return new Promise(function(accept) {
+        setTimeout(function() {
+            // console.log("cm is",cm)
+            // console.log("option is",option)
+            // accept(null)
+            var cursor = cm.getCursor(), line = cm.getLine(cursor.line)
+            var start = cursor.ch, end = cursor.ch
+            // console.log("start",start,'end',end)
+
+            while (start && /\w/.test(line.charAt(start - 1))) --start
+            while (end < line.length && /\w/.test(line.charAt(end))) ++end
+            var word = line.slice(start, end).toLowerCase()
+            // console.log("word is",word)
+            // console.log("scope is",scope)
+            let matches = Object.keys(scope).filter(k => k.startsWith(word));
+            // console.log("matches",matches)
+            return accept({
+                list:matches,
+                from: codemirror.Pos(cursor.line, start),
+                to: codemirror.Pos(cursor.line, end),
+            })
+        }, 100)
+    })
+}
 function CodeEditor({value, onEval}) {
     const ref = useRef()
     useEffect(()=>{
@@ -21,13 +53,14 @@ function CodeEditor({value, onEval}) {
                 value: 'some cool text',
                 lineNumbers:true,
                 mode:'javascript',
+                hintOptions: {hint: synonyms, completeSingle: false},
                 lineWrapping:true,
                 theme:'mdn-like',
+                matchBrackets:true,
+                autoCloseBrackets:true,
                 extraKeys: {
-                    'Ctrl-Enter':()=>{
-                        console.log("doing enter")
-                        onEval(editor.getValue())
-                    }
+                    'Ctrl-Enter':()=> onEval(editor.getValue()),
+                    "Ctrl-Space": "autocomplete",
                 }
             })
             editor.setValue('value')

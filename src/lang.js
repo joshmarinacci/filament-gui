@@ -10,22 +10,25 @@ export function is_gradient(result) {
     return result instanceof NGradient
 }
 
+export const scope = {
+    foo: () => console.log("doing foo"),
+    scalar: (v) => new NScalar(v),
+    string: v => new NString(v),
+    list: v => new NList(v),
+    color: v => new NColor(v),
+    gradient: v => new NGradient(v),
+    size: SCOPE.size.impl,
+    sum: SCOPE.sum.impl,
+    average: SCOPE.average.impl,
+    map: SCOPE.map.impl,
+    circle: v => new NCircle(v),
+    pack_row: SCOPE.pack_row.impl,
+    draw: SCOPE.draw.impl
+}
+
+
+
 export function real_eval(code) {
-    let scope = {
-        foo: () => console.log("doing foo"),
-        scalar: (v) => new NScalar(v),
-        string: v => new NString(v),
-        list: v => new NList(v),
-        color: v => new NColor(v),
-        gradient: v => new NGradient(v),
-        size: SCOPE.size.impl,
-        sum: SCOPE.sum.impl,
-        average: SCOPE.average.impl,
-        map: SCOPE.map.impl,
-        circle: v => new NCircle(v),
-        pack_row: SCOPE.pack_row.impl,
-        draw: SCOPE.draw.impl
-    }
 
     let lines = code.split("\n")
     lines[lines.length - 1] = 'return ' + lines[lines.length - 1]
