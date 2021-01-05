@@ -84,8 +84,8 @@ function App() {
         <HBox fill>
             <VBox>
                 {EXAMPLES.map(ex => <button
-                    onClick={() => setCode(ex.code.split("\n")
-                        .map(t => t.trim())
+                    onClick={() => setCode(ex.code.trim().split("\n")
+                        // .map(t => t.trim())
                         .filter(t => t.length > 0)
                         .join("\n"))}
                 >{ex.title}</button>)}

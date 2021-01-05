@@ -190,45 +190,52 @@ export const EXAMPLES = [
     {
         title:"size of list",
         code:`
-            let lis = list([scalar(1),scalar(2),scalar(3)])
-            size(lis)
-        `
+let lis = list([scalar(1),scalar(2),scalar(3)])
+size(lis)`
     },
     {
         title:"sum of list",
         code:`
-            let lis = list([scalar(1),scalar(2),scalar(3)])
-            sum(lis)
-        `
+let lis = list([scalar(1),scalar(2),scalar(3)])
+sum(lis)`
     },
     {
         title:"average of list",
         code:`
-            let lis = list([scalar(1),scalar(2),scalar(3)])
-            average(lis)
-        `
+let lis = list([scalar(1),scalar(2),scalar(3)])
+average(lis)`
     },
     {
         title:"double list",
         code:`
-            let lis = list([scalar(1),scalar(2),scalar(3)])
-            map(lis, x => x*2)
-        `
+let lis = list([scalar(1),scalar(2),scalar(3)])
+map(lis, x => x*2)`
     },
     {
         title:"one circle",
-        code:`
-            circle({radius:scalar(5)})
-        `
+        code:`circle({radius:scalar(5)})`
     },
     {
         title:'three circles packed',
         code:`
-            let lis1 = list([scalar(1),scalar(2),scalar(3)])
-            let lis2 = map(lis1,r=>circle({radius:scalar(r)}))
-            let lis3 = pack_row(lis2)
-            draw(lis3)
-        `
+let lis1 = list([scalar(1),scalar(2),scalar(3)])
+let lis2 = map(lis1,r=>circle({radius:scalar(r)}))
+let lis3 = pack_row(lis2)
+draw(lis3)`
+    },
+    {
+        title:'genuary4',
+        code:`
+function fillBand(start,size, fill) {
+    draw(range(50).map(()=>{
+        return Circle({
+            radius: rando(15,15),
+            center: Point({x:rando(0,500),y:rando(start,start+size)}),
+            fill: fill(),
+        })
+    }))
+}
+range(10).forEach(i => fillBand(i*50+25, 0, () => tinycolor({h: 160, s: rando(i*5,i*10), l: rando(0, 100)})))`
     }
 
 ]
