@@ -1,8 +1,9 @@
-import {useState, useRef, useEffect} from 'react'
+import {useState} from 'react'
 import './App.css'
 
-import {EXAMPLES, NString, NScalar, NList, NColor, NCircle, CanvasResult, NGradient} from "./test1.js"
-import {SCOPE} from "./test1.js"
+import {CanvasResult, EXAMPLES, NCircle, NColor, NGradient, NList, NScalar, NString, SCOPE} from "./test1.js"
+import {HBox, VBox} from './ui.js'
+import {ResultArea} from './views.js'
 
 
 function real_eval(code) {
@@ -75,83 +76,6 @@ function App() {
             </VBox>
         </HBox>
     )
-}
-
-const VBox = ({children, grow=false}) => {
-    let style = {
-        display: 'flex',
-        flexDirection: 'column'
-    }
-    let clsses = {
-        grow:grow,
-    }
-    let clssstr = Object.keys(clsses).filter(k => clsses[k]).join(" ")
-    return <div className={clssstr} style={style}>{children}</div>
-}
-const HBox = ({children, fill=false}) => {
-    let style = {
-        display: 'flex',
-        flexDirection: 'row',
-    }
-    let clsses = {
-        fill:fill,
-    }
-    let clssstr = Object.keys(clsses).filter(k => clsses[k]).join(" ")
-    return <div className={clssstr} style={style}>{children}</div>
-}
-
-const is_error_result = (result) => result instanceof Error
-const is_scalar = (val) => (val instanceof NScalar)
-const is_string = (val) => (val instanceof NString)
-const is_list   = (val) => val instanceof NList
-const is_color  = (val) => val instanceof NColor
-const is_canvas_result = (val) => val instanceof CanvasResult
-
-
-
-const ErrorResult = ({result}) => <div>error!!! <b>{result.toString()}</b></div>
-const ScalarResult = ({result}) => <div>Scalar <b>{result.value}</b></div>
-const StringResult = ({result}) => <div>String <b>{result.value}</b></div>
-
-function ListResult({result}) {
-    return <div>List {result.value.map(v => <ResultArea result={v}/>)}</div>
-}
-
-
-function CanvasResultResult({result}) {
-    let ref = useRef()
-    useEffect(()=>{
-        if(ref.current) {
-            result.cb(ref.current)
-        }
-    })
-    return <canvas width={600} height={300} ref={ref}/>
-}
-
-function is_gradient(result) {
-    return result instanceof NGradient
-}
-
-function GradientResult({result}) {
-    return <div>gradient here</div>
-}
-
-function ResultArea({result}) {
-    console.log('result is', result)
-    if (is_error_result(result)) return <ErrorResult result={result}/>
-    if (is_scalar(result)) return <ScalarResult result={result}/>
-    if (is_string(result)) return <StringResult result={result}/>
-    if (is_list(result)) return <ListResult result={result}/>
-    if (is_color(result)) return <ColorResult result={result}/>
-    if (is_gradient(result)) return <GradientResult result={result}/>
-    if (is_canvas_result(result)) return <CanvasResultResult result={result}/>
-    if (result === null) return <div>result is <b>null</b></div>
-    return <div>unknown result here</div>
-}
-
-function ColorResult({result}) {
-    let col = result.toHexColorString()
-    return <div>Color <b style={{backgroundColor:col}}>{col}</b></div>
 }
 
 export default App
