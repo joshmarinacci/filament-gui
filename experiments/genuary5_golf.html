@@ -1,0 +1,19 @@
+<canvas width="600" height="600"/>
+<script type="module">
+let M = Math
+const r = (n, m) => M.random()*(m-n) + n
+let c = document.querySelector('canvas').getContext('2d')
+c.translate(300,300)
+c.scale(1,-1)
+for(let n=0; n<10000; n++) {
+    let t=n/50, a=n/130, b=n/100
+    c.fillStyle = `hsla(${a%360},100%,${10+b}%,0.5)`
+    c.beginPath()
+    c.arc(
+        M.sin(t*2+n/20)*(t+a)+r(5,10),
+        M.cos(t*3)*(t+a)+r(5,10),
+        r(5,10), 0, M.PI*2)
+    c.closePath()
+    c.fill()
+}
+</script>

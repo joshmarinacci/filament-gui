@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Genuary 5</title>
+    <script src="../node_modules/tinycolor2/dist/tinycolor-min.js"></script>
+    <style type="text/css">
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="canvas1" width="600" height="300"></canvas>
+<canvas id="canvas2" width="600" height="300"></canvas>
+<canvas id="canvas3" width="600" height="600"></canvas>
+<canvas id="canvas4" width="600" height="600"></canvas>
+
+<script type="module">
+    let col = tinycolor({r:0,g:0,b:255})
+    function Circle(opts) {
+        return { ...opts}
+    }
+
+    function rando(min, max) {
+        return Math.random()*(max-min) + min
+    }
+
+    function Point(opts) {
+        return { ...opts}
+    }
+
+    function range(len) {
+        let arr = []
+        for(let i=0; i<len; i++) {
+            arr.push(i)
+        }
+        return arr
+    }
+
+    function clear_background(canvas_id) {
+        let canvas = document.querySelector(canvas_id)
+        let c = canvas.getContext('2d')
+        c.fillStyle = 'white'
+        c.fillRect(0,0,600,300)
+    }
+    function draw(canvas_id, shapes) {
+        let canvas = document.querySelector(canvas_id)
+        let c = canvas.getContext('2d')
+        c.save()
+        c.translate(50,50)
+        // c.fillStyle = 'white'
+        // c.fillRect(0,0,600,300)
+        shapes.forEach(sh => {
+            c.fillStyle = sh.fill.toHexString()
+            c.beginPath()
+            c.arc(sh.center.x,sh.center.y,sh.radius, 0, Math.PI*2)
+            c.closePath()
+            c.fill()
+        })
+        c.restore()
+    }
+
+    function randoRGBColor() {
+        return tinycolor({
+            r: rando(0,255),
+            g: rando(0,255),
+            b: rando(0,255),
+        })
+    }
+
+    let base = {r:0,g:255,b:255}
+
+    function mixColor(c1, c2, weight) {
+        return {
+            r: Math.sqrt((1-weight)*Math.pow(c1.r,2) + weight*Math.pow(c2.r,2)),
+            g: Math.sqrt((1-weight)*Math.pow(c1.g,2) + weight*Math.pow(c2.g,2)),
+            b: Math.sqrt((1-weight)*Math.pow(c1.b,2) + weight*Math.pow(c2.b,2)),
+        }
+    }
+
+    clear_background("#canvas1")
+    const eye_1 = (x,rad,h) => {
+        return range(4).map((n)=>{
+            let c ={
+                h:h,
+                s:100,
+                l:50,
+            }
+            //black, then white, then color, then white
+            if(n === 0) c.l = 0
+            if(n === 1) c.l = 100
+            if(n === 2) c.h = h
+            if(n === 3) c.l = 0
+            return Circle({
+                radius: (rad-n)*rad,
+                center: Point({x:x,y:100}),
+                fill: tinycolor(c)
+            })
+        })
+    }
+    draw("#canvas1",[eye_1(50,10, rando(0,360)), eye_1(250,10, rando(0,360))].flat())
+
+    clear_background('#canvas2')
+    const eye_2 = () => {
+        return range(10).map(e => eye_1(e*50+50,5, rando(60,120))).flat()
+    }
+    draw("#canvas2",eye_2())
+
+
+    clear_background('#canvas3')
+    const eye_4 = () => {
+        return range(3000).map(n => {
+            let th = (n/50.0)
+            let jitter = rando(-10,10)
+            // let jitter = 0
+            let rad = rando(5,10)
+            let s = 15+n/20
+            let x = Math.sin(th*2+n/20)*s
+            let y = Math.cos(th*3)*s
+            let cx = 300-50
+            let cy = 300-50
+            return Circle({
+                radius:rad,
+                center: Point({x:x+cx+jitter, y:y+cy+jitter}),
+                fill: tinycolor({
+                    h:(n/100)%360,
+                    s: 100,
+                    l: n/40,
+                }),
+            })
+        })
+    }
+    draw("#canvas3",eye_4())
+
+    function doGolf(canvas_id) {
+        const r = (min, max) => Math.random()*(max-min) + min
+        let c = document.querySelector(canvas_id).getContext('2d')
+        let w = 300
+        c.save()
+        c.translate(w,600-w)
+        c.scale(1,-1)
+        c.fillStyle = 'white'
+        c.fillRect(0,0,w*2,w*2)
+        for(let n=0; n<10000; n++) {
+            let th = (n/50.0)
+            let jit = r(-10,10)
+            let s = 10+n/50
+            let x = Math.sin(th*2+n/20)*s
+            let y = Math.cos(th*3)*s
+            c.fillStyle = `hsla(${((n/130)+0)%360},100%,${10+n/130}%,0.2)`
+            c.beginPath()
+            c.arc(x+jit,y+jit,r(5,10), 0, Math.PI*2)
+            c.closePath()
+            c.fill()
+        }
+        c.restore()
+    }
+    doGolf("#canvas4")
+
+</script>
+</body>
+</html>
