@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState, useRef, useEffect} from 'react'
 import './App.css'
 
 import {EXAMPLES, SCOPE} from "./test1.js"
@@ -6,6 +6,34 @@ import {HBox, VBox} from './ui.js'
 import {ResultArea} from './views.js'
 import {real_eval} from './lang.js'
 
+import * as codemirror from 'codemirror';
+import "codemirror/lib/codemirror.css"
+import "codemirror/theme/mdn-like.css"
+import {} from "codemirror/mode/javascript/javascript.js"
+
+let editor = null
+function CodeEditor({value}) {
+    const ref = useRef()
+    useEffect(()=>{
+        if(ref.current && editor === null) {
+            console.log("setting up code mirror")
+            editor = codemirror.fromTextArea(ref.current, {
+                value: 'some cool text',
+                lineNumbers:true,
+                mode:'javascript',
+                lineWrapping:true,
+                theme:'mdn-like',
+            })
+            editor.setValue('value')
+        }
+    })
+    useEffect(()=>{
+        if(editor) {
+            editor.setValue(value)
+        }
+    },[value])
+    return <textarea ref={ref}/>
+}
 
 function App() {
     const [code, setCode] = useState('5+6')
@@ -24,7 +52,7 @@ function App() {
                 >{ex.title}</button>)}
             </VBox>
             <VBox grow>
-                <textarea value={code}>some code is here</textarea>
+                <CodeEditor value={code}/>
                 <button onClick={() => doEval(code)}>eval</button>
                 <ResultArea result={result}/>
             </VBox>
