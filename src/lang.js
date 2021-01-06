@@ -1,4 +1,4 @@
-import {CanvasResult, NCircle, NColor, NGradient, NList, NScalar, NString, SCOPE} from './test1.js'
+import {CanvasResult, NCircle, NColor, NGradient, NList, NScalar, NString, Point, SCOPE} from './test1.js'
 
 export const is_error_result = (result) => result instanceof Error
 export const is_scalar = (val) => (val instanceof NScalar)
@@ -22,8 +22,11 @@ export const scope = {
     average: SCOPE.average.impl,
     map: SCOPE.map.impl,
     circle: v => new NCircle(v),
+    point: v => new Point(v.x,v.y),
     pack_row: SCOPE.pack_row.impl,
-    draw: SCOPE.draw.impl
+    draw: SCOPE.draw.impl,
+    range: SCOPE.range.impl,
+    rando: SCOPE.rando.impl,
 }
 
 

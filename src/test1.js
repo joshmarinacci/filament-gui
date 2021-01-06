@@ -42,11 +42,18 @@ open questions
 
 */
 
+
+import * as tinycolor from "tinycolor2/dist/tinycolor-min.js"
+
+export class NNull {
+    constructor() {
+    }
+}
 class Primitive {
     constructor() {
     }
     log(...args) {
-        // console.log(this.constructor.name,...args)
+        console.log(this.constructor.name,...args)
     }
 }
 
@@ -77,11 +84,15 @@ export class NList extends Primitive {
 export class NColor extends Primitive {
     constructor(value) {
         super();
-        this.log("making color from",value)
-        this.r = parseInt(value.substring(1,3),16)
-        this.g = parseInt(value.substring(3,5),16)
-        this.b = parseInt(value.substring(5,7),16)
-        this.log("parsed to",this.r,this.g,this.b)
+        this.log("making color from", value)
+        if (value.h) {
+            this.c = tinycolor(value)
+        } else {
+            this.r = parseInt(value.substring(1, 3), 16)
+            this.g = parseInt(value.substring(3, 5), 16)
+            this.b = parseInt(value.substring(5, 7), 16)
+            this.log("parsed to", this.r, this.g, this.b)
+        }
     }
     toHexColorString() {
         return '#'+[this.r,this.g,this.b]
@@ -91,7 +102,7 @@ export class NColor extends Primitive {
     }
 }
 
-class Point {
+export class Point {
     constructor(x,y) {
         this.x = x
         this.y = y
@@ -114,6 +125,7 @@ export class NCircle extends NShape {
         }
 
         this.center = new Point(this.radius,this.radius)
+        this.log("made circle",this)
     }
     bounds() {
         let r = this.radius
@@ -227,15 +239,21 @@ draw(lis3)`
         title:'genuary4',
         code:`
 function fillBand(start,size, fill) {
-    draw(range(50).map(()=>{
-        return Circle({
-            radius: rando(15,15),
-            center: Point({x:rando(0,500),y:rando(start,start+size)}),
+    return map(range(3),()=>{
+        return circle({
+            radius: scalar(rando(15,15)),
+            center: point({x:rando(0,500),y:rando(start,start+size)}),
             fill: fill(),
         })
-    }))
+    })
 }
-range(10).forEach(i => fillBand(i*50+25, 0, () => tinycolor({h: 160, s: rando(i*5,i*10), l: rando(0, 100)})))`
+// draw(map(range(1),(i) => {
+//     return fillBand(i*50+25, 0, 
+//         () => color({h: 160, s: rando(i*5,i*10), l: rando(0, 100)})
+//         )
+// }))
+draw(fillBand(25,0, ()=> color('#ff00ff')))
+`
     }
 
 ]
@@ -246,11 +264,17 @@ function unbox(obj) {
     return obj.value
 }
 function box(obj) {
-    // console.log("boxing",obj, obj instanceof Primitive)
+    console.log("boxing",obj, obj instanceof Primitive)
     if(obj instanceof Primitive) return obj
     if(typeof obj === 'number') {
         return new NScalar(obj)
     }
+    if(Array.isArray(obj)) return new NList(obj)
+    if(typeof obj === 'undefined') {
+        console.log("undefined it is")
+        return new NNull()
+    }
+    throw new Error(`I cant box ${obj}`)
 }
 
 export const SCOPE = {
@@ -313,6 +337,21 @@ export const SCOPE = {
             return c
         }
     },
+    "point":{
+        type:"function",
+        title:"point()",
+        doc:'makes a 2D point',
+        args:{
+            named:{
+                "x":'scalar',
+                y:'scalar',
+            }
+        },
+        returns:'object',
+        impl:({x,y}) => {
+            return new Point(x,y)
+        }
+    },
     "pack_row":{
         type:'function',
         title:'pack_row(list)',
@@ -353,11 +392,16 @@ export const SCOPE = {
                 ctx.fillRect(0,0,canvas.width,canvas.height)
 
                 let canvas_bounds = new Bounds(0,0,canvas.width,canvas.height)
-
+                console.log("canvas bounds is",canvas_bounds)
+                console.log("ll is",ll)
                 let max_bounds = ll.reduce((acc,shape)=>{
                     if(acc.bounds) acc = acc.bounds()
                     return acc.union(shape.bounds())
                 })
+                if(ll.length === 1) {
+                    max_bounds = ll[0].bounds()
+                }
+                console.log("max bounds is",max_bounds)
                 let scale = max_bounds.scaleInside(canvas_bounds)
                 console.log("bounds",canvas_bounds, 'vs',max_bounds,'scales to',scale)
 
@@ -373,6 +417,34 @@ export const SCOPE = {
                 ctx.restore()
                 ctx.restore()
             })
+        }
+    },
+    "range":{
+        type:'function',
+        title:'range(max), range(min,max), range(min,max,step)',
+        doc:'generates a list of numbers starting ',
+        args:{
+            indexed:['min','max','step'],
+        },
+        returns:"list",
+        impl:(min,max,step) => {
+            let arr = []
+            for(let i=0; i<min; i++) {
+                arr.push(new NScalar(i))
+            }
+            return box(arr)
+        }
+    },
+    "rando":{
+        type:'function',
+        title:'rando(min,max)',
+        doc:'generate a random number between min and max',
+        args:{
+            indexed:['min','max'],
+        },
+        returns:'scalar',
+        impl:(min,max) => {
+            return Math.random()*(max-min) + min
         }
     }
 
