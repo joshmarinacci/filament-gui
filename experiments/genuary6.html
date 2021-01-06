@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<canvas id="c1" width="600" height="600"></canvas>
+<script type="module">
+    //draw triangle w/ three circles
+    function randi(max) {
+        return Math.floor(Math.random()*max)
+    }
+
+    function pt(x, y) {
+        return { x,y,
+            distance:function(p2){
+                let a = p2.x-this.x
+                let b = p2.y-this.y
+                return Math.sqrt(Math.pow(a,2)+Math.pow(b,2))
+            },
+            minus: function(p2) {
+                return pt(this.x-p2.x, this.y-p2.y)
+            },
+            add: function(p2) {
+                return pt(p2.x+this.x, p2.y+this.y)
+            },
+            angle: function() {
+                return Math.atan2(this.y,this.x)
+            },
+            rotate: function(theta) {
+                return pt(
+                    this.x*Math.cos(theta) - this.y*Math.sin(theta),
+                    this.x*Math.sin(theta) + this.y*Math.cos(theta),
+                )
+            }
+        }
+    }
+
+    function draw_triangle(c, t, fill) {
+        c.strokeStyle = fill
+        c.beginPath()
+        c.moveTo(t[0].x,t[0].y)
+        c.lineTo(t[1].x,t[1].y)
+        c.lineTo(t[2].x,t[2].y)
+        c.closePath()
+        c.stroke()
+    }
+
+    function toRad(deg) {
+        return deg * Math.PI/180
+    }
+
+    function draw_circle_triangle(c, t, fill) {
+        // draw_triangle(c,t,'black')
+        let A = t[0], B = t[1], C = t[2]
+        // const circ = (pt) => {
+        //     c.moveTo(pt.x,pt.y)
+        //     c.arc(pt.x,pt.y,10,0,Math.PI*2)
+        // }
+        // const line = (a,b)=>{
+        //     c.moveTo(a.x,a.y)
+        //     c.lineTo(b.x,b.y)
+        // }
+        const circle_line = (A,B) => {
+            let AB = B.minus(A)
+            let D = AB.rotate(toRad(60)).add(A)
+            let LEN = A.distance(B)
+
+            c.fillStyle = `hsla(${100+randi(5)*40},100%,50%,0.05)`
+            c.beginPath()
+            c.arc(D.x,D.y, LEN, 0, Math.PI*2)
+            c.fill()
+
+            // let E = AB.rotate(toRad(-60)).add(A)
+            // c.beginPath()
+            // c.arc(E.x,E.y, LEN, 0, Math.PI*2)
+            c.fill()
+        }
+        circle_line(A,B)
+        circle_line(B,C)
+        circle_line(C,A)
+    }
+    let c = document.querySelector('#c1').getContext('2d')
+
+    function clear(c) {
+        c.fillStyle = 'white'
+        c.fillRect(0,0,400,400)
+    }
+
+    clear(c)
+
+    // c.globalCompositeOperation = 'darken'
+
+    let t = [pt(200,200), pt(400,200), pt(300,400)]
+    // draw_triangle(c, t, 'black')
+
+
+    function random_split(t) {
+        let side = 0//randi(3)
+        const pp = (n) => t[(n%t.length)]
+        let  p = pt( (pp(side).x + pp(side+1).x)/2, (pp(side).y + pp(side+1).y)/2)
+        let t1 = [pp(side),p,pp(side+2)]
+        let t2 = [p,pp(side+1),pp(side+2)]
+        return [t1,t2]
+    }
+    let ts = [t]
+    ts = ts.concat(random_split(ts[0]))
+    // ts = ts.concat(random_split(ts[2]))
+
+    ts.forEach(t => draw_circle_triangle(c,t,'red'))
+
+</script>
+
+</body>
+</html>
