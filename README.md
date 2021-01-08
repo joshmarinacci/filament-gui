@@ -65,6 +65,13 @@ for the real functions underneath.
 In addition to the built-in operators, new operators can be defined in libraries as functions with
 metadata to treat it as operators (TBD).
 
+Builtins:
+* the usual: `+ - * /`
+* power: `**` ex: pow(5,2) = `5**2`  sqrt(9) = `9**-2`
+* modifying operators: `++` `+=` `--` `-=` `*=` `/=`
+* remainder division: `mod`  __(% is used for the percent unit)__
+* boolean: ``<= < == > >= and or not xor`  __(use ! for not or factorial?)__
+
 
 # Functions
 
@@ -110,7 +117,9 @@ Some of the built in functions:
 * __for__:  loops over every element in a list with a lambda, but returns the original list: `(list, lam)`
 * __order__: sort list returning a new list, by: property to use for sorting `sort(data by:"date")`
 * __take__: take the first N elements from a list to make a new list `take(data, 10)`
+* __pick__: take random elements from list `pick(data,5)` get five random elements
 * __reverse__: return a list with the order reversed  `reverse(data)`
+* __select__: select items from list using lambda function returning false. `select(data, (t)t.amount>0)`
 * __sin__, __cos__, __tan__: the usual trig functions
 * __point__: a two component vector `point(25,50) === [25,50]`
 * __range__: produces a list of numbers. `(min?,max,step=1)`
@@ -410,3 +419,15 @@ vs notelang version
     
 ```
 
+## image manipulation
+
+`coord` here is a vector of 2 numbers, (x,y)
+`color` here is a vector of 3 numbers, rgb, 0->1.
+
+```javascript
+// mix each pixel w/ adjacent 50%/50
+for(image, (coord, color) => {
+    let adj = getPixel(image,coord+[1,0])
+    return (color + adj)/2
+})
+```
