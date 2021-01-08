@@ -69,8 +69,7 @@ Functions can have indexed and named arguments as desired.  They can be combined
 composition or the pipeline operator. Functions can be anonymous. 
 
 The pipeline operator is sugar for function composition.  
-The pipeline always maps to the first argument to the
-receiving function, thus:
+The pipeline always maps to the first argument to the receiving function, thus:
 
 `f() -> g(42)` is the same as `g(f(),42)`.
 
