@@ -5,9 +5,9 @@ and visualizations.  It is reactive and organized around transforming and plotti
 It is a humanist language, as its primary 
 concern is providing a good experience for the human doing the programming. It does not focus on 
 performance or typesafety, except where that would help the primary humanist concerns.
-*It is a tool for thinking about things, not shipping production software.*
+*Notebook Lang is a tool for thinking about things, not shipping production software.*
 
-Note: *This language is currently theoretical (with implementation stubs), but the eventual goal is a web-based notebook interface that anyone can use and share.*
+Note: __This language is currently theoretical (with implementation stubs), but the eventual goal is a web-based notebook interface that anyone can use and share.__
 
 # Status
 
