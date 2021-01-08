@@ -1,20 +1,28 @@
 # Notebook Lang
 
 Notebook Lang (final name TBD) is a language for doing exploratory programming and visualizations.  
-It is reactive and organized around flows of data.  It is a humanist language, as its primary concern is providing a good experience for the 
-human doing the programming. It does not focus on performance or typesafety, except where such focus helps the primary humanist concerns.
-It is a tool for thinking about things, not shipping production software.  
+It is reactive and organized around flows of data.  It is a humanist language, as its primary 
+concern is providing a good experience for the human doing the programming. It does not focus on 
+performance or typesafety, except where that would help the primary humanist concerns.
+It is a tool for thinking about things, not shipping production software.
+
+# Status
+
+A note on notation. I'm still playing around with the symbols to use for pipeline, lambda functions,
+variable assignment vs equality test, etc. There's *so* many different ways to do it, including
+partial and deferred evaluation.
+
 
 # Features
 
-* assign variables only once
-* Reactive notebook environment. When one dependency is updated the rest of the notebook will update automatically.
-* heavy use of functional features like map and foreach with as overhead variables as possible
-* pipeline operator to chain things together
+* heavy use of functional features like map and foreach with as few overhead variables as possible
 * built in vis libs for drawing, graphs, random number generation, and vectors
 * unit based numbers with conversions
-* apis always try to do the right thing. ex: a graph label can take text or an image  
-* forgiving syntax
+* Reactive evaluation. When one dependency is updated the rest of the notebook will update automatically.
+* pipeline operator to chain things together
+* apis always try to do the right thing and be forgiving. ex: a graph label can take text or an image or URL
+* assign variables only once (maybe?)
+* very forgiving syntax
     * foo == FoO
     * f_o_o == foo
     * 1_000 == 1000
@@ -24,7 +32,7 @@ Notebook Lang takes inspiration from
 
 * [Julia](https://docs.julialang.org/en/v1/manual/functions/)
 * [Jupyter & and Python](https://jupyter.org) and notebook programming
-* Mathematica
+* [Mathematica](https://www.wolfram.com/mathematica/)
 * [TallyCat](http://apps.josh.earth/tallycat/), an earlier unit based calculator I wrote.
 
 # Unit Math
@@ -42,13 +50,15 @@ All operators are functions and most can be applied to scalars and lists. This m
 complex vector operations easier to represent compactly. Infix operators are just sugar
 for the real functions underneath.
 
-```
+``` javascript
 1+2 = add(1,2) = 3
 3 + [1,2] = add(3,[1,2]) = [4,5]
 [1,2]+[3,4] = [4,6]
++ across [1,2,3] = across(add,[1,2,3]) = 6
 ```
 
-In addition to the built in operators, new operators can be defined in libraries as functions.
+In addition to the built-in operators, new operators can be defined in libraries as functions with
+metadata to treat it as operators (TBD).
 
 
 # Functions
@@ -60,11 +70,11 @@ The pipeline operator is sugar for function composition.
 The pipeline always maps to the first argument to the
 receiving function, thus:
 
-`f() => g(42)` is the same as `g(f(),42)`.
+`f() -> g(42)` is the same as `g(f(),42)`.
 
 Bigger example of pipelining
 
-```
+``` javascript
 // load a table, pull out the second column, calculate a total
 
 let data = load('table.csv')
@@ -73,13 +83,13 @@ show(sum(data2))
 
 // the same with pipeline operator
 
-load('table.csv') => map( (row)=>row[1]) => sum() => show() 
+load('table.csv') => map( row => row[1]) => sum() -> show()
 
 ```
 
-Mixing indexed and named arguments:
+## Mixing indexed and named arguments:
 
-```
+``` javascript
 let data = load('http://some.url/table.csv')
 chart(data, type='bar', width='600')
 ```
@@ -92,17 +102,17 @@ behaves.
 Some of the built in functions:
 
 * __rand__: random numbers. `()->[0,1], (max)->[0,max], (min,max)->[min,max]`
-* __map__:  convert every element in a list using a lambda function: (list, lam)
-* __for__:  loops over every element in a list with a lambda, but returns the original list: (list, lam)
-* __order__: sort list returning a new list, by: property to use for sorting
-* __take__: take the first N elements from a list to make a new list
-* __reverse__: return a list with the order reversed 
+* __map__:  convert every element in a list using a lambda function: `(list, lam)`
+* __for__:  loops over every element in a list with a lambda, but returns the original list: `(list, lam)`
+* __order__: sort list returning a new list, by: property to use for sorting `sort(data by:"date")`
+* __take__: take the first N elements from a list to make a new list `take(data, 10)`
+* __reverse__: return a list with the order reversed  `reverse(data)`
 * __sin__, __cos__, __tan__: the usual trig functions
-* __point__: a two component vector
-* __range__: produces a list of numbers. (min?,max,step=1)
+* __point__: a two component vector `point(25,50) === [25,50]`
+* __range__: produces a list of numbers. `(min?,max,step=1)`
 * __draw__: draws lists/nested lists of shapes
 * __circle__ : a circle shape with center, radius, and fill
-* __rect__: a rect shape with width, height, position and fill
+* __rect__: a rect shape with width, height, position and fill `rect(width=100, height=50)`
 * __pack_row__: packs shapes in a row, centered vertically
 * __pack_col__: packs shapes in a column, centered horizontally
 * __draw_geomap__: draws a geo map
@@ -115,19 +125,18 @@ The language environment comes with several built in useful datasets
 
 * EARTH: circumference, radius, mass, population
 * PLANETS: radius, mass, orbital distance, albedo
+* US_STATES: name, date entered union, abbrevation, capitol, current population, flag
 * SCRABBLE: values of different letters
 
 
 # Examples:
 
-
-
 # histogram of date states entered the union
 
-```
-    DATASETS.STATES => 
-        histogram( item: @state.date_entered_union,
-                  label: @state.abbreviation,
+``` javascript
+    DATASETS.US_STATES =>
+        histogram( item: (s)=>state.date_entered_union,
+                  label: (s)=>state.abbreviation,
                   bin_size: 10yrs)
 ```
 
@@ -140,13 +149,12 @@ We need the circumference of the earth and the speed of the fastest bullet. Lets
 
 
 # Show the relative sizes of the planets in the solar system as a row
-```
-function planet_to_circle(planet) {
-  return circle(
-    radius: planet.radius,
-    fill: color(hue:random(360)
+``` javascript
+planet_to_circle <- (planet) => circle(
+    radius= planet.radius,
+    fill= color(hue=random(360))
     )
-}
+
 DATASETS.PLANETS
   => map(planet_to_circle)
   => pack_row()
@@ -156,7 +164,7 @@ DATASETS.PLANETS
 
 # how many milliseconds is 15 minutes
 
-```
+``` javascript
   15 minutes as msec
 ```
 
@@ -166,20 +174,23 @@ DATASETS.PLANETS
 # plot all of my friends on a map by their addresses as user avatars
 If we assume friends only have one mailing address
 
-```
-find(a =>	a.type == DB.person and a.category == DB.contacts)
-  => for(f => f.latlon = lookup_lat_lon(f.address))
-  => draw_geomap( coord: f => f.latlon, label: f=>f.avatar)
+``` javascript
+find(data, (a) => a.type == DB.person and a.category == DB.contacts)
+  => for((f) => f.latlon = lookup_lat_lon(f.address))
+  => draw_geomap( coord: (f)=> f.latlon, label: (f)=>f.avatar)
 ```
 
-The `draw_map` function takes a list of objects. If the objects are themselves lat/lon pairs it will just draw them with default markers. If the objects are not GeoCoordinates it will need a mapping function to pull out the lat lon. You can also use a mapping function to pull out a label.
+The `draw_map` function takes a list of objects. If the objects are themselves lat/lon pairs 
+it will just draw them with default markers. If the objects are not GeoCoordinates 
+it will need an accessor function to pull out the lat lon. You can also use a mapping 
+function to pull out a label.
 
 # plot the current position of the ISS on a map
 
 
 # draw the relative height of a 6ft man and 40in child
 
-```
+``` javascript
   rect(width:1ft height:6ft) => man
   rect(width:1ft height:40in) => child
   pack_row([man,child]) => draw()
@@ -187,32 +198,32 @@ The `draw_map` function takes a list of objects. If the objects are themselves l
 
 # draw the relative thin-ness of every iphone
 
-```
+``` javascript
 iphones = DATASETS.IPHONES
 iphones 
-  => map(|p|rect(width:p.depth, height:p.height))
-  => for(|r|r.fill = color({hue:randi(360)}))
+  => map( p => rect(width:p.depth, height:p.height))
+  => for( r => r.fill = color({hue:randi(360)}))
   => pack_row()
   => draw() 
 ```
 
 # plot the equation x^2 + 5x
-```
-let eq = (x) => x^2 + 5x
+``` javascript
+fun eq = (x) => x^2 + 5x
 plot(eq, range:[0,10])
 ```
 
 # top 10 tallest buildings in the world as table and drawing
 
-```
-order(DATASETS.BUILDINGS, by:height, dir:'asc') => take(10) => buildings
+``` javascript
+order(DATASETS.BUILDINGS, by:'height', dir:'asc') => take(10) => buildings
 show(buildings)
 buildings => map(h => rect(height:h, width: h/10)) => pack_row() => draw()
 ```
 
 # chart atomic number vs year of discovery
 
-```
+``` javascript
 let elements = DATASETS.ELEMENTS
 chart(elements, 
   x_axis:(e)=>e.number, 
@@ -222,7 +233,7 @@ chart(elements,
 
 # calculate scrabble value of the word EXIT
 
-```
+``` javascript
 let word = 'EXIT'
 let letters = DATASETS.SCRABBLE
 word.map(l => letters[letter].score) => sum()
@@ -230,21 +241,19 @@ word.map(l => letters[letter].score) => sum()
 
 # vector math for drawing points
 
-```
+``` javascript
 // define some points
 let A = [25,50]   // first point
 let B = [100,50]  // second point
 
-let AB = B-A   // vector between two points
+let AB = B-A   // subtract vectors to get the part between the two points
 fun magnitude (A) => (A[0]**2+A[1]**2)**-2 
-
 fun make_rot (Ø) => [ [cos(Ø), -sin(Ø)], 
                       [sin(Ø),  cos(Ø)] ]
 // rotate by 90 degrees
 let rotated = make_rot(PI/2) * AB
 
 ```
-
 
 
 ### Questions
@@ -254,7 +263,7 @@ let rotated = make_rot(PI/2) * AB
   
 * what's a good syntax for anonymous functions / lambdas?
 
-```
+``` javascript
 double = @(x) x*2
 double = |x|x*2|
 double = (x)=>x*2
@@ -262,8 +271,23 @@ double = x => x*2
 double = lambda x: x*2
 double = {x:Number -> x*2}
 double(x) = x+y
+```
+
+
+* equality vs setting variables and pipeline.  Can pipelining to a new identifier be the same as setting a variable? ex:
+
+``` javascript
+// set the foo variable to the 'bar' string
+var foo = 'bar'  //assign foo
+var foo := 'bar' //assign foo
+'bar' => foo     //assign to foo
+(foo=='bar')     //comparison
 
 ```
+
+
+
+# MISC
 
 Genuary 5:  a loop of translucent circles
 
@@ -291,8 +315,9 @@ for(let n=0; n<10000; n++) {
 c.restore()
 ```
 
+vs the note lang version
 
-```notelang
+``` javascript
 range(10_000) 
     -> map(n => {
         let Ø = n/50
@@ -341,6 +366,8 @@ range(10_000)
     ts.forEach(t => draw_circle_triangle(c,t,'red'))
 
 ```
+
+vs notelang version
 
 ```notelang
 
