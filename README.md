@@ -1,17 +1,16 @@
 # Notebook Lang
 
-Notebook Lang (final name TBD) is a language for doing exploratory programming and visualizations.  
-It is reactive and organized around flows of data.  It is a humanist language, as its primary 
+Notebook Lang (final name TBD) is a humanist programming language for doing exploratory programming 
+and visualizations.  It is reactive and organized around transforming and plotting of data. 
+It is a humanist language, as its primary 
 concern is providing a good experience for the human doing the programming. It does not focus on 
 performance or typesafety, except where that would help the primary humanist concerns.
-It is a tool for thinking about things, not shipping production software.
+*It is a tool for thinking about things, not shipping production software.*
 
 # Status
 
-A note on notation. I'm still playing around with the symbols to use for pipeline, lambda functions,
-variable assignment vs equality test, etc. There's *so* many different ways to do it, including
-partial and deferred evaluation.
-
+A note on notation. I'm still playing around with the symbols to use for pipeline vs lambda functions,
+variable assignment vs equality test, named args vs maps, etc. There's *so* many different ways to do it, including partial and deferred evaluation, defaults, and more. Sheesh!
 
 # Features
 
@@ -22,12 +21,12 @@ partial and deferred evaluation.
 * pipeline operator to chain things together
 * apis always try to do the right thing and be forgiving. ex: a graph label can take text or an image or URL
 * assign variables only once (maybe?)
-* very forgiving syntax
-    * foo == FoO
-    * f_o_o == foo
-    * 1_000 == 1000
-    * whitespace doesn't matter
-    * 4ft == 4 ft == 4 feet == 4 foots == scalar(4,'feet')
+* very forgiving syntax, whitespace doesn't matter, case-insenstive, skip underlines, do it how you want.
+    * `foo == FoO`
+    * `f_o_o == foo`
+    * `CoolFunc == cool_func`
+    * `1_000_000 == 1000000`
+    * `4ft == 4 ft == 4 feet == 4 foots == scalar(4,'feet')`
   
 Notebook Lang takes inspiration from
 
@@ -43,8 +42,9 @@ Notebook Lang takes inspiration from
 Supports numbers with units, conversion between them, and performing math on them.
 
 ```
-8ft * 10ft * 10ft = 800 cu-ft
+8ft * 10ft * 10ft as gallons = 5984.42 gallons
 8ft as cm = 243.84 centimeters
+0xFF as decimal == 255
 ```
 
 # operators
@@ -153,9 +153,9 @@ We need the circumference of the earth and the speed of the fastest bullet. Lets
 
 # Show the relative sizes of the planets in the solar system as a row
 ``` javascript
-planet_to_circle <- (planet) => circle(
-    radius= planet.radius,
-    fill= color(hue=random(360))
+planet_to_circle <= (planet) => circle(
+    radius = planet.radius,
+    fill = color(hue=random(360))
     )
 
 DATASETS.PLANETS
@@ -188,10 +188,15 @@ it will just draw them with default markers. If the objects are not GeoCoordinat
 it will need an accessor function to pull out the lat lon. You can also use a mapping 
 function to pull out a label.
 
-# plot the current position of the ISS on a map
+### show the current position of the ISS on a map
+
+```javascript
+import ISS
+find_position(now()) => draw_geomap( globe:true)
 
 
-# draw the relative height of a 6ft man and 40in child
+
+### draw the relative height of a 6ft man and 40in child
 
 ``` javascript
   rect(width:1ft height:6ft) => man
@@ -199,7 +204,7 @@ function to pull out a label.
   pack_row([man,child]) => draw()
 ```
 
-# draw the relative thin-ness of every iphone
+### draw the relative thin-ness of every iphone
 
 ``` javascript
 iphones = DATASETS.IPHONES
@@ -216,7 +221,7 @@ fun eq = (x) => x^2 + 5x
 plot(eq, range:[0,10])
 ```
 
-# top 10 tallest buildings in the world as table and drawing
+### top 10 tallest buildings in the world as table and drawing
 
 ``` javascript
 order(DATASETS.BUILDINGS, by:'height', dir:'asc') => take(10) => buildings
@@ -224,7 +229,7 @@ show(buildings)
 buildings => map(h => rect(height:h, width: h/10)) => pack_row() => draw()
 ```
 
-# chart atomic number vs year of discovery
+### chart atomic number vs year of discovery
 
 ``` javascript
 let elements = DATASETS.ELEMENTS
@@ -234,7 +239,7 @@ chart(elements,
   type:'scatter')
 ```
 
-# calculate scrabble value of the word EXIT
+### calculate scrabble value of the word EXIT
 
 ``` javascript
 let word = 'EXIT'
@@ -242,7 +247,7 @@ let letters = DATASETS.SCRABBLE
 word.map(l => letters[letter].score) => sum()
 ```
 
-# vector math for drawing points
+### vector math for drawing points
 
 ``` javascript
 // define some points
@@ -259,7 +264,8 @@ let rotated = make_rot(PI/2) * AB
 ```
 
 
-### Questions
+# Questions
+
 * How can you show provenance? Include textual descriptions with links. Ex: [The 5 Fastest Rifle Cartridges](https://www.msn.com/en-us/news/us/the-5-fastest-rifle-cartridges/ar-BB17nLBQ)
 * How to auto-complete the `earth.circumference` part?
 * How to make sure the unit `ft/s` isn’t interpreted as actual division?
