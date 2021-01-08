@@ -266,6 +266,7 @@ let B = [100,50]  // second point
 
 let AB = B-A   // subtract vectors to get the part between the two points
 fun magnitude (A) => (A[0]**2+A[1]**2)**-2 
+fun normalize (A) => (A/magnitude(A))
 fun make_rot (Ø) => [ [cos(Ø), -sin(Ø)], 
                       [sin(Ø),  cos(Ø)] ]
 // rotate by 90 degrees
