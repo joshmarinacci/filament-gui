@@ -1,28 +1,252 @@
-# notebook lang
+# Notebook Lang
 
-This is a language for doing exploratory programming and visualizations.  It is reactive and organized
-around flows of data.  
+Notebook Lang (final name TBD) is a language for doing exploratory programming and visualizations.  
+It is reactive and organized around flows of data.  It is a humanist language, as its primary concern is providing a good experience for the 
+human doing the programming. It does not focus on performance or typesafety, except where such focus helps the primary humanist concerns.
+It is a tool for thinking about things, not shipping production software.  
 
-# features
+# Features
 
 * assign variables only once
-* heavy use of functional features like map and foreach
+* Reactive notebook environment. When one dependency is updated the rest of the notebook will update automatically.
+* heavy use of functional features like map and foreach with as overhead variables as possible
 * pipeline operator to chain things together
 * built in vis libs for drawing, graphs, random number generation, and vectors
 * unit based numbers with conversions
+* apis always try to do the right thing. ex: a graph label can take text or an image  
 * forgiving syntax
+    * foo == FoO
+    * f_o_o == foo
+    * 1_000 == 1000
+    * whitespace doesn't matter
+  
+Notebook Lang takes inspiration from
+
+* [Julia](https://docs.julialang.org/en/v1/manual/functions/)
+* [Jupyter & and Python](https://jupyter.org) and notebook programming
+* Mathematica
+* [TallyCat](http://apps.josh.earth/tallycat/), an earlier unit based calculator I wrote.
+
+# Unit Math
+
+Supports numbers with units, conversion between them, and performing math on them.
+
+``
+8ft * 10ft * 10ft = 800 cu-ft
+8ft as cm = 243.84 centimeters
+``
+
+# operators
+
+All operators are functions and most can be applied to scalars and lists. This makes
+complex vector operations easier to represent compactly. Infix operators are just sugar
+for the real functions underneath.
+
+```
+1+2 = add(1,2) = 3
+3 + [1,2] = add(3,[1,2]) = [4,5]
+[1,2]+[3,4] = [4,6]
+```
+
+In addition to the built in operators, new operators can be defined in libraries as functions.
 
 
-# Standard Functions
+# Functions
 
-* __rando__: random numbers. (), (max), (min,max)
+Functions can have indexed and named arguments as desired.  They can be combined with regular 
+composition or the pipeline operator. Functions can be anonymous. 
+
+The pipeline operator is sugar for function composition.  
+The pipeline always maps to the first argument to the
+receiving function, thus:
+
+`f() => g(42)` is the same as `g(f(),42)`.
+
+Bigger example of pipelining
+
+```
+// load a table, pull out the second column, calculate a total
+
+let data = load('table.csv')
+let data2 = map(data,(row)=>row[1])
+show(sum(data2))
+
+// the same with pipeline operator
+
+load('table.csv') => map( (row)=>row[1]) => sum() => show() 
+
+```
+
+Mixing indexed and named arguments:
+
+```
+let data = load('http://some.url/table.csv')
+chart(data, type='bar', width='600')
+```
+
+Named arguments usually are optional and have defaults. Indexed arguments are usually
+core to the use of the function. It is common to have a function with the first being
+a required input indexed argument, and the rest being options to control how the function
+behaves.
+
+Some of the built in functions:
+
+* __rand__: random numbers. `()->[0,1], (max)->[0,max], (min,max)->[min,max]`
 * __map__:  convert every element in a list using a lambda function: (list, lam)
+* __for__:  loops over every element in a list with a lambda, but returns the original list: (list, lam)
+* __order__: sort list returning a new list, by: property to use for sorting
+* __take__: take the first N elements from a list to make a new list
+* __reverse__: return a list with the order reversed 
 * __sin__, __cos__, __tan__: the usual trig functions
 * __point__: a two component vector
 * __range__: produces a list of numbers. (min?,max,step=1)
+* __draw__: draws lists/nested lists of shapes
+* __circle__ : a circle shape with center, radius, and fill
+* __rect__: a rect shape with width, height, position and fill
+* __pack_row__: packs shapes in a row, centered vertically
+* __pack_col__: packs shapes in a column, centered horizontally
+* __draw_geomap__: draws a geo map
+* __histogram__: draws a histogram of the data 
+* __address_to_geo__: converts a street address to a geo coordinate (US addresses only)
+
+# Standard Datasets
+
+The language environment comes with several built in useful datasets
+
+* EARTH: circumference, radius, mass, population
+* PLANETS: radius, mass, orbital distance, albedo
+* SCRABBLE: values of different letters
+
 
 # Examples:
 
+
+
+# histogram of date states entered the union
+
+```
+    DATASETS.STATES => 
+        histogram( item: @state.date_entered_union,
+                  label: @state.abbreviation,
+                  bin_size: 10yrs)
+```
+
+
+# How long would it take Superman to fly around the world
+Let's assume he is faster than a speeding bullet. 
+We need the circumference of the earth and the speed of the fastest bullet. Lets show it in hours.
+
+`earth.circumference / 8,000 ft/s as hours`
+
+
+# Show the relative sizes of the planets in the solar system as a row
+```
+function planet_to_circle(planet) {
+  return circle(
+    radius: planet.radius,
+    fill: color(hue:random(360)
+    )
+}
+DATASETS.PLANETS
+  => map(planet_to_circle)
+  => pack_row()
+  => draw()
+```
+
+
+# how many milliseconds is 15 minutes
+
+```
+  15 minutes as msec
+```
+
+
+  
+
+# plot all of my friends on a map by their addresses as user avatars
+If we assume friends only have one mailing address
+
+```
+find(a =>	a.type == DB.person and a.category == DB.contacts)
+  => for(f => f.latlon = lookup_lat_lon(f.address))
+  => draw_geomap( coord: f => f.latlon, label: f=>f.avatar)
+```
+
+The `draw_map` function takes a list of objects. If the objects are themselves lat/lon pairs it will just draw them with default markers. If the objects are not GeoCoordinates it will need a mapping function to pull out the lat lon. You can also use a mapping function to pull out a label.
+
+# plot the current position of the ISS on a map
+
+
+# draw the relative height of a 6ft man and 40in child
+
+```
+  rect(width:1ft height:6ft) => man
+  rect(width:1ft height:40in) => child
+  pack_row([man,child]) => draw()
+```
+
+# draw the relative thin-ness of every iphone
+
+```
+iphones = DATASETS.IPHONES
+iphones 
+  => map(|p|rect(width:p.depth, height:p.height))
+  => for(|r|r.fill = color({hue:randi(360)}))
+  => pack_row()
+  => draw() 
+```
+
+# plot the equation x^2 + 5x
+```
+let eq = (x) => x^2 + 5x
+plot(eq, range:[0,10])
+```
+
+# top 10 tallest buildings in the world as table and drawing
+
+```
+order(DATASETS.BUILDINGS, by:height, dir:'asc') => take(10) => buildings
+show(buildings)
+buildings => map(h => rect(height:h, width: h/10)) => pack_row() => draw()
+```
+
+# chart atomic number vs year of discovery
+
+```
+let elements = DATASETS.ELEMENTS
+chart(elements, 
+  x_axis:(e)=>e.number, 
+  y_axis:(e)=>e.discovery_date, 
+  type:'scatter')
+```
+
+# calculate scrabble value of the word EXIT
+
+```
+let word = 'EXIT'
+let letters = DATASETS.SCRABBLE
+word.map(l => letters[letter].score) => sum()
+```
+
+
+
+### Questions
+* How can you show provenance? Include textual descriptions with links. Ex: [The 5 Fastest Rifle Cartridges](https://www.msn.com/en-us/news/us/the-5-fastest-rifle-cartridges/ar-BB17nLBQ)
+* How to auto-complete the `earth.circumference` part?
+* How to make sure the unit `ft/s` isn’t interpreted as actual division?
+  
+* what's a good syntax for anonymous functions / lambdas?
+
+```
+double = @(x) x*2
+double = |x|x*2|
+double = (x)=>x*2
+double = x => x*2
+double = lambda x: x*2
+double = {x:Number -> x*2}
+double(x) = x+y
+
+```
 
 Genuary 5:  a loop of translucent circles
 
@@ -50,6 +274,7 @@ for(let n=0; n<10000; n++) {
 c.restore()
 ```
 
+
 ```notelang
 range(10_000) 
     -> map(n => {
@@ -63,6 +288,7 @@ range(10_000)
     -> draw()
 ```
 
+## genuary 6
 
 ```javascript
     let tri1 = [pt(200,200), pt(400,200), pt(300,400)]
@@ -129,3 +355,4 @@ range(10_000)
     map(triangles, draw_circle_triangle) -> draw
     
 ```
+
