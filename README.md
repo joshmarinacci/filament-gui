@@ -27,10 +27,13 @@ partial and deferred evaluation.
     * f_o_o == foo
     * 1_000 == 1000
     * whitespace doesn't matter
+    * 4ft == 4 ft == 4 feet == 4 foots == scalar(4,'feet')
   
 Notebook Lang takes inspiration from
 
 * [Julia](https://docs.julialang.org/en/v1/manual/functions/)
+* [Frink](https://frinklang.org/)
+* [APL, J, Kerf](https://github.com/kevinlawler/kerf)
 * [Jupyter & and Python](https://jupyter.org) and notebook programming
 * [Mathematica](https://www.wolfram.com/mathematica/)
 * [TallyCat](http://apps.josh.earth/tallycat/), an earlier unit based calculator I wrote.
@@ -39,10 +42,10 @@ Notebook Lang takes inspiration from
 
 Supports numbers with units, conversion between them, and performing math on them.
 
-``
+```
 8ft * 10ft * 10ft = 800 cu-ft
 8ft as cm = 243.84 centimeters
-``
+```
 
 # operators
 
