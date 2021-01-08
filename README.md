@@ -228,6 +228,23 @@ let letters = DATASETS.SCRABBLE
 word.map(l => letters[letter].score) => sum()
 ```
 
+# vector math for drawing points
+
+```
+// define some points
+let A = [25,50]   // first point
+let B = [100,50]  // second point
+
+let AB = B-A   // vector between two points
+fun magnitude (A) => (A[0]**2+A[1]**2)**-2 
+
+fun make_rot (Ø) => [ [cos(Ø), -sin(Ø)], 
+                      [sin(Ø),  cos(Ø)] ]
+// rotate by 90 degrees
+let rotated = make_rot(PI/2) * AB
+
+```
+
 
 
 ### Questions
