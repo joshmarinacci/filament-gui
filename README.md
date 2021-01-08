@@ -30,7 +30,6 @@ variable assignment vs equality test, named args vs maps, etc. There's *so* many
   
 Notebook Lang takes inspiration from
 
-* [Julia](https://docs.julialang.org/en/v1/manual/functions/)
 * [Frink](https://frinklang.org/)
 * [APL, J, Kerf](https://github.com/kevinlawler/kerf)
 * [Jupyter & and Python](https://jupyter.org) and notebook programming
