@@ -7,6 +7,9 @@ concern is providing a good experience for the human doing the programming. It d
 performance or typesafety, except where that would help the primary humanist concerns.
 *It is a tool for thinking about things, not shipping production software.*
 
+This language is currently theoretical (with implementation stubs), but the eventual goal is
+a web-based notebook interface that anyone can use and share.
+
 # Status
 
 A note on notation. I'm still playing around with the symbols to use for pipeline vs lambda functions,
