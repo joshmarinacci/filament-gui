@@ -44,6 +44,7 @@ Supports numbers with units, conversion between them, and performing math on the
 8ft * 10ft * 10ft as gallons = 5984.42 gallons
 8ft as cm = 243.84 centimeters
 0xFF as decimal == 255
+20% == 0.2
 ```
 
 # operators
@@ -70,7 +71,7 @@ composition or the pipeline operator. Functions can be anonymous.
 
 The pipeline operator is sugar for function composition. The pipeline always maps to the first argument to the receiving function, thus:
 
-`f() -> g(42)` is the same as `g(f(),42)`.
+`f() => g(42)` is the same as `g(f(),42)`.
 
 Bigger example of pipelining
 
@@ -102,6 +103,7 @@ behaves.
 Some of the built in functions:
 
 * __rand__: random numbers. `()->[0,1], (max)->[0,max], (min,max)->[min,max]`
+* __range__: generate a list of numbers: `(max), (min,max), (min,max,step)`
 * __map__:  convert every element in a list using a lambda function: `(list, lam)`
 * __for__:  loops over every element in a list with a lambda, but returns the original list: `(list, lam)`
 * __order__: sort list returning a new list, by: property to use for sorting `sort(data by:"date")`
@@ -131,7 +133,7 @@ The language environment comes with several built in useful datasets
 
 # Examples:
 
-# histogram of date states entered the union
+## histogram of date states entered the union
 
 ``` javascript
     DATASETS.US_STATES =>
@@ -141,14 +143,14 @@ The language environment comes with several built in useful datasets
 ```
 
 
-# How long would it take Superman to fly around the world
+## How long would it take Superman to fly around the world
 Let's assume he is faster than a speeding bullet. 
 We need the circumference of the earth and the speed of the fastest bullet. Lets show it in hours.
 
 `earth.circumference / 8,000 ft/s as hours`
 
 
-# Show the relative sizes of the planets in the solar system as a row
+## Show the relative sizes of the planets in the solar system as a row of circles
 ``` javascript
 planet_to_circle <= (planet) => circle(
     radius = planet.radius,
@@ -162,7 +164,7 @@ DATASETS.PLANETS
 ```
 
 
-# how many milliseconds is 15 minutes
+## how many milliseconds is 15 minutes
 
 ``` javascript
   15 minutes as msec
@@ -171,11 +173,11 @@ DATASETS.PLANETS
 
   
 
-# plot all of my friends on a map by their addresses as user avatars
+## plot all of my friends on a map by their addresses as user avatars
 If we assume friends only have one mailing address
 
 ``` javascript
-find(data, (a) => a.type == DB.person and a.category == DB.contacts)
+find(contacts, (a) => a.type == DB.person and a.category == DB.contacts)
   => for((f) => f.latlon = lookup_lat_lon(f.address))
   => draw_geomap( coord: (f)=> f.latlon, label: (f)=>f.avatar)
 ```
@@ -185,15 +187,15 @@ it will just draw them with default markers. If the objects are not GeoCoordinat
 it will need an accessor function to pull out the lat lon. You can also use a mapping 
 function to pull out a label.
 
-### show the current position of the ISS on a map
+## show the current position of the ISS on a map
 
 ```javascript
 import ISS
 find_position(now()) => draw_geomap( globe:true)
+```
 
 
-
-### draw the relative height of a 6ft man and 40in child
+## draw the relative height of a 6ft man and 40in child
 
 ``` javascript
   rect(width:1ft height:6ft) => man
@@ -201,7 +203,7 @@ find_position(now()) => draw_geomap( globe:true)
   pack_row([man,child]) => draw()
 ```
 
-### draw the relative thin-ness of every iphone
+## draw the relative thin-ness of every iphone
 
 ``` javascript
 iphones = DATASETS.IPHONES
@@ -212,13 +214,13 @@ iphones
   => draw() 
 ```
 
-# plot the equation x^2 + 5x
+## plot the equation x^2 + 5x
 ``` javascript
 fun eq = (x) => x^2 + 5x
 plot(eq, range:[0,10])
 ```
 
-### top 10 tallest buildings in the world as table and drawing
+## top 10 tallest buildings in the world as table and drawing
 
 ``` javascript
 order(DATASETS.BUILDINGS, by:'height', dir:'asc') => take(10) => buildings
@@ -226,7 +228,7 @@ show(buildings)
 buildings => map(h => rect(height:h, width: h/10)) => pack_row() => draw()
 ```
 
-### chart atomic number vs year of discovery
+## chart atomic number vs year of discovery
 
 ``` javascript
 let elements = DATASETS.ELEMENTS
@@ -236,7 +238,7 @@ chart(elements,
   type:'scatter')
 ```
 
-### calculate scrabble value of the word EXIT
+## calculate scrabble value of the word EXIT
 
 ``` javascript
 let word = 'EXIT'
@@ -244,7 +246,7 @@ let letters = DATASETS.SCRABBLE
 word.map(l => letters[letter].score) => sum()
 ```
 
-### vector math for drawing points
+## vector math for drawing points
 
 ``` javascript
 // define some points
