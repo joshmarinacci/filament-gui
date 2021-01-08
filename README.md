@@ -269,9 +269,17 @@ fun magnitude (A) => (A[0]**2+A[1]**2)**-2
 fun normalize (A) => (A/magnitude(A))
 fun make_rot (Ø) => [ [cos(Ø), -sin(Ø)], 
                       [sin(Ø),  cos(Ø)] ]
+
+fun dot (A,B) => + across (A*B)
+
+fun cross (A,B) =>  [
+    A[1]*B[2] - A[2]*B[1], 
+    A[2]*B[0] - A[0]*B[2],
+    A[0]*B[1] - A[1]*B[0],
+]
+fun angle (A,B) => arccos(dot(A,B)/(mag(A)*mag(B)))
 // rotate by 90 degrees
 let rotated = make_rot(PI/2) * AB
-
 ```
 
 
@@ -280,6 +288,15 @@ let rotated = make_rot(PI/2) * AB
 * How can you show provenance? Include textual descriptions with links. Ex: [The 5 Fastest Rifle Cartridges](https://www.msn.com/en-us/news/us/the-5-fastest-rifle-cartridges/ar-BB17nLBQ)
 * How to auto-complete the `earth.circumference` part?
 * How to make sure the unit `ft/s` isn’t interpreted as actual division?
+
+* define clamp to work on more than just scalars. could you clamp a color vector or a point vector?
+* visualize vectors by drawing as arrows. how?  map list of vectors to arrows?
+* how to let you work with components of vectors with xyz rgb etc when it's really just a list of two numbers underneath
+
+[Eucliean Vector](https://en.wikipedia.org/wiki/Euclidean_vector)
+
+
+
   
 * what's a good syntax for anonymous functions / lambdas?
 
