@@ -133,7 +133,7 @@ The language environment comes with several built in useful datasets
 
 # Examples:
 
-## histogram of date states entered the union
+## Histogram of date states entered the union
 
 ``` javascript
     DATASETS.US_STATES =>
@@ -144,10 +144,10 @@ The language environment comes with several built in useful datasets
 
 
 ## How long would it take Superman to fly around the world
-Let's assume he is faster than a speeding bullet. 
+Let's assume he is [faster than a speeding bullet](https://en.wikipedia.org/wiki/.220_Swift). 
 We need the circumference of the earth and the speed of the fastest bullet. Lets show it in hours.
 
-`earth.circumference / 8,000 ft/s as hours`
+`earth.circumference / 4_000 ft/s as hours`
 
 
 ## Show the relative sizes of the planets in the solar system as a row of circles
@@ -164,7 +164,7 @@ DATASETS.PLANETS
 ```
 
 
-## how many milliseconds is 15 minutes
+## How many milliseconds is 15 minutes
 
 ``` javascript
   15 minutes as msec
@@ -173,7 +173,7 @@ DATASETS.PLANETS
 
   
 
-## plot all of my friends on a map by their addresses as user avatars
+## Plot all of my friends on a map by their addresses as user avatars
 If we assume friends only have one mailing address
 
 ``` javascript
@@ -187,7 +187,7 @@ it will just draw them with default markers. If the objects are not GeoCoordinat
 it will need an accessor function to pull out the lat lon. You can also use a mapping 
 function to pull out a label.
 
-## show the current position of the ISS on a map
+## Show the current position of the ISS on a map
 
 ```javascript
 import ISS
@@ -195,7 +195,7 @@ find_position(now()) => draw_geomap( globe:true)
 ```
 
 
-## draw the relative height of a 6ft man and 40in child
+## Draw the relative height of a 6ft man and 40in child
 
 ``` javascript
   rect(width:1ft height:6ft) => man
@@ -203,7 +203,7 @@ find_position(now()) => draw_geomap( globe:true)
   pack_row([man,child]) => draw()
 ```
 
-## draw the relative thin-ness of every iphone
+## Draw the relative thinness of every iphone
 
 ``` javascript
 iphones = DATASETS.IPHONES
@@ -214,13 +214,13 @@ iphones
   => draw() 
 ```
 
-## plot the equation x^2 + 5x
+## Plot the equation x^2 + 5x
 ``` javascript
 fun eq = (x) => x^2 + 5x
 plot(eq, range:[0,10])
 ```
 
-## top 10 tallest buildings in the world as table and drawing
+## 10 tallest buildings in the world as table and diagram
 
 ``` javascript
 order(DATASETS.BUILDINGS, by:'height', dir:'asc') => take(10) => buildings
@@ -228,7 +228,7 @@ show(buildings)
 buildings => map(h => rect(height:h, width: h/10)) => pack_row() => draw()
 ```
 
-## chart atomic number vs year of discovery
+## Chart atomic number vs year of discovery
 
 ``` javascript
 let elements = DATASETS.ELEMENTS
@@ -238,7 +238,7 @@ chart(elements,
   type:'scatter')
 ```
 
-## calculate scrabble value of the word EXIT
+## Calculate scrabble value of the word EXIT
 
 ``` javascript
 let word = 'EXIT'
@@ -246,7 +246,7 @@ let letters = DATASETS.SCRABBLE
 word.map(l => letters[letter].score) => sum()
 ```
 
-## vector math for drawing points
+## Vector math for drawing points
 
 ``` javascript
 // define some points
