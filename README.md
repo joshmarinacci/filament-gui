@@ -67,7 +67,7 @@ metadata to treat it as operators (TBD).
 
 Builtins:
 * the usual: `+ - * /`
-* power: `**` ex: pow(5,2) = `5**2`  sqrt(9) = `9**-2`
+* power: `**` ex: pow(5,2) = `5**2`  sqrt(9) = `9**(1/2)`
 * modifying operators: `++` `+=` `--` `-=` `*=` `/=`
 * remainder division: `mod`  __(% is used for the percent unit)__
 * boolean: ``<= < == > >= and or not xor`  __(use ! for not or factorial?)__
