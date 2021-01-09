@@ -119,7 +119,7 @@ Some of the built in functions:
 * __take__: take the first N elements from a list to make a new list `take(data, 10)`
 * __pick__: take random elements from list `pick(data,5)` get five random elements
 * __reverse__: return a list with the order reversed  `reverse(data)`
-* __select__: select items from list using lambda function returning false. `select(data, (t)t.amount>0)`
+* __select__: select items from list using where: lambda function returning false. `select(data, where=(t)=>t.amount>0)`
 * __sin__, __cos__, __tan__: the usual trig functions
 * __point__: a two component vector `point(25,50) === [25,50]`
 * __range__: produces a list of numbers. `(min?,max,step=1)`
@@ -131,6 +131,10 @@ Some of the built in functions:
 * __draw_geomap__: draws a geo map
 * __histogram__: draws a histogram of the data 
 * __address_to_geo__: converts a street address to a geo coordinate (US addresses only)
+
+# comments
+
+Use whatever you want.  `#` or `//` or `/* */`. Anything else?
 
 # Standard Datasets
 
@@ -269,9 +273,17 @@ fun magnitude (A) => (A[0]**2+A[1]**2)**-2
 fun normalize (A) => (A/magnitude(A))
 fun make_rot (Ø) => [ [cos(Ø), -sin(Ø)], 
                       [sin(Ø),  cos(Ø)] ]
+
+fun dot (A,B) => + across (A*B)
+
+fun cross (A,B) =>  [
+    A[1]*B[2] - A[2]*B[1], 
+    A[2]*B[0] - A[0]*B[2],
+    A[0]*B[1] - A[1]*B[0],
+]
+fun angle (A,B) => arccos(dot(A,B)/(mag(A)*mag(B)))
 // rotate by 90 degrees
 let rotated = make_rot(PI/2) * AB
-
 ```
 
 
@@ -280,6 +292,22 @@ let rotated = make_rot(PI/2) * AB
 * How can you show provenance? Include textual descriptions with links. Ex: [The 5 Fastest Rifle Cartridges](https://www.msn.com/en-us/news/us/the-5-fastest-rifle-cartridges/ar-BB17nLBQ)
 * How to auto-complete the `earth.circumference` part?
 * How to make sure the unit `ft/s` isn’t interpreted as actual division?
+
+* define clamp to work on more than just scalars. could you clamp a color vector or a point vector?
+* visualize vectors by drawing as arrows. how?  map list of vectors to arrows?
+* how to let you work with components of vectors with xyz rgb etc when it's really just a list of two numbers underneath
+
+[Eucliean Vector](https://en.wikipedia.org/wiki/Euclidean_vector)
+
+
+* What's the shortest possible raytracer using vector math. 
+    * Loop over every pixel
+    * generate primary ray
+    * intersect with list of objects
+    * find normal at closest intersection
+    * calculate shading using lights.
+    * project secondary rays and recurse
+
   
 * what's a good syntax for anonymous functions / lambdas?
 
@@ -432,3 +460,61 @@ for(image, (coord, color) => {
     return (color + adj)/2
 })
 ```
+
+
+# research
+
+https://en.wikipedia.org/wiki/Comparison_of_programming_languages_(list_comprehension)
+
+Look at what LINQ does.
+
+```csharp
+var ns = from x in Enumerable.Range(0, 100)
+         where x * x > 3
+         select x * 2;
+```
+
+is sugar for
+
+```csharp
+var ns = Enumerable.Range(0, 100)
+        .Where(x => x * x > 3)
+        .Select(x => x * 2);
+```
+
+how about 
+```javascript
+range(100) => select(where= x=>x*x>3, map:x=>x*2)
+```
+or
+```javascript
+range(100) => filter(x=>x*x>3) => map(x=>x*2) => show()
+```
+
+
+turned into block language
+```
+|--------------|
+| make 0 to 10 | 
+|--------------------|
+| include x where    |
+|  x*x > 3           |
+|--------------------|
+| transform x to |
+|  x * 2         |
+|----------------|
+```
+
+
+
+
+
+# Philosophy
+
+* build your code up in pieces, incrementally. always be able to see the steps along the way
+* learn as you code. shortcuts are just sugar for plain stuff. learn the plain then learn the sugar
+* make a separate function, then inline it.
+
+
+
+https://writings.stephenwolfram.com/2016/09/how-to-teach-computational-thinking/
