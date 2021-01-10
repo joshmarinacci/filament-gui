@@ -53,7 +53,7 @@ circles >> row() >> draw()
 
 * Multiple syntaxes.  The underlying AST can be represented in one of three ways: a **pure ASCII version** (as in examples above), a **print ready** version that uses unicode glyphs where appropriate but would be harder to type without editor support (`pi` = `π`, `theta` = `ø`,  `<< and >>` = arrow symbols, etc.), and finally a **visual block syntax** similar to [Scratch](https://en.wikipedia.org/wiki/Scratch_(programming_language)) (appropriate for younger programmers who are just getting started).  All three syntaxes are fully interchangable. 
 
-* Keywords and operators are very opinionated, and chosen to be understandable by non-programmers. The boolean operators are 'and', 'or', and 'not' rather than `&&`, `||`, and `!`, though these may optionally be available for advanced users if they want. The same with `<< >>` used for assignment and pipelines rather than bit shifting.
+* Keywords and operators are very opinionated, and chosen to be understandable by non-programmers. The boolean operators are `and`, `or`, and `not` rather than `&&`, `||`, and `!`, though these may optionally be available for advanced users if they want. The same with `<< >>` used for assignment and pipelines rather than bit shifting.
 
 * Humanist APIs. The environment comes with a series of APIs designed to be consistent and easy to combine. They work together in a holistic way that feels natural. For example: the graph label function can take text, numbers, colors, images, or urls.  Functions generally do the best they can with whatever you give them, and complain visually when they have problems so you can easily fix it.
 
