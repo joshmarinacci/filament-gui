@@ -1,10 +1,12 @@
-# Introduction to a Humanist Language
+# Introduction to HL, a Humanist Language
 
-This language, currently called **HL** until a suitable name is found, is a [humanist](https://en.wikipedia.org/wiki/Humanism) programming language and IDE. It can be used by itself, but is generally meant to be used within [a notebook interface](https://en.wikipedia.org/wiki/Notebook_interface), typically on the web. 
+HL (name TBD) is a [humanist](https://en.wikipedia.org/wiki/Humanism) programming language and IDE.  Think of it as a mixture of **Mathematica, Scratch, and open datasets, swirled together into modern UX**.
+
+
+HL can be used by itself, but is generally meant to be used within [a notebook interface](https://en.wikipedia.org/wiki/Notebook_interface), typically on the web. 
 
 HL is meant to be accessible to all ages and levels of skill, from children to novice programmers to artists and even professionals who are doing exploratory programming. The syntax is designed to be simple to understand and forgiving of errors.  Though it uses some advanced computational concepts from existing [array](https://en.wikipedia.org/wiki/Array_programming), [functional](https://en.wikipedia.org/wiki/Functional_programming), and [object oriented](https://en.wikipedia.org/wiki/Object-oriented_programming) programming languages, these concepts are presented in a form that is simple as possible while still being useful.
 
-In many ways, **HL is a mixture of Mathematica, Scratch, and open datasets, swirled together into a UI informed by modern UX**.
 
 Notable features
 
