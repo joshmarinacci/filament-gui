@@ -51,7 +51,7 @@ nums >> map(radius => circle(radius)) >> circles
 circles >> row() >> draw()
 ```
 
-* Multiple syntaxes.  The underlying AST can be represented in one of three ways: a **pure ASCII version** (as in examples above), a **print ready** version that uses unicode glyphs where appropriate but would be harder to type without editor support (`pi` = `π`, `theta` = `ø`,  `<< and >>` = arrow symbols, etc.), and finally a **visual block syntax** similar to Scratch (appropriate for younger programmers who are just getting started).  All three syntaxes are fully interchangable. 
+* Multiple syntaxes.  The underlying AST can be represented in one of three ways: a **pure ASCII version** (as in examples above), a **print ready** version that uses unicode glyphs where appropriate but would be harder to type without editor support (`pi` = `π`, `theta` = `ø`,  `<< and >>` = arrow symbols, etc.), and finally a **visual block syntax** similar to [Scratch](https://en.wikipedia.org/wiki/Scratch_(programming_language)) (appropriate for younger programmers who are just getting started).  All three syntaxes are fully interchangable. 
 
 * Keywords and operators are very opinionated, and chosen to be understandable by non-programmers. The boolean operators are 'and', 'or', and 'not' rather than `&&`, `||`, and `!`, though these may optionally be available for advanced users if they want. The same with `<< >>` used for assignment and pipelines rather than bit shifting.
 
