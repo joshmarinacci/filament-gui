@@ -52,22 +52,30 @@ class Sphere {
         let b = distance.dot(ray.direction)
         let c = b*b - (distance.magnitude() * distance.magnitude()) + (this.radius*this.radius)
         if(c > 0.0) {
-            process.stdout.write("X")
-            return -b - Math.sqrt(c)
+            return b - Math.sqrt(c)
         } else {
-            process.stdout.write(".")
-            return -1
+            return 10000
         }
+    }
+    getNormal(point) {
+        return point.sub(this.center).normalize()
     }
 }
 
 const scene = {
     fov: 90.0,
-    sphere: new Sphere(
+    spheres: [
+        new Sphere(
             new Vec3(0,0,-5),
-            2.0,
+            1.5,
             new Color(0.4,1.0,0.4)
-    )
+        ),
+        new Sphere(
+            new Vec3(3,0,-5),
+            1.0,
+            new Color(0.4,1.0,0.4)
+        )
+        ]
 }
 
 class Image {
@@ -77,7 +85,7 @@ class Image {
     }
 }
 
-let canvas = new Image(20,40)
+let canvas = new Image(40,15)
 
 function create_prime(x,y,image) {
     let canvas_x = (x+0.5)/image.width * 2.0 - 1.0
@@ -88,11 +96,29 @@ function create_prime(x,y,image) {
     )
 }
 
-for( let i=0; i<canvas.width; i++) {
-    for(let j=0; j<canvas.height; j++) {
+for(let j=0; j<canvas.height; j++) {
+    for( let i=0; i<canvas.width; i++) {
         let ray = create_prime(i,j,canvas)
-        if( scene.sphere.intersect(ray)) {
-            // drawPx(x,y, scene.sphere.color)
+        //see if hit
+        let min_t = 10000
+        let obj = null
+        //record the closest hit
+        scene.spheres.forEach(sph => {
+            let inter = sph.intersect(ray)
+            if(inter < min_t) min_t = inter
+            obj = sph
+        })
+        // let t = scene.sphere.intersect(ray)
+        if( min_t < 0) {
+            process.stdout.write('x')
+            //shade
+            // let origin = ray.origin.add(ray.direction.scaleBy(t))
+            // let normal = scene.sphere.getNormal(origin)
+            // console.log(normal)
+            // let direction = scene.sphere.bounce(ray,normal)
+            // console.log(origin)
+        } else {
+            process.stdout.write('.')
         }
     }
     process.stdout.write("\n")
