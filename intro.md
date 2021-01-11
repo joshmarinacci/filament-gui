@@ -61,6 +61,17 @@ circles >> row() >> draw()
 
 
 
+
+HL takes inspiration from
+
+* [Frink](https://frinklang.org/)
+* [APL, J, Kerf](https://github.com/kevinlawler/kerf)
+* [Jupyter & and Python](https://jupyter.org) and notebook programming
+* [Mathematica](https://www.wolfram.com/mathematica/)
+* [TallyCat](http://apps.josh.earth/tallycat/), an earlier unit based calculator I wrote.
+
+
+
 More info:
 
 * [Tutorial](./tutorial.md)

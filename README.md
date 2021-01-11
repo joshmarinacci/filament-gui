@@ -1,6 +1,6 @@
-# Notebook Lang
+# A Humanist Language
 
-Notebook Lang (final name TBD) is a humanist programming language for doing exploratory programming 
+HL (final name TBD) is a humanist programming language for doing exploratory programming 
 and visualizations.  It is reactive and organized around transforming and plotting of data. 
 It is a humanist language, as its primary 
 concern is providing a good experience for the human doing the programming. It does not focus on 
@@ -9,143 +9,9 @@ performance or typesafety, except where that would help the primary humanist con
 
 Note: __This language is currently theoretical (with implementation stubs), but the eventual goal is a web-based notebook interface that anyone can use and share.__
 
-# Status
+See the [intro](./intro.md) document for more on the philosophy and what makes it unique.
 
-A note on notation. I'm still playing around with the symbols to use for pipeline vs lambda functions,
-variable assignment vs equality test, named args vs maps, etc. There's *so* many different ways to do it, including partial and deferred evaluation, defaults, and more. Sheesh!
-
-# Features
-
-* heavy use of functional features like map and foreach with as few overhead variables as possible
-* built in vis libs for drawing, graphs, random number generation, and vectors
-* unit based numbers with conversions
-* Reactive evaluation. When one dependency is updated the rest of the notebook will update automatically.
-* pipeline operator to chain things together
-* apis always try to do the right thing and be forgiving. ex: a graph label can take text or an image or URL
-* assign variables only once (maybe?)
-* very forgiving syntax, whitespace doesn't matter, case-insenstive, skip underlines, do it how you want.
-    * `foo == FoO`
-    * `f_o_o == foo`
-    * `CoolFunc == cool_func`
-    * `1_000_000 == 1000000`
-    * `4ft == 4 ft == 4 feet == 4 foots == scalar(4,'feet')`
   
-Notebook Lang takes inspiration from
-
-* [Frink](https://frinklang.org/)
-* [APL, J, Kerf](https://github.com/kevinlawler/kerf)
-* [Jupyter & and Python](https://jupyter.org) and notebook programming
-* [Mathematica](https://www.wolfram.com/mathematica/)
-* [TallyCat](http://apps.josh.earth/tallycat/), an earlier unit based calculator I wrote.
-
-# Unit Math
-
-Supports numbers with units, conversion between them, and performing math on them.
-
-```
-8ft * 10ft * 10ft as gallons = 5984.42 gallons
-8ft as cm = 243.84 centimeters
-0xFF as decimal == 255
-20% == 0.2
-```
-
-# operators
-
-All operators are functions and most can be applied to scalars and lists. This makes
-complex vector operations easier to represent compactly. Infix operators are just sugar
-for the real functions underneath.
-
-``` javascript
-1+2 = add(1,2) = 3
-3 + [1,2] = add(3,[1,2]) = [4,5]
-[1,2]+[3,4] = [4,6]
-+ across [1,2,3] = across(add,[1,2,3]) = 6
-```
-
-In addition to the built-in operators, new operators can be defined in libraries as functions with
-metadata to treat it as operators (TBD).
-
-Builtins:
-* the usual: `+ - * /`
-* power: `**` ex: pow(5,2) = `5**2`  sqrt(9) = `9**(1/2)`
-* modifying operators: `++` `+=` `--` `-=` `*=` `/=`
-* remainder division: `mod`  __(% is used for the percent unit)__
-* boolean: ``<= < == > >= and or not xor`  __(use ! for not or factorial?)__
-
-
-# Functions
-
-Functions can have indexed and named arguments as desired.  They can be combined with regular 
-composition or the pipeline operator. Functions can be anonymous. 
-
-The pipeline operator is sugar for function composition. The pipeline always maps to the first argument to the receiving function, thus:
-
-`f() => g(42)` is the same as `g(f(),42)`.
-
-Bigger example of pipelining
-
-``` javascript
-// load a table, pull out the second column, calculate a total
-
-let data = load('table.csv')
-let data2 = map(data,(row)=>row[1])
-show(sum(data2))
-
-// the same with pipeline operator
-
-load('table.csv') => map( row => row[1]) => sum() -> show()
-
-```
-
-## Mixing indexed and named arguments:
-
-``` javascript
-let data = load('http://some.url/table.csv')
-chart(data, type='bar', width='600')
-```
-
-Named arguments usually are optional and have defaults. Indexed arguments are usually
-core to the use of the function. It is common to have a function with the first being
-a required input indexed argument, and the rest being options to control how the function
-behaves.
-
-Some of the built in functions:
-
-* __rand__: random numbers. `()->[0,1], (max)->[0,max], (min,max)->[min,max]`
-* __range__: generate a list of numbers: `(max), (min,max), (min,max,step)`
-* __map__:  convert every element in a list using a lambda function: `(list, lam)`
-* __for__:  loops over every element in a list with a lambda, but returns the original list: `(list, lam)`
-* __order__: sort list returning a new list, by: property to use for sorting `sort(data by:"date")`
-* __take__: take the first N elements from a list to make a new list `take(data, 10)`
-* __pick__: take random elements from list `pick(data,5)` get five random elements
-* __reverse__: return a list with the order reversed  `reverse(data)`
-* __select__: select items from list using where: lambda function returning false. `select(data, where=(t)=>t.amount>0)`
-* __sin__, __cos__, __tan__: the usual trig functions
-* __point__: a two component vector `point(25,50) === [25,50]`
-* __range__: produces a list of numbers. `(min?,max,step=1)`
-* __draw__: draws lists/nested lists of shapes
-* __circle__ : a circle shape with center, radius, and fill
-* __rect__: a rect shape with width, height, position and fill `rect(width=100, height=50)`
-* __pack_row__: packs shapes in a row, centered vertically
-* __pack_col__: packs shapes in a column, centered horizontally
-* __draw_geomap__: draws a geo map
-* __histogram__: draws a histogram of the data 
-* __address_to_geo__: converts a street address to a geo coordinate (US addresses only)
-
-# comments
-
-Use whatever you want.  `#` or `//` or `/* */`. Anything else?
-
-# Standard Datasets
-
-The language environment comes with several built in useful datasets
-
-* EARTH: circumference, radius, mass, population
-* PLANETS: radius, mass, orbital distance, albedo
-* US_STATES: name, date entered union, abbrevation, capitol, current population, flag
-* SCRABBLE: values of different letters
-
-
 # Examples:
 
 ## Histogram of date states entered the union
@@ -332,8 +198,6 @@ var foo := 'bar' //assign foo
 (foo=='bar')     //comparison
 
 ```
-
-
 
 # MISC
 
