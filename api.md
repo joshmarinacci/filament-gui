@@ -8,13 +8,16 @@ an internal BigNumber library. This allows it to perserve fractions when possibl
 * __rand__: random numbers. `()->[0,1], (max)->[0,max], (min,max)->[min,max]`
 * __sin__, __cos__, __tan__: the usual trig functions, in radians or degrees.
 * __add__, __mul__, etc.  function implementations of the standard math operations.
+* __as__, converts number to specified unit.
 * __pow__, power. 5^2 = pow(5,2)
+* __exp__, e^n
 * __sqrt__, square root
 * __max__, __min__, max and min of the arguments. Works with scalars and lists.
 * __random_integer(max)__: returns a random number between 0 and the max
 * __randomreal__ or __randomfloat__?
 * __is_prime__ return true if number is prime
-* still needed: absolute value, round, floor and ceiling, natural log, log base 10, more trig functions
+* __sign__ sign of the argument. returns -1, 0, or 1
+* still needed: absolute value, round, floor and ceiling, natural log, log base 10, more trig functions. truncate? fract to get the fractional part of a number? convert between radians and degrees.
 
 
 
@@ -140,8 +143,13 @@ actually do something like show the 30 nearest volcanos?
 # Constants
 
 * Pi
-* GoldenRation
-* e
+* GoldenRatio / Phi
+* e, eulers number
+* square root of 2?
+* square root of 1/2?
+* i, imaginary unit, sqrt(-1)?
+* natural logarihm of 2?
+* g: force of gravity on earth?
 
 # data access
 

@@ -27,20 +27,20 @@
 * `!` fact(a) factorial
 * `mod` mod(a) modular (*remainder*) division. `%` is used for percentages
 
-
-
-## the rest of the operators
+## All the rest
 
 `()` parenthesis for grouping and function calls
 `[]` square brackets for list literals, maps to `list(a,b,c,...)` function
 `<<` assign
 `>>` assign and pipeline operator (depending on the context)
+`as` convert to a specified unit. ex: `10cm as inches`. works on lists.
 
 
 ## specifically not included
 
 * bitshifting `<<` `>>`
 * bitwise booleans `|` `&`
+* increment and decrement shortcuts:  `--` `-=` `+=` `++`
 * symbols for boolean AND, OR, NOT, XOR
 * ranges: `1..10`, `1..<10` and other comprehensions (may revisit)
 * % for modular division. use `mod` instead
@@ -68,11 +68,10 @@ to enter. They will also be shown in their unicode form in the "print ready" syn
 * pi **π** or **∏**
 * alpha **&#945;**
 * sigma **&#963;** and **&#931;**
-* not equal **&#8800;**
+* not equal **&#8800;**, greater than or equal, and less than or equal
 * right arrow **&#8594;** replaces >> 
 * left arrow **&#8592;** replaces <<
 * curved arrow **&#11148;** or **&#11181;** replaces return ??
-
 
 
 # identifiers
@@ -156,6 +155,15 @@ chart( [1,2,3], color='red')
 
 
 # control flow
+
+For now control flow, function definitions, comments, code blocks, lambda functions,
+conditionals, etc are TBD, so they will use the JS equivalents for now.
+
+- No increment operators 
+- document the ‘as’ operator. works over lists too.
+- mention comments, blocks, conditionals, flow control are still TBD, so using JS for now
+- mention function def and lambda syntax still TBD, so JS for now
+
 
 * if, then, else
 * switch / match
