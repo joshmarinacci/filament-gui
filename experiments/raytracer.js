@@ -151,14 +151,16 @@ export function run(canvas, cb) {
     }
 }
 
-run(canvas, (x,y,c)=>{
-    if(x === 0)process.stdout.write('\n')
-    let colors = ['.', ':', '*', '%', '#', '@', 'x', 'X', 'W', 'Q']
-    if(c === 0) {
-        process.stdout.write('_')
-    } else {
-        let n = Math.floor(c*10)
-        process.stdout.write(colors[n])
-    }
+if(typeof process !== 'undefined') {
+    run(canvas, (x, y, c) => {
+        if (x === 0) process.stdout.write('\n')
+        let colors = ['.', ':', '*', '%', '#', '@', 'x', 'X', 'W', 'Q']
+        if (c === 0) {
+            process.stdout.write('_')
+        } else {
+            let n = Math.floor(c * 10)
+            process.stdout.write(colors[n])
+        }
 
-})
+    })
+}

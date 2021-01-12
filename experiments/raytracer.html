@@ -1,15 +1,13 @@
 <html>
     <body>
-        <canvas id='canvas' width="100" height="100"></canvas>
+        <canvas id='canvas' width="300" height="300"></canvas>
 <script type='module'>
     import {run} from './raytracer.js'
     let canvas = document.getElementById('canvas')
     let ctx = canvas.getContext('2d')
-    ctx.fillStyle = 'red'
-    ctx.fillRect(0,0,100,100)
-
     run(canvas, (x,y,shade) => {
-
+        ctx.fillStyle = `hsl(0,100%, ${shade*100}%)`
+        ctx.fillRect(x,y,1,1)
     })
 </script>
 </body>
