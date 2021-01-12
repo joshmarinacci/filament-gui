@@ -54,7 +54,7 @@ class Sphere {
         if(c > 0.0) {
             return b - Math.sqrt(c)
         } else {
-            return 10000
+            return Infinity
         }
     }
     getNormal(point) {
@@ -64,6 +64,11 @@ class Sphere {
 
 const scene = {
     fov: 90.0,
+    lights: [
+        {
+            center: new Vec3(-30,-10,20)
+        },
+    ],
     spheres: [
         new Sphere(
             new Vec3(0,0,-5),
@@ -96,29 +101,52 @@ function create_prime(x,y,image) {
     )
 }
 
+
+
+function surface(ray, scene, obj, pointAtTime, normal, depth) {
+    let b = obj.color
+    let c = new Vec3(0,0,0)
+    let lambertAmount = 0
+    scene.lights.forEach(light => {
+        // unit(light.center - pat) dot normal
+        let contrib = light.center.sub(pointAtTime).normalize().dot(normal)
+        if(contrib < 0) return
+        lambertAmount += contrib
+    })
+    //clamp to above 1
+    lambertAmount = Math.min(1,lambertAmount)
+    //multiply times sphere color and material.lambert + ambient
+    return lambertAmount
+}
+
 for(let j=0; j<canvas.height; j++) {
     for( let i=0; i<canvas.width; i++) {
         let ray = create_prime(i,j,canvas)
         //see if hit
-        let min_t = 10000
-        let obj = null
+        let closest = {
+            distance: Infinity,
+            obj:null
+        }
         //record the closest hit
-        scene.spheres.forEach(sph => {
-            let inter = sph.intersect(ray)
-            if(inter < min_t) min_t = inter
-            obj = sph
+        scene.spheres.forEach(obj => {
+            let distance = obj.intersect(ray)
+            if(distance < closest.distance) {
+                closest = {distance, obj}
+            }
         })
-        // let t = scene.sphere.intersect(ray)
-        if( min_t < 0) {
-            process.stdout.write('x')
-            //shade
-            // let origin = ray.origin.add(ray.direction.scaleBy(t))
-            // let normal = scene.sphere.getNormal(origin)
-            // console.log(normal)
-            // let direction = scene.sphere.bounce(ray,normal)
-            // console.log(origin)
+        if( closest.distance < 0) {
+            let pointAtTime = ray.origin.add( ray.direction.scaleBy(closest.distance))
+            let color = surface(ray,
+                scene,
+                closest.obj,
+                pointAtTime,
+                closest.obj.getNormal(pointAtTime)
+                )
+            let colors = ['.',':','*','%','#','@','x','X','W','Q']
+            let n = Math.floor(color*10)
+            process.stdout.write(colors[n])
         } else {
-            process.stdout.write('.')
+            process.stdout.write(' ')
         }
     }
     process.stdout.write("\n")
