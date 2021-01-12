@@ -48,6 +48,11 @@ export class Sphere {
     }
 
     intersect(ray) {
+        //HL: dist << ray.origin - sphere.center
+        //HL: b << dist dot ray.direction
+        //HL: c = b**2 - dist.magnitude()**2 + sphere.radius**2
+        //HL: fdist << (c > 0) ? b - sqrt(c) : Infinity
+        //HL: return hit(obj: this, dist: dist, point: ray.direction * fidst + ray.origin)
         let distance = ray.origin.sub(this.center)
         let b = distance.dot(ray.direction)
         let c = b*b - (distance.magnitude() * distance.magnitude()) + (this.radius*this.radius)
@@ -58,6 +63,7 @@ export class Sphere {
         }
     }
     getNormal(point) {
+        // HL: return normalize(pt - sphere.center)
         return point.sub(this.center).normalize()
     }
 }
@@ -93,7 +99,9 @@ export class Image {
 let canvas = new Image(50,20)
 
 function create_prime(x,y,image) {
-    let canvas_x = (x+0.5)/image.width * 2.0 - 1.0
+    //HL:  (xy + [0.5,0.5]) / image.size * 2.0 - [1.0,1.0]
+    //HL: return ray(origin: [0,0,0], direction: normalize([cx,cy,-1]))
+    let canvas_x =       (x+0.5)/image.width * 2.0 - 1.0
     let canvas_y = 1.0 - (y+0.5)/image.height * 2.0
     return new Ray(
         new Vec3(0,0,0),
@@ -118,6 +126,7 @@ function surface(ray, scene, obj, pointAtTime, normal, depth) {
 }
 
 export function run(canvas, cb) {
+    //HL: for(canvas, (x,y) => ())
     for (let j = 0; j < canvas.height; j++) {
         for (let i = 0; i < canvas.width; i++) {
             let ray = create_prime(i, j, canvas)
@@ -127,12 +136,15 @@ export function run(canvas, cb) {
                 obj: null
             }
             //record the closest hit
+            //HL: hits << map(spheres, sp => sp.intersect(ray))
+            //HL: let closest = min(hits, hit => hit.distance)
             scene.spheres.forEach(obj => {
                 let distance = obj.intersect(ray)
                 if (distance < closest.distance) {
                     closest = {distance, obj}
                 }
             })
+            // if closest.distance < 0
             if (closest.distance < 0) {
                 let pointAtTime = ray.origin.add(ray.direction.scaleBy(closest.distance))
                 let color = surface(ray,
@@ -141,13 +153,14 @@ export function run(canvas, cb) {
                     pointAtTime,
                     closest.obj.getNormal(pointAtTime)
                 )
-                // return color
+                //HL: hit.point  << ray.direction * hit.distance + ray.origin
+                //HL: brightness << surface(ray,scene,hit.obj, hit.point, hit.obj.getNormal(hit.point))
+                //HL: brightness * closest.obj.color + ambient >> clamp(0,1) >> return
                 cb(i,j,color)
             } else {
                 cb(i,j,0)
             }
         }
-        // process.stdout.write("\n")
     }
 }
 
