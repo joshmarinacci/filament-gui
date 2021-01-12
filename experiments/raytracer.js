@@ -71,12 +71,12 @@ const scene = {
     ],
     spheres: [
         new Sphere(
-            new Vec3(0,0,-5),
+            new Vec3(-1,0,-4),
             1.5,
             new Color(0.4,1.0,0.4)
         ),
         new Sphere(
-            new Vec3(3,0,-5),
+            new Vec3(2,0,-4),
             1.0,
             new Color(0.4,1.0,0.4)
         )
@@ -90,7 +90,7 @@ class Image {
     }
 }
 
-let canvas = new Image(40,15)
+let canvas = new Image(100,40)
 
 function create_prime(x,y,image) {
     let canvas_x = (x+0.5)/image.width * 2.0 - 1.0
