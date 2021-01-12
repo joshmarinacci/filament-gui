@@ -44,3 +44,31 @@ test('power',() => {
     // 2**2
     // 2**3
 })
+
+//negate
+test('negate', ()=>{
+    // -88
+    // - -88
+    // - [1,2,3]
+    //
+})
+//factorial
+//!1 = 1
+//!0 = 0
+//!3 = 1*2*3 = 6
+//![1,2,3,4,5] = [1,2,6,24,120]
+
+//mod
+//2 mod 3 = 2
+//0 mod 3 = 0
+//4 mod 3 = 1
+//[0,1,2,3,4,5] mod 4 = [0,1,2,3,0,1]
+//4 mod [0,1,2,3,4,5] = [inf?, 0,0,3,0,1]
+
+//sin, cos, tan
+
+//random. how to test this?
+//exp meaning e^n
+//sqrt
+//max and min
+//is_prime

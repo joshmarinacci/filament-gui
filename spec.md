@@ -38,7 +38,7 @@
 
 ## specifically not included
 
-* bitshifting `<<` `>>`
+* bit shifting `<<` `>>`
 * bitwise booleans `|` `&`
 * increment and decrement shortcuts:  `--` `-=` `+=` `++`
 * symbols for boolean AND, OR, NOT, XOR
