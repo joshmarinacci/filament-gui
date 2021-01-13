@@ -2,10 +2,15 @@
  * @jest-environment jsdom
  */
 
-function add(a,b) {
-    return a + b
+function binop(a,b,cb) {
+    if((!Array.isArray(a)) && (Array.isArray(b))) return b.map(v => cb(a,v))
+    if((Array.isArray(a)) && (!Array.isArray(b))) return a.map(v => cb(v,b))
+    if((Array.isArray(a)) && (Array.isArray(b))) return a.map((v,i) => cb(v,b[i]))
+    return cb(a,b)
 }
-
+function add(a,b) {
+    return binop(a,b,(a,b)=>a+b)
+}
 
 test('add', () => {
     // 4 + 2 >> 6
@@ -18,31 +23,61 @@ test('add', () => {
     expect(add([4,5],[1,2])).toEqual([5,7])
 })
 
+function subtract(a, b) {
+    return binop(a,b,(a,b)=>a-b)
+}
+
 test('subtract',()=>{
     // 2 - 1
+    expect(subtract(2,1)).toEqual(1)
     // 1 - 2
+    expect(subtract(1,2)).toEqual(-1)
     // -1 - 2
-    // [1,2,3] - 4
+    expect(subtract(-1,2)).toEqual(-3)
+    // [1,2,3] - 4 = [-3,-2,-1]
+    expect(subtract([1,2,3],4)).toEqual([-3,-2,-1])
     // 4 - [1,2,3]
+    expect(subtract(4,[1,2,3])).toEqual([3,2,1])
 })
+
+function multiply(a,b) {
+    return binop(a,b,(a,b)=>a*b)
+}
 
 test('multiply', () => {
-    // 4 * 5
-    // [1,2,3] * 4
-    // 4 * [1,2,3]
-    // [1,2,3] * [4,5,6]
+    // 4 * 5 = 20
+    expect(multiply(4,5)).toEqual(20)
+    // [1,2,3] * 4 = [4,8,12]
+    expect(multiply([1,2,3],4)).toEqual([4,8,12])
+    // 4 * [1,2,3] = [4,8,12
+    expect(multiply(4,[1,2,3])).toEqual([4,8,12])
+    // [1,2,3] * [4,5,6] = [4,10,18]
+    expect(multiply([1,2,3],[4,5,6])).toEqual([4,10,18])
 })
 
+function divide(a,b) {
+    return binop(a,b,(a,b)=>a/b)
+}
 test('divide',() => {
-    // 4/5
-    // [1,2,3] / 4
+    // 4/5 = 4/5
+    expect(divide(4,5)).toEqual(4/5)
+    // [1,2,3] / 4 = [1/4,1/2,3/4]
+    expect(divide([1,2,3],4)).toEqual([1/4,1/2,3/4])
     // 4 / [1,2,3]
+    expect(divide(4,[1,2,3])).toEqual([4,2,4/3])
     // [4,6,8] / [2,3,4]
+    expect(divide([4,6,8],[1,2,3])).toEqual([4,3,8/3])
 })
+
+function power(a,b) {
+    return Math.pow(a,b)
+}
 
 test('power',() => {
     // 2**2
+    expect(power(2,2)).toEqual(2*2)
     // 2**3
+    expect(power(2,3)).toEqual(2*2*2)
 })
 
 //negate
