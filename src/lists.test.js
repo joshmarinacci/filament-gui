@@ -3,7 +3,7 @@
  */
 
 
-import {add, subtract, multiply, divide, factorial, mod, power, negate} from './math.js'
+import {add} from './math.js'
 
 
 function gen_range(min,max,step) {
@@ -91,6 +91,7 @@ function map(list,cb) {
 test('map a list',()=>{
     expect(map([1,2,3],x=>x*2)).toEqual([2,4,6])
     expect(map(range(3),x=>x*2)).toEqual([0,2,4])
+    expect(map(range(3), (x)=>add(x,5))).toEqual([5,6,7])
 })
 // * __for__:  loops over every element in a list with a lambda, but returns the original list: `(list, lam)`
 
