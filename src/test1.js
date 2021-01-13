@@ -208,6 +208,18 @@ take(range(0,100,10), -5)
     {first:'Zach', last:'Braff'},
 ]
 sort(names,{by:'last'})`
+    },
+    {
+        title:'join two lists',
+        code:`join([1,2,3], [4,5,6])`
+    },
+    {
+        title:'select from list where multiple of 7',
+        code:`select(range(0,100), {where:x=>x%7===0})`
+    },
+    {
+        title:'count down from 10 to zero',
+        code:`reverse(range(0,11))`
     }
     // {
     //     title:'color',
@@ -281,7 +293,7 @@ function box(obj) {
 
 export const SCOPE = {
     "length": {
-        title:'size(list)',
+        title:'length(list)',
         doc:"length of the list",
         type:'function',
         impl: length,

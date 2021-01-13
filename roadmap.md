@@ -4,7 +4,7 @@
 
 ## M1.0
 - [x] focus on impl instead of research
-- [ ] Remove custom types. Just use regular JS syntax where possible. new scalar() if units required, otherwise plain JS numbers and lists
+- [x] Remove custom types. Just use regular JS syntax where possible. plain JS objects.
 - [x] headless unit test support. make `npm run lang-tests` work
 - [x] impl all math functions with unit tests
 - [x] impl all list functions with unit tests
