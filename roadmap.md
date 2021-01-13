@@ -2,7 +2,7 @@
 
 * fully post blogs about the development. at least once a week.
 
-## M1.0
+## M1
 - [x] focus on impl instead of research
 - [x] Remove custom types. Just use regular JS syntax where possible. plain JS objects.
 - [x] headless unit test support. make `npm run lang-tests` work
@@ -11,7 +11,7 @@
 - [x] implement API enough for 10 examples to work
 - [ ] blog post on the language and some ascii code examples
 
-## M1.1
+## M2
 - [ ] button to add new code block
 - [ ] button to add new markdown block
 - [ ] render code and markdown pretty when not editing them
@@ -20,7 +20,7 @@
 - [ ] blog post on the editor
 
 
-## M2 
+## M3 
 * back to research
 * review: https://cuelang.org
 * research syntaxes for code blocks, lambdas, and control flow in non-C style languages. 
@@ -31,7 +31,7 @@
 * switch editor to use HL language
 * blog post
 
-## M3
+## M4
 * blog post
 * design & impl full shape drawing system
 * design chart system to auto-detect formats and labels. lets you customize as needed for all current examples
@@ -44,7 +44,7 @@
 * add 10 new examples which use graphics
 
 
-## M4
+## M5
 * blog post
 * add unicode pretty view
 * prototype visual scratch blocks view of same code. split pane. not interactive.
