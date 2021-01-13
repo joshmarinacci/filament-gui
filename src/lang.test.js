@@ -80,25 +80,63 @@ test('power',() => {
     expect(power(2,3)).toEqual(2*2*2)
 })
 
+function unop(a,cb) {
+    if(Array.isArray(a)) return a.map(v => cb(v))
+    return cb(a)
+}
+
+
+function negate(a) {
+    return unop(a,a=>-a)
+}
 //negate
 test('negate', ()=>{
     // -88
+    expect(negate(88)).toEqual(-88)
     // - -88
+    expect(negate(-88)).toEqual(88)
     // - [1,2,3]
-    //
+    expect(negate([1,2,3])).toEqual([-1,-2,-3])
 })
+
+const factorial = (a) => unop(a,(a)=>{
+    if(a === 0 || a === 1) return 1
+    let sum = 1
+    for(let i=1; i<=a; i++) sum *= i
+    return sum
+})
+
 //factorial
-//!1 = 1
-//!0 = 0
-//!3 = 1*2*3 = 6
-//![1,2,3,4,5] = [1,2,6,24,120]
+test('factorial',()=>{
+    //!1 = 1
+    expect(factorial(1)).toEqual(1)
+    //!0 = 0
+    expect(factorial(0)).toEqual(1)
+    //!3 = 1*2*3 = 6
+    expect(factorial(3)).toEqual(6)
+    //![1,2,3,4,5] = [1,2,6,24,120]
+    expect(factorial([1,2,3,4,5])).toEqual([1,2,6,24,120])
+})
+
 
 //mod
-//2 mod 3 = 2
-//0 mod 3 = 0
-//4 mod 3 = 1
-//[0,1,2,3,4,5] mod 4 = [0,1,2,3,0,1]
-//4 mod [0,1,2,3,4,5] = [inf?, 0,0,3,0,1]
+const mod = (a,b) => binop(a,b,(a,b)=>{
+    return a % b
+})
+
+test('modulo',()=>{
+    //2 mod 3 = 2
+    expect(mod(2,3)).toEqual(2)
+    //0 mod 3 = 0
+    expect(mod(0,3)).toEqual(0)
+    //4 mod 3 = 1
+    expect(mod(4,3)).toEqual(1)
+
+    //[0,1,2,3,4,5] mod 4 = [0,1,2,3,0,1]
+    expect(mod([0,1,2,3,4,5],4)).toEqual([0,1,2,3,0,1])
+    //4 mod [0,1,2,3,4,5] = [inf?, 0,0,3,0,1]
+    expect(mod(4,[0,1,2,3,4,5])).toEqual([NaN,0,0,1,0,4])
+})
 
 //sin, cos, tan
 //sin(0) = 0
