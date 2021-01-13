@@ -2,11 +2,11 @@ import {useEffect, useRef} from 'react'
 import {is_canvas_result, is_color, is_error_result, is_gradient, is_list, is_scalar, is_string} from './lang.js'
 
 const ErrorResult = ({result}) => <div>error!!! <b>{result.toString()}</b></div>
-const ScalarResult = ({result}) => <div>Scalar <b>{result.value}</b></div>
-const StringResult = ({result}) => <div>String <b>{result.value}</b></div>
+const ScalarResult = ({result}) => <div>Scalar <b>{result.toString()}</b></div>
+const StringResult = ({result}) => <div>String <b>{result.toString()}</b></div>
 
 function ListResult({result}) {
-    return <div>List {result.value.map(v => <ResultArea result={v}/>)}</div>
+    return <div>List {result.map(v => <ResultArea result={v}/>)}</div>
 }
 
 function CanvasResultResult({result}) {

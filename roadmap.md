@@ -3,21 +3,21 @@
 * fully post blogs about the development. at least once a week.
 
 ## M1.0
-- [ ] focus on impl instead of research
+- [x] focus on impl instead of research
 - [ ] Remove custom types. Just use regular JS syntax where possible. new scalar() if units required, otherwise plain JS numbers and lists
-- [ ] headless unit test support. make `npm run lang-tests` work
-- [ ] impl all math functions with unit tests
-- [ ] impl all list functions with unit tests
+- [x] headless unit test support. make `npm run lang-tests` work
+- [x] impl all math functions with unit tests
+- [x] impl all list functions with unit tests
 - [ ] implement API enough for 10 examples to work
 - [ ] blog post on the language and some ascii code examples
 
 ## M1.1
-* button to add new code block
-* button to add new markdown block
-* render code and markdown pretty when not editing them
-* render tables and lists as spreadsheet like view
-* add 10 new examples to sidebar
-* blog post on the editor
+- [ ] button to add new code block
+- [ ] button to add new markdown block
+- [ ] render code and markdown pretty when not editing them
+- [ ] render tables and lists as spreadsheet like view
+- [ ] add 10 new examples to sidebar
+- [ ] blog post on the editor
 
 
 ## M2 

@@ -1,9 +1,11 @@
 import {CanvasResult, NCircle, NColor, NGradient, NList, NScalar, NString, Point, SCOPE} from './test1.js'
+import {add, divide, multiply, subtract} from './math.js'
+import {drop, join, map, sort, take} from './lists.js'
 
 export const is_error_result = (result) => result instanceof Error
-export const is_scalar = (val) => (val instanceof NScalar)
-export const is_string = (val) => (val instanceof NString)
-export const is_list   = (val) => val instanceof NList
+export const is_scalar = (val) => (val instanceof NScalar) || (typeof val === 'number')
+export const is_string = (val) => (val instanceof NString || (typeof val === 'string'))
+export const is_list   = (val) => val instanceof NList || Array.isArray(val)
 export const is_color  = (val) => val instanceof NColor
 export const is_canvas_result = (val) => val instanceof CanvasResult
 export function is_gradient(result) {
@@ -11,22 +13,29 @@ export function is_gradient(result) {
 }
 
 export const scope = {
-    foo: () => console.log("doing foo"),
-    scalar: (v) => new NScalar(v),
-    string: v => new NString(v),
-    list: v => new NList(v),
+    // foo: () => console.log("doing foo"),
+    // scalar: (v) => new NScalar(v),
+    // string: v => new NString(v),
     color: v => new NColor(v),
     gradient: v => new NGradient(v),
-    size: SCOPE.size.impl,
+    add: add,
+    subtract: subtract,
+    multiply: multiply,
+    divide: divide,
+    // circle: v => new NCircle(v),
+    // point: v => new Point(v.x,v.y),
+    // pack_row: SCOPE.pack_row.impl,
+    // draw: SCOPE.draw.impl,
+    length: SCOPE.length.impl,
     sum: SCOPE.sum.impl,
-    average: SCOPE.average.impl,
-    map: SCOPE.map.impl,
-    circle: v => new NCircle(v),
-    point: v => new Point(v.x,v.y),
-    pack_row: SCOPE.pack_row.impl,
-    draw: SCOPE.draw.impl,
     range: SCOPE.range.impl,
-    rando: SCOPE.rando.impl,
+    map: map,
+    take: take,
+    drop: drop,
+    sort: sort,
+    join: join,
+
+    // rando: SCOPE.rando.impl,
 }
 
 
