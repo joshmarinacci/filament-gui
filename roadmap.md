@@ -8,7 +8,7 @@
 - [x] headless unit test support. make `npm run lang-tests` work
 - [x] impl all math functions with unit tests
 - [x] impl all list functions with unit tests
-- [ ] implement API enough for 10 examples to work
+- [x] implement API enough for 10 examples to work
 - [ ] blog post on the language and some ascii code examples
 
 ## M1.1
