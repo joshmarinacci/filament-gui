@@ -2,18 +2,9 @@
  * @jest-environment jsdom
  */
 
-function binop(a,b,cb) {
-    if((!Array.isArray(a)) && (Array.isArray(b))) return b.map(v => cb(a,v))
-    if((Array.isArray(a)) && (!Array.isArray(b))) return a.map(v => cb(v,b))
-    if((Array.isArray(a)) && (Array.isArray(b))) return a.map((v,i) => cb(v,b[i]))
-    return cb(a,b)
-}
-function unop(a,cb) {
-    if(Array.isArray(a)) return a.map(v => cb(v))
-    return cb(a)
-}
 
-const add = (a,b) => binop(a,b,(a,b)=>a+b)
+import {add, subtract, multiply, divide, factorial, mod, power, negate} from './math.js'
+
 test('add', () => {
     // 4 + 2 >> 6
     expect(add(4,2)).toEqual(6)
@@ -25,7 +16,6 @@ test('add', () => {
     expect(add([4,5],[1,2])).toEqual([5,7])
 })
 
-const subtract = (a, b) => binop(a,b,(a,b)=>a-b)
 test('subtract',()=>{
     // 2 - 1
     expect(subtract(2,1)).toEqual(1)
@@ -39,7 +29,6 @@ test('subtract',()=>{
     expect(subtract(4,[1,2,3])).toEqual([3,2,1])
 })
 
-const multiply = (a,b) => binop(a,b,(a,b)=>a*b)
 test('multiply', () => {
     // 4 * 5 = 20
     expect(multiply(4,5)).toEqual(20)
@@ -51,7 +40,6 @@ test('multiply', () => {
     expect(multiply([1,2,3],[4,5,6])).toEqual([4,10,18])
 })
 
-const divide = (a,b) => binop(a,b,(a,b)=>a/b)
 test('divide',() => {
     // 4/5 = 4/5
     expect(divide(4,5)).toEqual(4/5)
@@ -63,7 +51,6 @@ test('divide',() => {
     expect(divide([4,6,8],[1,2,3])).toEqual([4,3,8/3])
 })
 
-const power = (a,b) => Math.pow(a,b)
 test('power',() => {
     // 2**2
     expect(power(2,2)).toEqual(2*2)
@@ -71,7 +58,6 @@ test('power',() => {
     expect(power(2,3)).toEqual(2*2*2)
 })
 
-const negate = (a) =>unop(a,a=>-a)
 test('negate', ()=>{
     // -88
     expect(negate(88)).toEqual(-88)
@@ -81,12 +67,6 @@ test('negate', ()=>{
     expect(negate([1,2,3])).toEqual([-1,-2,-3])
 })
 
-const factorial = (a) => unop(a,(a)=>{
-    if(a === 0 || a === 1) return 1
-    let sum = 1
-    for(let i=1; i<=a; i++) sum *= i
-    return sum
-})
 test('factorial',()=>{
     //!1 = 1
     expect(factorial(1)).toEqual(1)
@@ -98,7 +78,6 @@ test('factorial',()=>{
     expect(factorial([1,2,3,4,5])).toEqual([1,2,6,24,120])
 })
 
-const mod = (a,b) => binop(a,b,(a,b)=> a % b)
 test('modulo',()=>{
     //2 mod 3 = 2
     expect(mod(2,3)).toEqual(2)
