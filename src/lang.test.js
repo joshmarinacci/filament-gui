@@ -3,7 +3,7 @@
  */
 
 
-import {add, subtract, multiply, divide, factorial, mod, power, negate} from './math.js'
+import {add, subtract, multiply, divide, factorial, mod, power, negate, sin, cos, tan} from './math.js'
 
 test('add', () => {
     // 4 + 2 >> 6
@@ -93,12 +93,20 @@ test('modulo',()=>{
 })
 
 //sin, cos, tan
-//sin(0) = 0
-//sin(pi/2) = 1
-//sin(pi) = 0
-//sin([0,pi/2,pi]) = [0,1,0]
-//cos([0,pi/2,pi]) = [1,0,1]
-//tan([-pi/4,0,pi/4]) = [1,0,1]
+test('trig', () => {
+    //sin(0) = 0
+    expect(sin(0)).toEqual(0)
+    //sin(pi/2) = 1
+    expect(sin(Math.PI/2)).toEqual(1)
+    //sin(pi) = 0
+    expect(sin(Math.PI)).toEqual(0)
+    //sin([0,pi/2,pi]) = [0,1,0]
+    expect(sin([0,Math.PI/2,Math.PI])).toEqual([0,1,0])
+    //cos([0,pi/2,pi]) = [1,0,1]
+    expect(cos([0,Math.PI/2,Math.PI])).toEqual([1,0,1])
+    //tan([-pi/4,0,pi/4]) = [1,0,1]
+    expect(tan([0,Math.PI/2,Math.PI])).toEqual([1,0,1])
+})
 
 //sqrt
 //sqrt(4) = 2

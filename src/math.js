@@ -22,3 +22,6 @@ export const factorial = (a) => unop(a,(a)=>{
     return sum
 })
 export const mod = (a,b) => binop(a,b,(a,b)=> a % b)
+export const sin = (a) => unop(a, a=>Math.sin(a))
+export const cos = (a) => unop(a, a=>Math.cos(a))
+export const tan = (a) => unop(a, a=>Math.tan(a))
