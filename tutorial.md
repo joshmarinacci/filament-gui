@@ -112,15 +112,10 @@ Programming is both fun and useful. We can instruct computers to help us answer 
 # Lists
 
 
+# symbols and goes to syntax
+
+# charts from lists and datasets
 
 
-
-
-
-
-
-- Arithmetic and units and functions
-- Save as a variable
-- Lists and functions
 - Charts and datasets
 - Sounds and images

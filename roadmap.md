@@ -9,7 +9,11 @@
 - [x] impl all math functions with unit tests
 - [x] impl all list functions with unit tests
 - [x] implement API enough for 10 examples to work
-- [ ] blog post on the language and some ascii code examples
+- [x] blog post on the language and some ascii code examples
+
+
+next examples
+
 
 ## M2
 - [ ] button to add new code block
