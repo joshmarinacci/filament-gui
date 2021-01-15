@@ -12,7 +12,7 @@ an internal BigNumber library. This allows it to perserve fractions when possibl
 * __pow__, power. 5^2 = pow(5,2)
 * __exp__, e^n
 * __sqrt__, square root
-* __max__, __min__, max and min of the arguments. Works with scalars and lists.
+* __max__, __min__, max and min of the arguments. Works with scalars and lists and lambda to pull out sub-part to compare
 * __random_integer(max)__: returns a random number between 0 and the max
 * __randomreal__ or __randomfloat__?
 * __is_prime__ return true if number is prime
@@ -38,6 +38,8 @@ an internal BigNumber library. This allows it to perserve fractions when possibl
 * __length__: returns the length of the list
 * __sum__: adds all data points together
 
+
+
 # charts
 
 * __plot__: lot a list of numbers as a scatter plot. x is the index in the list. y is the value of each number. can also plot equations as lambdas.
@@ -60,6 +62,7 @@ Unlike in the Wolfram language, you don't need separate functions for strings. T
 * __characters__: splits into a list of single char strings
 
 
+
 # Graphics
 
 Standard 2D graphics using the PDF / Canvas / SVG imaging model. Lengths and points may be specified with
@@ -67,7 +70,7 @@ units, like `rect(width=2cm, height=1ft)`. If no units are supplied then it is a
 
 * __point__: a two component vector `point(25,50) === [25,50]`
 * anywhere an xy pair can be used, a point can be used as well.
-* __draw__: draws lists/nested lists of shapes
+* __draw__: draws lists/nested lists of shapes. optionally set size of the canvas area
 * __circle__ : a circle shape with center, radius, and fill
 * __rect__: a rect shape with width, height, position and fill `rect(width=100, height=50)` 
 * __regular_polygon__: an N-gon. ex: regular_polygon(5) = pentagon. accepts fill and center position.

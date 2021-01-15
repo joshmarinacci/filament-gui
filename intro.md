@@ -13,7 +13,9 @@ HL can be used by itself, but is generally meant to be used within [a notebook i
 
 # Notable features
 
-* All math operations are really functions and can be applied to scalars, lists, and larger objects.  ex:   `4 * [1,2,3] = mulitply(4,List(1,2,3)) = [4,8,12]`
+* All math operations are really functions and can be applied to scalars, lists, 
+  and larger objects. Taken from array programmming langauges like APL.
+  ex:   `4 * [1,2,3] = mulitply(4,List(1,2,3)) = [4,8,12]`
 
 * Identifiers and numbers are case insensitive and can have _'s anywhere in them without changing the meaning. ex: `is_prime` is the same as `IsPrime` and  `4_000_000` is the same as `4000000`
 
@@ -43,7 +45,9 @@ random(10)
 
 making them easier to understand.
 
-To set a variable either `<< `or `>>` can be used. This emphaszes that data is moving *into* the variables and then used later. Same example as above, with intermediate variables.
+To set a variable either `<< `or `>>` can be used. This emphasizes that 
+data is moving *into* the variables and then used later. Same example as above, 
+with intermediate variables.
 
 ```javascript
 nums << random(10)

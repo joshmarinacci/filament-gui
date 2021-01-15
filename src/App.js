@@ -96,7 +96,7 @@ function App() {
                 <ResultArea result={result}/>
             </VBox>
             <VBox classes={{docs:true}}>
-                {Object.values(SCOPE).map(fn => <div><b>{fn.title}</b>:<i>{fn.doc}</i></div>)}
+                {/*{Object.values(SCOPE).map(fn => <div><b>{fn.title}</b>:<i>{fn.doc}</i></div>)}*/}
             </VBox>
         </HBox>
     )
