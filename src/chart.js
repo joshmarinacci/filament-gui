@@ -6,12 +6,18 @@ export function chart(data,{width=300, height=400}) {
     return new CanvasResult((canvas)=>{
         let ctx = canvas.getContext('2d')
         ctx.save()
+        clear(ctx,canvas)
         // ctx.scale(1,-1)
         // ctx.translate(0,-canvas.height)
         // draw_border(ctx, canvas)
         draw_bars(ctx,canvas,data)
         ctx.restore()
     })
+}
+
+function clear(ctx,canvas) {
+    ctx.fillStyle = 'white'
+    ctx.fillRect(0,0,canvas.width,canvas.height)
 }
 
 function draw_border(ctx, canvas) {

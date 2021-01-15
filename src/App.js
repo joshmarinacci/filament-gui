@@ -92,7 +92,7 @@ function App() {
             </VBox>
             <VBox grow>
                 <CodeEditor value={code} onEval={(code)=>doEval(code)}/>
-                <button onClick={() => doEval(code)}>eval</button>
+                <button onClick={() => doEval(editor.getValue())}>eval</button>
                 <ResultArea result={result}/>
             </VBox>
             <VBox classes={{docs:true}}>
