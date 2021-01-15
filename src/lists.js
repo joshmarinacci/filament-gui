@@ -90,3 +90,7 @@ export function select(list, opts) {
     let where = opts.where
     return list.filter(where)
 }
+
+export function max(list) {
+    return list.reduce((a,b)=> a>b?a:b)
+}
