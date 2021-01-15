@@ -34,8 +34,18 @@ canvas {
 
 
 .list-result {
-  /*border: 5px solid red;*/
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+}
+
+.table-result {
+  border: 1px solid #333333;
+  border-collapse: collapse;
+}
+.table-result th {
+  background-color: aliceblue;
+}
+.table-result td, .table-result th {
+  border: 1px solid #333333;
 }

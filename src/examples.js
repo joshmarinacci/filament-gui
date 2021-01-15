@@ -63,5 +63,9 @@ sort(names,{by:'last'})`
     {
         title:'bars of sin() 0->10',
         code:`chart(map(divide(range(0,100),10), x=>cos(x)))`
+    },
+    {
+        title:'syllables in the alphabet',
+        code:`await dataset('alphabet')`
     }
 ]

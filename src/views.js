@@ -19,6 +19,34 @@ function ListResult({result}) {
     return <div className={'list-result'}>list: {res}</div>
 }
 
+const is_table = (result) => (result && result.data)?true:false
+
+function TableRow({item, schema}) {
+    let cells = Object.keys(schema.properties).map(key => {
+        return <td key={key}>{item[key]}</td>
+    })
+    return <tr>{cells}</tr>
+}
+
+function TableView({result}) {
+    let header = Object.keys(result.data.schema.properties).map(key => {
+        let sch = result.data.schema.properties[key]
+        let title = key
+        if(sch.title) title = sch.title
+        return <th key={key}>{title}</th>
+    })
+    let items = result.data.items.map((it,n) => {
+        return <TableRow key={n} item={it} schema={result.data.schema}/>
+    })
+    return <table className={'table-result'}>
+        <thead>
+            <tr>{header}</tr>
+        </thead>
+        <tbody>
+        {items}
+        </tbody>
+    </table>
+}
 
 export function ResultArea({result}) {
     if (is_error_result(result)) return <ErrorResult result={result}/>
@@ -26,6 +54,7 @@ export function ResultArea({result}) {
     if (is_string(result)) return <StringResult result={result}/>
     if (is_list(result)) return <ListResult result={result}/>
     if (is_canvas_result(result)) return <CanvasView result={result}/>
+    if (is_table(result)) return <TableView result={result}/>
     if (result === null) return <div>result is <b>null</b></div>
     return <div>unknown result here</div>
 }

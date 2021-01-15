@@ -78,7 +78,7 @@ function App() {
     const [code, setCode] = useState('5+6')
     const [result, setResult] = useState(null)
 
-    const doEval = (code) => setResult(real_eval(code))
+    const doEval = (code) => real_eval(code).then(d => setResult(d))
 
     return (
         <HBox fill>
