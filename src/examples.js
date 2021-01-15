@@ -65,7 +65,7 @@ sort(names,{by:'last'})`
         code:`chart(map(divide(range(0,100),10), x=>cos(x)))`
     },
     {
-        title:'syllables in the alphabet',
-        code:`await dataset('alphabet')`
+        title:'syllables for each letter',
+        code:`chart(await dataset('alphabet'), {x_label:'letter', y:'syllables'})`
     }
 ]

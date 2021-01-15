@@ -56,6 +56,7 @@ export function ResultArea({result}) {
     if (is_canvas_result(result)) return <CanvasView result={result}/>
     if (is_table(result)) return <TableView result={result}/>
     if (result === null) return <div>result is <b>null</b></div>
+    console.log(result)
     return <div>unknown result here</div>
 }
 
