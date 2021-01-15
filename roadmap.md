@@ -217,6 +217,6 @@ could host their own impl, just without the integrations and datasets.
 * *ads* just slap ads on it. A completly free and open resource with ads. [Like these](https://www.worldometers.info/geography/alphabetical-list-of-countries/)
 * *sponsorship* it's a public resource and big companies pay to be the sponsor. Think NPR sponsorships. The sponsor name is tasteful and on every page, just once per page.
 * *sell books* create programming books on it that are sold.
-* *sell cirriculum* if this really is that powerful, sell a cirriculum based on it to schools and home schoolers and clubs.
+* *sell cirriculum* if this really is that powerful, sell a curriculum based on it to schools and home schoolers and clubs.
 
 
