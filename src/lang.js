@@ -1,4 +1,4 @@
-import {add, divide, multiply, subtract} from './math.js'
+import {add, cos, divide, multiply, power, sin, subtract, tan} from './math.js'
 import {drop, join, map, reverse, select, sort, sum, take, range, length} from './lists.js'
 import {chart} from './chart.js'
 
@@ -7,6 +7,12 @@ export const scope = {
     subtract: subtract,
     multiply: multiply,
     divide: divide,
+    power:power,
+
+    sin:sin,
+    cos:cos,
+    tan:tan,
+
     length: length,
     sum: sum,
     range: range,

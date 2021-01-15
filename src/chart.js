@@ -2,7 +2,7 @@ import {CanvasResult} from './canvas.js'
 import {max} from './lists.js'
 
 
-export function chart(data,{width=300, height=400}) {
+export function chart(data,{}={width:300, height:400}) {
     return new CanvasResult((canvas)=>{
         let ctx = canvas.getContext('2d')
         ctx.save()

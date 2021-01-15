@@ -53,7 +53,15 @@ sort(names,{by:'last'})`
         code:`range(10000)`,
     },
     {
-        title:'simple chart',
-        code:`chart(range(0,10),{})`,
+        title:'simple chart ',
+        code:`chart(range(0,10))`,
     },
+    {
+        title:'bars of x**2',
+        code:`chart(map(range(0,10), x=>power(x,2)))`
+    },
+    {
+        title:'bars of sin() 0->10',
+        code:`chart(map(divide(range(0,100),10), x=>cos(x)))`
+    }
 ]
