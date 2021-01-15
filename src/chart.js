@@ -21,7 +21,6 @@ export function chart(data,{x,x_label,y,y_label}={width:300, height:400,}) {
         clear(ctx,canvas)
         if(data.data && data.data.items) data = data.data.items
 
-        // console.log("data is",data,"y is",y)
         if(!x_label) x_label = 'index'
         if(!y_label) {
             if(y) {
@@ -70,10 +69,7 @@ function draw_bars(ctx, canvas, data, x_label, y) {
             value = datu[y]
         }
         let label = i+""
-        if(label !== 'index') {
-            // console.log("dataum",x_label,datu)
-            label = datu[x_label]
-        }
+        if(x_label !== 'index') label = datu[x_label]
 
         ctx.fillStyle = 'aqua'
         ctx.fillRect(
