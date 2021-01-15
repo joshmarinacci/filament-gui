@@ -1,16 +1,6 @@
-import {CanvasResult, NCircle, NColor, NGradient, NList, NScalar, NString, Point, SCOPE} from './test1.js'
 import {add, divide, multiply, subtract} from './math.js'
 import {drop, join, map, reverse, select, sort, sum, take, range, length} from './lists.js'
-
-export const is_error_result = (result) => result instanceof Error
-export const is_scalar = (val) => (val instanceof NScalar) || (typeof val === 'number')
-export const is_string = (val) => (val instanceof NString || (typeof val === 'string'))
-export const is_list   = (val) => val instanceof NList || Array.isArray(val)
-export const is_color  = (val) => val instanceof NColor
-export const is_canvas_result = (val) => val instanceof CanvasResult
-export function is_gradient(result) {
-    return result instanceof NGradient
-}
+import {chart} from './chart.js'
 
 export const scope = {
     add: add,
@@ -27,6 +17,7 @@ export const scope = {
     join: join,
     select: select,
     reverse:reverse,
+    chart:chart,
 }
 
 
@@ -46,7 +37,7 @@ ${defines}
 ${lines.join("\n")}
 };
 `
-    console.log("generated code is", gen_code)
+    // console.log("generated code is", gen_code)
     try {
         return Function(gen_code)()(scope)
     } catch (e) {

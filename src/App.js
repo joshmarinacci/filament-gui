@@ -1,7 +1,6 @@
 import {useState, useRef, useEffect} from 'react'
 import './App.css'
 
-import {EXAMPLES, SCOPE} from "./test1.js"
 import {HBox, VBox} from './ui.js'
 import {ResultArea} from './views.js'
 import {real_eval, scope} from './lang.js'
@@ -16,6 +15,7 @@ import {} from "codemirror/addon/edit/closebrackets.js"
 import "codemirror/addon/hint/show-hint.css"
 import {} from "codemirror/addon/hint/show-hint.js"
 import {} from "codemirror/addon/hint/javascript-hint.js"
+import {EXAMPLES} from './examples.js'
 
 let editor = null
 
