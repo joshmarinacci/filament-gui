@@ -49,7 +49,11 @@ sort(names,{by:'last'})`
         code:`reverse(range(0,11))`
     },
     {
+        title:'huge list',
+        code:`range(10000)`,
+    },
+    {
         title:'simple chart',
         code:`chart(range(0,10),{})`,
-    }
+    },
 ]

@@ -8,6 +8,13 @@ const ScalarResult = ({result}) => <div><b>{result.toString()}</b></div>
 const StringResult = ({result}) => <div>String <b>{result.toString()}</b></div>
 
 function ListResult({result}) {
+    if(result.length > 100) {
+        let start = result.slice(0,90)
+        let end = result.slice(result.length-10)
+        let res1 = start.map((v,i) => [<ResultArea key={i} result={v}/>,','])
+        let res2 = end.map((v,i) => [<ResultArea key={i+90} result={v}/>,','])
+        return <div className={'list-result'}>list: {res1} ... {res2}</div>
+    }
     let res = result.map((v,i) => [<ResultArea key={i} result={v}/>,','])
     return <div className={'list-result'}>list: {res}</div>
 }
