@@ -31,3 +31,21 @@ canvas {
   max-width: 20em;
   margin: 0.25em;
 }
+
+
+.list-result {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.table-result {
+  border: 1px solid #333333;
+  border-collapse: collapse;
+}
+.table-result th {
+  background-color: aliceblue;
+}
+.table-result td, .table-result th {
+  border: 1px solid #333333;
+}

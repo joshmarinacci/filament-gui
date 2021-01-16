@@ -1,7 +1,6 @@
 import {useState, useRef, useEffect} from 'react'
 import './App.css'
 
-import {EXAMPLES, SCOPE} from "./test1.js"
 import {HBox, VBox} from './ui.js'
 import {ResultArea} from './views.js'
 import {real_eval, scope} from './lang.js'
@@ -16,6 +15,7 @@ import {} from "codemirror/addon/edit/closebrackets.js"
 import "codemirror/addon/hint/show-hint.css"
 import {} from "codemirror/addon/hint/show-hint.js"
 import {} from "codemirror/addon/hint/javascript-hint.js"
+import {EXAMPLES} from './examples.js'
 
 let editor = null
 
@@ -78,7 +78,7 @@ function App() {
     const [code, setCode] = useState('5+6')
     const [result, setResult] = useState(null)
 
-    const doEval = (code) => setResult(real_eval(code))
+    const doEval = (code) => real_eval(code).then(d => setResult(d))
 
     return (
         <HBox fill>
@@ -92,7 +92,7 @@ function App() {
             </VBox>
             <VBox grow>
                 <CodeEditor value={code} onEval={(code)=>doEval(code)}/>
-                <button onClick={() => doEval(code)}>eval</button>
+                <button onClick={() => doEval(editor.getValue())}>eval</button>
                 <ResultArea result={result}/>
             </VBox>
             <VBox classes={{docs:true}}>
