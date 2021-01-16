@@ -1,7 +1,7 @@
 
 # HL Tutorial
 
-Welcome to HL, a humanist programming language.  Computers are amazing. They can calculate incredible things super fast. They and aswer questions and draw graphics. However, computers are aactually very dumb. All they do is simple
+Welcome to HL, a humanist programming language.  Computers are amazing. They can calculate incredible things super fast. They can aswer questions and draw graphics. However, computers are actually very dumb. All they do is simple
 arithmetic. But they can do it super duper fast.  To do smart things humans have to teach them.  This is called programming. Anyone can program, including you!
 
 
@@ -20,7 +20,7 @@ which equals 112.
 
 ### Units
 
-In the above problem only *we* know that the `7` meant `7 feet`. The computer doesn't know because we didn't tell it. Fortunately HL lets us tell teh computer exactly what units we mean. Let's try that again. Type:
+In the above problem only *we* know that the `7` meant `7 feet`. The computer doesn't know because we didn't tell it. Fortunately HL lets us tell the computer exactly what units we mean. Let's try that again. Type:
 
 ```javascript
 7 feet * 4 feet * 4 feet
@@ -76,12 +76,12 @@ Units are very important. They help make sure our calculations are correct. Even
 
 ### Superman
 
-Now lets try a more complex problem. In one of the Superman movies he flys so fast that the world turns backwards and reverses time. That got me thinking. Is that realistic? The earth is pretty big. How long would it really take him to fly around the world?
+Now lets try a more complex problem. In one of the Superman movies he flies so fast that the world turns backwards and reverses time. That got me thinking. Is that realistic? The earth is pretty big. How long would it really take him to fly around the world?
 
-We need some information first. How fast can Superman fly? Apparently the comics are pretty vague about his speed. Some say it's faster than light, some say it's infinite, some say it's just it's just slighly slower than The Flash.  Since this is about the real world let's go with an older claim, that [Superman is faster than a speeding bullet](https://screenrant.com/superman-faster-speeding-bullet-confirmed/).  According to the internet, the fastest bullet ever made was was the [.220 Swift](https://en.wikipedia.org/wiki/.220_Swift) which can regularly exceed 4000 feet per second. [The fastest recorded shot was at 4665 ft/s](https://www.quora.com/Whats-the-fastest-bullet-in-the-world-What-makes-it-so-fast-How-are-they-made), so we'll go with that.
+We need some information first. How fast can Superman fly? Apparently the comics are pretty vague about his speed. Some say it's faster than light, some say it's infinite, some say it's just slighly slower than The Flash.  Since this is about the real world let's go with an older claim, that [Superman is faster than a speeding bullet](https://screenrant.com/superman-faster-speeding-bullet-confirmed/).  According to the internet, the fastest bullet ever made was was the [.220 Swift](https://en.wikipedia.org/wiki/.220_Swift) which can regularly exceed 4,000 feet per second. [The fastest recorded shot was at 4,665 ft/s](https://www.quora.com/Whats-the-fastest-bullet-in-the-world-What-makes-it-so-fast-How-are-they-made), so we'll go with that.
 
-Now wee need to know how big the earth is. The earth isn't perfectly sperhical and of course it would depend on eactly which part of the earth superman flew, but [according to Wikipedia](https://en.wikipedia.org/wiki/Earth) the 
-average (mean) radius of the Earth is *6371.0* kilometers. 
+Now wee need to know how big the earth is. The earth isn't perfectly spherical and of course it would depend on exactly which part of the earth superman flew, but [according to Wikipedia](https://en.wikipedia.org/wiki/Earth) the 
+average (mean) radius of the Earth is *6,371.0* kilometers. 
 
 Now we can divide these and convert to hours to see how long it would take.
 
@@ -96,7 +96,7 @@ Now we can divide these and convert to hours to see how long it would take.
 
  So pretty fast. In fact. 
  
- Oh, wait, That's not right. We are using the radius of the earth, not the circumference.  We know the circumferce of a circle is 2*pi*radius. Let's try that again.
+ Oh, wait, That's not right. We are using the radius of the earth, not the circumference.  We know the circumferce of a circle is 2\*pi\*radius. Let's try that again.
 
 ``` javascript
 (6371.0 km * 3.14 * 2) / 4000ft/s as hours  
