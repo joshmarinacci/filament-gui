@@ -120,7 +120,7 @@ will be replaced with their standard equivalent.
 
 Functions are named by standard identifiers. They are called
 using parenthesis with one or more arguments. Arguments
-by be referred to by position (indexed) or name (keyword). 
+may be referred to by position (indexed) or name (keyword). 
 
 
 Consider the `chart` function.
