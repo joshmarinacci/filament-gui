@@ -71,5 +71,11 @@ sort(names,{by:'last'})`
     {
         title:"elements number vs weight",
         code: `chart(await dataset('elements'), {x:'number', y:'weight', type:'scatter'})`
+    },
+    {
+        title:"planets radius vs orbit radius",
+        code: `let planets = await dataset('planets')
+        chart(planets,{type:'scatter', x:'orbital_radius',y:'mean_radius'})
+        `
     }
 ]
