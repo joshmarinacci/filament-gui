@@ -75,19 +75,18 @@ function draw_bars(ctx, canvas, data, x_label, y) {
     let edge_gap = 25
     let bar_gap = 10
     const bar_width = (canvas.width - edge_gap*2)/data.length
-    let values = data
-    if(y) {
-        values = data.map(v => v[y])
-    }
+    let get_y = (datum) => datum
+    if(typeof y === 'function') get_y = y
+    if(typeof y === 'string') get_y = (d) => d[y]
+    let values = data.map(get_y)
+
     let max_val = max(values)
-    // console.log("max is",max_val)
+    console.log("max is",max_val)
     let scale = (canvas.height-edge_gap*2)/max_val
+    console.log("scale is",scale)
 
     data.forEach((datu,i)=>{
-        let value = datu
-        if(y) {
-            value = datu[y]
-        }
+        let value = get_y(datu)
         let label = i+""
         if(x_label !== 'index') label = datu[x_label]
 
