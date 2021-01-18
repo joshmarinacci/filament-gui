@@ -30,6 +30,16 @@ export function length(list) {
 export function take(list,num) {
     if(!list) throw new Error("take needs a list to take from")
     if(typeof num === 'undefined') num = 1
+    // if it's a table
+    if(list.data) {
+        return {
+            data: {
+                items:take(list.data.items,num),
+                schema:list.data.schema
+            },
+        }
+    }
+
     if(num < 0) {
         return list.slice(list.length+num,list.length)
     }
