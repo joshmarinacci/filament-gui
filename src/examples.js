@@ -95,5 +95,14 @@ chart(countries, {x_label:'name', y:(y)=>parseInt(y.population), y_label:'popula
 const first_letter = (s) => take(s.name, 1)
 states = map(states, first_letter)
 histogram(states)`
+    },
+    {
+        title:'timeline of states entering the union',
+        code: `let states = await dataset('states')
+timeline(states, {date:'date_entered_union', name:'name'})`
+    },
+    {
+        title:'history of apple stock last 5 years',
+        code: `chart(await stockquote('AAPL'), {y:'closing_price'})`
     }
 ]
