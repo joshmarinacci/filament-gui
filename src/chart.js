@@ -81,9 +81,9 @@ function draw_bars(ctx, canvas, data, x_label, y) {
     let values = data.map(get_y)
 
     let max_val = max(values)
-    console.log("max is",max_val)
+    // console.log("max is",max_val)
     let scale = (canvas.height-edge_gap*2)/max_val
-    console.log("scale is",scale)
+    // console.log("scale is",scale)
 
     data.forEach((datu,i)=>{
         let value = get_y(datu)
@@ -113,7 +113,7 @@ export function histogram(data) {
         clear(ctx,canvas)
         let freqs = {}
         data.forEach(datum => {
-            console.log("datum",datum)
+            // console.log("datum",datum)
             if(!freqs[datum]) freqs[datum] = 0
             freqs[datum] += 1
         })
@@ -124,7 +124,7 @@ export function histogram(data) {
         let hh = canvas.height/max_y
         entries.forEach((pair,i) => {
             const [name,count] = pair
-            console.log(name,count)
+            // console.log(name,count)
             ctx.fillStyle = 'aqua'
             let x = i*w
             let y = canvas.height - hh*count
