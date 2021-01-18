@@ -32,7 +32,7 @@ function TableView({result}) {
     let header = Object.keys(result.data.schema.properties).map(key => {
         let sch = result.data.schema.properties[key]
         let title = key
-        if(sch.title) title = sch.title
+        // if(sch.title) title = sch.title
         return <th key={key}>{title}</th>
     })
     let items = result.data.items.map((it,n) => {
@@ -56,7 +56,7 @@ export function ResultArea({result}) {
     if (is_canvas_result(result)) return <CanvasView result={result}/>
     if (is_table(result)) return <TableView result={result}/>
     if (result === null) return <div>result is <b>null</b></div>
-    console.log(result)
+    console.log('result is',result)
     return <div>unknown result here</div>
 }
 

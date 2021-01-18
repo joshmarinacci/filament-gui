@@ -67,5 +67,9 @@ sort(names,{by:'last'})`
     {
         title:'syllables for each letter',
         code:`chart(await dataset('alphabet'), {x_label:'letter', y:'syllables'})`
+    },
+    {
+        title:"elements number vs weight",
+        code: `chart(await dataset('elements'), {x:'number', y:'weight', type:'scatter'})`
     }
 ]

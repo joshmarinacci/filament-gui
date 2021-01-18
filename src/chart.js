@@ -14,26 +14,46 @@ function draw_legend(ctx, canvas, data, x_label, y_label) {
     ctx.fillText(legend,xx,yy)
 }
 
-export function chart(data,{x,x_label,y,y_label}={width:300, height:400,}) {
+function draw_scatter(ctx, canvas, data, x, y) {
+    let x_values = data.map(d => d[x])
+    let y_values = data.map(d => d[y])
+    let max_x = max(x_values)
+    let max_y = max(y_values)
+    let x_scale = canvas.width/max_x
+    let y_scale = canvas.height/max_y
+
+    data.forEach((datum,i) => {
+        let vx = datum[x]
+        let vy = datum[y]
+        ctx.fillStyle = 'black'
+        ctx.beginPath()
+        ctx.arc(vx*x_scale,canvas.height-vy*y_scale,2, 0, Math.PI*2)
+        ctx.fill()
+    })
+}
+
+export function chart(data,{x,x_label,y,y_label, type='bar'}={width:300, height:400,}) {
     return new CanvasResult((canvas)=>{
         let ctx = canvas.getContext('2d')
         ctx.save()
         clear(ctx,canvas)
         if(data.data && data.data.items) data = data.data.items
 
+        if(!x_label) x_label = x?x:x_label
         if(!x_label) x_label = 'index'
-        if(!y_label) {
-            if(y) {
-                y_label = y
-            } else {
-                y_label = 'value'
-            }
-        }
+        if(!y_label) y_label = y?y:y_label
+        if(!y_label) y_label = 'value'
         // ctx.scale(1,-1)
         // ctx.translate(0,-canvas.height)
         // draw_border(ctx, canvas)
-        draw_bars(ctx,canvas,data,x_label,y)
-        draw_legend(ctx,canvas,data,x_label,y_label)
+        if(type === 'bar') {
+            draw_bars(ctx,canvas,data,x_label,y)
+            draw_legend(ctx,canvas,data,x_label,y_label)
+        }
+        if(type === 'scatter') {
+            draw_scatter(ctx,canvas,data,x,y)
+            draw_legend(ctx,canvas,data,x_label,y_label)
+        }
         ctx.restore()
     })
 }

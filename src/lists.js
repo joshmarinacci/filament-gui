@@ -1,5 +1,4 @@
 function gen_range(min,max,step) {
-    console.log("generating",min,max,step)
     let list = []
     for(let i=min; i<max; i+=step) {
         list.push(i)
