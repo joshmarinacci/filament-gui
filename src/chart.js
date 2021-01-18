@@ -101,3 +101,40 @@ function draw_bars(ctx, canvas, data, x_label, y) {
         ctx.fillText(label,edge_gap+bar_width*i, canvas.height-edge_gap + 15)
     })
 }
+
+
+export function histogram(data) {
+    //count frequency of each item in the list
+    //draw a barchart using frequency for height
+    //use the key for the name
+    return new CanvasResult((canvas)=>{
+        let ctx = canvas.getContext('2d')
+        ctx.save()
+        clear(ctx,canvas)
+        let freqs = {}
+        data.forEach(datum => {
+            console.log("datum",datum)
+            if(!freqs[datum]) freqs[datum] = 0
+            freqs[datum] += 1
+        })
+        console.log(freqs)
+        let entries = Object.entries(freqs)
+        let w = canvas.width / entries.length
+        let max_y = max(entries.map(pair => pair[1]))
+        let hh = canvas.height/max_y
+        entries.forEach((pair,i) => {
+            const [name,count] = pair
+            console.log(name,count)
+            ctx.fillStyle = 'aqua'
+            let x = i*w
+            let y = canvas.height - hh*count
+            ctx.fillRect(x,y,w-5,hh*count)
+            ctx.fillStyle = 'black'
+            ctx.font = '10px sans-serif'
+            ctx.fillText(name,i*w+5, canvas.height-20)
+            ctx.fillText(count+"",i*w+5, canvas.height-10)
+        })
+        ctx.restore()
+    })
+
+}

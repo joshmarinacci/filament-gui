@@ -88,5 +88,12 @@ sort(names,{by:'last'})`
         title:'most populous countries',
         code: `let countries = take(await dataset('countries'), 10)
 chart(countries, {x_label:'name', y:(y)=>parseInt(y.population), y_label:'population'})`
+    },
+    {
+        title:'histogram of states first letters',
+        code: `let states = await dataset('states')
+const first_letter = (s) => take(s.name, 1)
+states = map(states, first_letter)
+histogram(states)`
     }
 ]
