@@ -103,6 +103,6 @@ timeline(states, {date:'statehood_date', name:'name'})`
     },
     {
         title:'history of apple stock last 5 years',
-        code: `chart(await stockhistory('AAPL'), {y:'closing_price'})`
+        code: `chart(await stockhistory('AAPL'), {y:'close'})`
     }
 ]
