@@ -1,5 +1,6 @@
 import {CanvasResult} from './canvas.js'
 import {max} from './lists.js'
+import {compareAsc, compareDesc, parse as parseDate, eachYearOfInterval, differenceInYears, format as formatDate} from 'date-fns'
 
 
 function draw_legend(ctx, canvas, data, x_label, y_label) {
@@ -102,7 +103,6 @@ function draw_bars(ctx, canvas, data, x_label, y) {
     })
 }
 
-
 export function histogram(data) {
     //count frequency of each item in the list
     //draw a barchart using frequency for height
@@ -137,4 +137,56 @@ export function histogram(data) {
         ctx.restore()
     })
 
+}
+
+export function timeline(data, opts) {
+    let date = opts.date
+    let get_date = (datum) => datum
+    if(typeof date === 'function') get_date = date
+    if(typeof date === 'string') get_date = (d) => {
+        let dt = d[date]
+        if(typeof dt === 'string') {
+            let dt2 = parseDate(dt,'MMMM dd, yyyy', new Date())
+            return dt2
+        }
+        return dt
+    }
+
+    let min = data.data.items.map(get_date)
+    min.sort((a,b)=>compareAsc(a,b))
+    min = min[0]
+    let max = data.data.items.map(get_date)
+    max.sort((a,b)=> compareDesc(a,b))
+    max = max[0]
+    let interval = {
+        start:min,
+        end:max,
+    }
+    return new CanvasResult((canvas)=>{
+        let ctx = canvas.getContext('2d')
+        ctx.save()
+        clear(ctx,canvas)
+        let width = canvas.width
+        let height = canvas.height
+        let pairs = data.data.items.map(datum => {
+            return {
+                name:datum.name,
+                date:get_date(datum)
+            }
+        })
+
+        pairs.forEach((datum,i) => {
+            ctx.fillStyle = 'aqua'
+            ctx.fillStyle = 'black'
+            let diff_x = differenceInYears(datum.date,min)
+            let x = diff_x*10
+            let y = 0
+            ctx.fillRect(x,y,2,canvas.height-30)
+            ctx.fillText(datum.name,x+2, (i%20)*10)
+        })
+
+        ctx.fillText(formatDate(min,'yyyy'),0,height-10)
+        ctx.fillText(formatDate(max,'yyyy'),width-20,height-10)
+        ctx.restore()
+    })
 }

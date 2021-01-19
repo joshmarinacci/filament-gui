@@ -1,6 +1,6 @@
 import {add, cos, divide, multiply, power, sin, subtract, tan} from './math.js'
 import {drop, join, map, reverse, select, sort, sum, take, range, length} from './lists.js'
-import {chart, histogram} from './chart.js'
+import {chart, histogram, timeline} from './chart.js'
 import {dataset, stockhistory} from './dataset.js'
 
 export const scope = {
@@ -30,6 +30,7 @@ export const scope = {
 
     chart:chart,
     histogram:histogram,
+    timeline:timeline,
 }
 
 
