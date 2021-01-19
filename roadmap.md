@@ -12,16 +12,16 @@
 - [x] blog post on the language and some ascii code examples
 
 
-next examples
+
 
 
 ## M2
 - [ ] button to add new code block
 - [ ] button to add new markdown block
 - [ ] render code and markdown pretty when not editing them
-- [ ] render tables and lists as spreadsheet like view
-- [ ] add 10 new examples to sidebar
-- [ ] blog post on the editor
+- [x] render tables and lists as spreadsheet like view
+- [x] add 10 new examples to sidebar
+- [x] blog post on the editor
 
 
 ## M3 

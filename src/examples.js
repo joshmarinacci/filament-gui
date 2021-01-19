@@ -103,6 +103,6 @@ timeline(states, {date:'date_entered_union', name:'name'})`
     },
     {
         title:'history of apple stock last 5 years',
-        code: `chart(await stockquote('AAPL'), {y:'closing_price'})`
+        code: `chart(await stockhistory('AAPL'), {y:'closing_price'})`
     }
 ]
