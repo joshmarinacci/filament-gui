@@ -1,5 +1,4 @@
 function gen_range(min,max,step) {
-    console.log("generating",min,max,step)
     let list = []
     for(let i=min; i<max; i+=step) {
         list.push(i)
@@ -27,10 +26,24 @@ export function length(list) {
 }
 
 
+function is_dataset(list) {
+    return list.data?true:false
+}
+
 // * __take__: take the first N elements from a list to make a new list `take([1,2,3], 2) = [1,2]`
 export function take(list,num) {
     if(!list) throw new Error("take needs a list to take from")
     if(typeof num === 'undefined') num = 1
+    // if it's a table
+    if(is_dataset(list)) {
+        return {
+            data: {
+                items:take(list.data.items,num),
+                schema:list.data.schema
+            },
+        }
+    }
+
     if(num < 0) {
         return list.slice(list.length+num,list.length)
     }
@@ -55,6 +68,9 @@ export function join(a,b) {
 
 // * __map__:  convert every element in a list using a lambda function: `(list, lam)`
 export function map(list,cb) {
+    if(is_dataset(list)) {
+        return map(list.data.items,cb)
+    }
     return list.map(cb)
 }
 

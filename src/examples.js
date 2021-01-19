@@ -67,5 +67,42 @@ sort(names,{by:'last'})`
     {
         title:'syllables for each letter',
         code:`chart(await dataset('alphabet'), {x_label:'letter', y:'syllables'})`
+    },
+    {
+        title:"elements number vs weight",
+        code: `chart(await dataset('elements'), {x:'number', y:'weight', type:'scatter'})`
+    },
+    {
+        title:"planets radius vs orbit radius",
+        code: `let planets = await dataset('planets')
+        chart(planets,{type:'scatter', x:'orbital_radius',y:'mean_radius'})
+        `
+    },
+    {
+        title:'5 tallest buildings. name vs height',
+        code: `let buildings = await dataset('tallest_buildings')
+        let b2 = take(buildings,5) 
+        chart(b2, {y:'height', x_label:'name'})`
+    },
+    {
+        title:'most populous countries',
+        code: `let countries = take(await dataset('countries'), 10)
+chart(countries, {x_label:'name', y:(y)=>parseInt(y.population), y_label:'population'})`
+    },
+    {
+        title:'histogram of states first letters',
+        code: `let states = await dataset('states')
+const first_letter = (s) => take(s.name, 1)
+states = map(states, first_letter)
+histogram(states)`
+    },
+    {
+        title:'timeline of states entering the union',
+        code: `let states = await dataset('states')
+timeline(states, {date:'date_entered_union', name:'name'})`
+    },
+    {
+        title:'history of apple stock last 5 years',
+        code: `chart(await stockquote('AAPL'), {y:'closing_price'})`
     }
 ]

@@ -1,6 +1,6 @@
 import {add, cos, divide, multiply, power, sin, subtract, tan} from './math.js'
 import {drop, join, map, reverse, select, sort, sum, take, range, length} from './lists.js'
-import {chart} from './chart.js'
+import {chart, histogram} from './chart.js'
 import {dataset} from './dataset.js'
 
 export const scope = {
@@ -28,6 +28,7 @@ export const scope = {
     dataset:dataset,
 
     chart:chart,
+    histogram:histogram,
 }
 
 
