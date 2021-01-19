@@ -50,6 +50,7 @@ ${lines.join("\n")}
     console.log("generated code is", gen_code)
     try {
         let AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+        console.log("async function is",AsyncFunction)
         let func = new AsyncFunction('scope',gen_code)
         console.log("made the function",func)
         return func(scope)
