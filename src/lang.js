@@ -1,6 +1,6 @@
 import {add, cos, divide, multiply, power, sin, subtract, tan} from './math.js'
 import {drop, join, map, reverse, select, sort, sum, take, range, length} from './lists.js'
-import {chart, histogram} from './chart.js'
+import {chart, histogram, timeline} from './chart.js'
 import {dataset, stockhistory} from './dataset.js'
 
 export const scope = {
@@ -30,6 +30,7 @@ export const scope = {
 
     chart:chart,
     histogram:histogram,
+    timeline:timeline,
 }
 
 
@@ -44,12 +45,18 @@ export async function real_eval(code) {
     }).join("\n")
     let gen_code = `
 ${defines}
-${lines.join("\n")}
+async function foos() { 
+   ${lines.join("\n")}
+}
+return foos()
 `
     console.log("generated code is", gen_code)
     try {
-        let AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
-        let func = new AsyncFunction('scope',gen_code)
+        // let AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+        // console.log("async function is",AsyncFunction)
+        // let func = new AsyncFunction('scope',gen_code)
+        let func = new Function('scope',gen_code)
+        console.log("made the function",func)
         return func(scope)
     } catch (e) {
         console.error(e)

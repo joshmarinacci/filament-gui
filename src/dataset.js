@@ -1,17 +1,18 @@
 import {parse as parseDate} from 'date-fns'
+import {cached_json_fetch} from './util.js'
 
 let AV_API_KEY= '1S4KT3P0F4XXIVRL'
 
 export async function dataset(name) {
     let url = `https://api.silly.io/api/list/${name}`
     console.log("loading",url)
-    return await fetch(url).then(r => r.json())
+    return await cached_json_fetch(url)
 }
 
 
 export async function stockhistory(symbol) {
     let url = `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${AV_API_KEY}`
-    return await fetch(url).then(r => r.json()).then(d => {
+    return await cached_json_fetch(url).then(d => {
         let hash_data = d['Monthly Time Series']
         let data = Object.entries(hash_data).map(([name,obj]) => {
             return {
