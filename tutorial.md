@@ -112,6 +112,43 @@ Programming is both fun and useful. We can instruct computers to help us answer 
 # Lists
 
 
+Now let's take a look at lists. Imagine you want to add up some numbers. You could do it by adding each number separately like this:
+
+```javascript
+4 + 5 + 6 + 7 + 8
+```
+or you could make them a list and use the sum function.
+
+```javascript
+sum([4,5,6,7,8])
+```
+
+Sum is a built in function that will add all of the items in a list.
+
+
+
+
+- Add 5 numbers. Plus vs sum
+- Need a list of numbers. Use range. 
+- Sum the range 1 to 8. Common thing. 
+- Average value of the list
+- sort a list. 
+- huge lists
+- select from list using a lambda function
+- Make factorial 
+- Five numbers. Only want first two. Use take 
+- Join two lists 
+- What's more real world.
+- chart some lists w/o options. just bar chart of numbers growing, or compare heights of people using units .
+- show drawing x, x^2, sin() using barchart. of course there are better ways to do this, but it’s fun.
+- earn X dollars each week in june, did again in july. compare revenue. did hotter temps in july sell more lemonade?  just make two lists and subtract them.
+- work with lists just like regular numbers. add subtract two lists. multiply two lists (great for vector math like dot product).
+- show simple graphics filter where each color is multiplied by 0.5 to darken it
+- now show some simple datasets which give you lists of records, sort of like a spreadsheet.
+
+
+
+
 # symbols and goes to syntax
 
 # charts from lists and datasets
