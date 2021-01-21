@@ -341,7 +341,7 @@ Now add a chart to draw the planets.
 
 Hmm. That doesn't look right.  Chart doesn't
 know what part of the planets dataset we want
-to draw. We have to tell it. Let's use mean_radius for the height of the bar chart. For the label under each bar we can use the name. We can tell the chart function what to do using the named arguments `x_label` and `y`.
+to draw. We have to tell it. Let's use `mean_radius` for the height of the bar chart. For the label under each bar we can use the `name` property. We can tell the chart function what to do using the named arguments `x_label` and `y`.
 
 ![planets chart2](docs/images/planets_chart_2.png)
 
