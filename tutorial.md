@@ -319,22 +319,40 @@ that have already been assembled.  HL comes with datsets for
 * Planets of the solar system
 * countries of the world.
 
-*image of periodic table of elements*
-
-Let's suppose you want to compare the sizes of the planets. That's super easy with datasets:
+When you load a dataset with
 
 ```javascript
-let planets = dataset('planets')
-chart(planets, x_label:'name', y_value:'radius')
+dataset('elements')
 ```
-*image* 
+it looks like this:
+
+![elements table](docs/images/elements_table.png)
+
+Each column in the table is a field of each record in the datasets. 
+
+Let's suppose you want to compare the sizes of the planets. First load the planets dataset. It looks like this:
+
+![planets table](docs/images/planets_table.png)
+
+
+Now add a chart to draw the planets. 
+
+![planets chart](docs/images/planets_chart_1.png)
+
+Hmm. That doesn't look right.  Chart doesn't
+know what part of the planets dataset we want
+to draw. We have to tell it. Let's use mean_radius for the height of the bar chart. For the label under each bar we can use the name. We can tell the chart function what to do using the named arguments `x_label` and `y`.
+
+![planets chart2](docs/images/planets_chart_2.png)
 
 Now let's compare the radius of the orbit to the radius of the planet. This will show us if the smaller planets are clustered together or spread out.
 
 ```javascript
-chart(planets, type:'scatter', x_value:'orbital_radius', y_value:'radius')
+let planets = await dataset('planets')
+chart(planets, {type:'scatter', x:'orbital_radius', y:'mean_radius'})
 ```
-*image* 
+
+![planets chart3](docs/images/planets_chart_3.png)
 
 Here's a fun one. Let's see which letters have one syllable vs two.
 
@@ -342,11 +360,18 @@ Here's a fun one. Let's see which letters have one syllable vs two.
 chart(dataset('letters'), y_value:'syllables')
 ```
 
-Let's compare the discovery date of elements vs their numbers. We can see that the higher numbered elements were discovered far after earlier ones.
+![letters chart](docs/images/letters_chart.png)
+
+Let's check out the relative heights of the tallest buildings in the world:
+
 
 ```javascript
-chart(elements, x_value:'discovery_date',y_value:'number')
+let buildings = await dataset('tallest_buildings')
+let b2 = take(buildings,5) 
+chart(b2, {y:'height', x_label:'name'})
 ```
+
+![tallest buildings](docs/images/buildings_chart.png)
 
 
 
