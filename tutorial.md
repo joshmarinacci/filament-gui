@@ -124,7 +124,7 @@ sum([4,5,6,7,8])
 ```
 
 Sum is a built in function that will add all of the items in a list. There are a lot
-of other cool fucntions that work on lists.  You can sort a list
+of other cool functions that work on lists.  You can sort a list
 
 ```javascript
 sort([8,4,7,1])
@@ -226,7 +226,7 @@ let july  = [67, 45, 77, 98]
 july - april // [33, 1, 21, 56]
 ```
 
-doing math with who lists is also great for working with vectors.
+doing math with lists is also great for working with vectors.
 
 ```javascript
 let V1 = [0,0,5]
@@ -252,7 +252,7 @@ select( range(10_000), where: x => x mod 5 )
 
 you can also apply functions to combine elements in a list in different ways. Consider
 calculating at total of 1,2, and 3. Instead of adding numbers together indivdually or using 
-the sum funciton you can apply addition over every element in the list. `add over [1,2,3]` This 
+the sum function you can apply addition over every element in the list. `add over [1,2,3]` This 
 is the same as putting a plus between each number: `1 + 2 + 3`. All of these are the same:
 
 ```javascript
@@ -263,7 +263,7 @@ sum([1,2,3])
 reduce([1,2,3], with: (a,b)=>a+b)
 ```
 Remember that `+` is the same thing as using the `add` function.  With this functionality we can create
-our own factorial. if you remember, factorial of N is calculated by multiplying every lower number together with N.  So factorial of 4 is 1*2*3*4, which we can caluate with mul over [1*2*3*4]. Lets
+our own factorial. If you remember, factorial of N is calculated by multiplying every lower number together with N.  So factorial of 4 is 1*2*3*4, which we can caluate with mul over [1*2*3*4]. Lets
 do factorial of 100
 
 ```javascript
@@ -317,7 +317,7 @@ that have already been assembled.  HL comes with datsets for
 * Periodic table of elements
 * Letters of the English Alphabet
 * Planets of the solar system
-* countries of the world.
+* Countries of the world.
 
 When you load a dataset with
 
