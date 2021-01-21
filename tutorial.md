@@ -322,7 +322,7 @@ that have already been assembled.  HL comes with datsets for
 When you load a dataset with
 
 ```javascript
-dataset('elements')
+let elements = await dataset('elements')
 ```
 it looks like this:
 
