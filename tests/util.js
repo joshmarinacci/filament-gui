@@ -20,6 +20,15 @@ function init_parser() {
         number_float:function(a,b,c) {
             return parseFloat(a.sourceString + b.sourceString + c.sourceString)
         },
+        string:function(a,b,c) {
+            return b.sourceString
+        },
+        List_full:function(a,b,c,d,e) {
+            console.log('list full',b.calc(),d.calc())
+            let list = d.calc().slice()
+            list.unshift(b.calc())
+            return list
+        },
         _terminal: function() {
             console.log("terminal",this)
             return this.sourceString;
@@ -39,7 +48,7 @@ export function tests(msg,arr) {
             // console.log("m is",m)
             if(m.failed()) throw new Error("match failed on: " + str);
             let sem = semantics(m);
-            console.log(sem.calc())
+            // console.log(sem.calc())
 
             // if(res.type === 'funcall') {
             //     res = res.invoke();
@@ -48,7 +57,9 @@ export function tests(msg,arr) {
             //     return t.equal(res.string, ans);
             // }
             // return t.approximately(res.getValue(), ans, 0.001);
-            return t.equal(sem.calc(),ans);
+            let val = sem.calc()
+            console.log("comparing",val,ans)
+            return t.deepEqual(val,ans);
         });
         t.end();
     });

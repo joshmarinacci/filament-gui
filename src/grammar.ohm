@@ -30,8 +30,8 @@ Filament {
     | Exp           --indexed_arg
 
   List
-    = "[" PriExp ("," PriExp)* "]" -- list
-    | "[" "]"        -- empty_list
+    = "[" PriExp ("," PriExp)* "]" -- full
+    | "[" "]"        -- empty
 
   UnitNumber
     = number unit -- with_unit
@@ -52,6 +52,7 @@ Filament {
     = number unit
 
   string
-    = "\"" letter* "\"" -- string_literal
+    = "\"" letter* "\""
+    | "\'" letter* "\'"
 }
 
