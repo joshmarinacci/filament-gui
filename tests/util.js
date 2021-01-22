@@ -2,7 +2,7 @@ import fs from 'fs'
 import ohm from "ohm-js"
 import test from "tape"
 import tp from "tape-approximately"
-import {add, divide, factorial, multiply, subtract} from '../src/math.js'
+import {add, divide, factorial, multiply, power, subtract} from '../src/math.js'
 
 
 let source, grammar, semantics
@@ -43,6 +43,7 @@ function init_parser() {
             if(op === '-') return subtract(va,vc)
             if(op === '*') return multiply(va,vc)
             if(op === '/') return divide(va,vc)
+            if(op === '**') return power(va,vc)
             throw new Error(`unknown binary operator ${op}`)
         },
         OprExp_unop:function(a,b) {
