@@ -1,0 +1,57 @@
+Filament {
+  Exp
+    = OprExp
+
+  Operator
+    = "+" | "-"
+
+  OprExp
+    = PriExp Operator PriExp  -- oper
+    | PriExp
+
+  PriExp
+    = Exp ">>" Exp -- pipeline_right
+    | Exp "<<" Exp -- pipeline_left
+    | Funcall
+    | "(" Exp ")"  -- paren
+    | "+" PriExp   -- pos
+    | "-" PriExp   -- neg
+    | List
+    | UnitNumber
+    | string
+    | ident
+
+  Funcall
+    = ident "(" Arg ("," Arg)* ")" --funcall_args
+    | ident "(" ")" --funcall_noargs
+
+  Arg
+    = ident ":" Exp --named_arg
+    | Exp           --indexed_arg
+
+  List
+    = "[" PriExp ("," PriExp)* "]" -- list
+    | "[" "]"        -- empty_list
+
+  UnitNumber
+    = number unit -- with_unit
+    | numberunit  -- with_unit2
+    | number      -- without_unit
+
+  ident  (an identifier)
+    = letter alnum*
+
+  unit
+    = letter+
+
+  number  (a number)
+    = digit* "." digit+  -- float
+    | digit+             -- integer
+
+  numberunit
+    = number unit
+
+  string
+    = "\"" letter* "\"" -- string_literal
+}
+

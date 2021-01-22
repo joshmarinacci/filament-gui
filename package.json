@@ -9,6 +9,7 @@
     "alphavantage": "^2.2.0",
     "codemirror": "^5.59.1",
     "date-fns": "^2.16.1",
+    "ohm-js": "^15.4.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
@@ -40,5 +41,8 @@
       "last 1 safari version"
     ]
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "tape-approximately": "^1.0.0"
+  }
 }
