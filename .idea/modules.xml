@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/notebook-lang.iml" filepath="$PROJECT_DIR$/.idea/notebook-lang.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../tallycat-parser/.idea/tallycat-parser.iml" filepath="$PROJECT_DIR$/../tallycat-parser/.idea/tallycat-parser.iml" />
     </modules>
   </component>
 </project>
