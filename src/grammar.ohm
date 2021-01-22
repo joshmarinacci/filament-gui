@@ -6,6 +6,7 @@ Filament {
     =  "**"
     | "*"
     | "/"
+    | "mod"
     | "+"
     | "-"
 
@@ -30,8 +31,8 @@ Filament {
     | ident
 
   Funcall
-    = ident "(" Arg ("," Arg)* ")" --funcall_args
-    | ident "(" ")" --funcall_noargs
+    = ident "(" Arg ("," Arg)* ")" --with_args
+    | ident "(" ")" --noargs
 
   Arg
     = ident ":" Exp --named_arg

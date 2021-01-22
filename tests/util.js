@@ -2,10 +2,33 @@ import fs from 'fs'
 import ohm from "ohm-js"
 import test from "tape"
 import tp from "tape-approximately"
-import {add, divide, factorial, multiply, power, subtract} from '../src/math.js'
+import {add, cos, divide, factorial, multiply, power, sin, subtract, tan} from '../src/math.js'
+import {drop, join, length, map, range, reverse, select, sort, sum, take} from '../src/lists.js'
 
 
 let source, grammar, semantics
+const scope = {
+    add: add,
+    subtract: subtract,
+    multiply: multiply,
+    divide: divide,
+    power:power,
+
+    sin:sin,
+    cos:cos,
+    tan:tan,
+
+    length: length,
+    sum: sum,
+    range: range,
+    map: map,
+    take: take,
+    drop: drop,
+    sort: sort,
+    join: join,
+    select: select,
+    reverse:reverse,
+}
 
 
 tp(test)
@@ -15,6 +38,9 @@ function init_parser() {
     grammar = ohm.grammar(source);
     semantics = grammar.createSemantics();
     semantics.addOperation('calc',{
+        ident:function(first,rest) {
+            return first.calc() + "" + rest.calc().join("")
+        },
         number_integer:function(a) {
             return parseInt(a.sourceString)
         },
@@ -51,6 +77,20 @@ function init_parser() {
             let val = b.calc()
             if(op === '!') return factorial(val)
             throw new Error(`unknown unary operator ${op}`)
+        },
+        PriExp_neg:function(a,b) {
+            return -b.calc()
+        },
+
+        Funcall_with_args:function(a,_1,c,d,e,_2) {
+            let fun_name = a.calc()
+            let args = [c.calc()].concat(e.calc())
+            console.log("funcall",fun_name,args)
+            if(scope[fun_name]) {
+                return scope[fun_name].apply(null,args)
+            } else {
+                throw new Error(`no such function ${fun_name}`)
+            }
         },
 
     })
