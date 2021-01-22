@@ -2,14 +2,18 @@ Filament {
   Exp
     = OprExp
 
-  Operator
+  BinOp
     = "+"
     | "-"
     | "*"
     | "/"
 
+  UnOp
+    = "!"
+
   OprExp
-    = PriExp Operator PriExp --op_call
+    = PriExp BinOp PriExp --binop
+    | UnOp PriExp --unop
     | PriExp
 
   PriExp
