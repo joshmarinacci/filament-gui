@@ -2,6 +2,7 @@ import fs from 'fs'
 import ohm from "ohm-js"
 import test from "tape"
 import tp from "tape-approximately"
+import {add, divide, multiply, subtract} from '../src/math.js'
 
 
 let source, grammar, semantics
@@ -24,14 +25,24 @@ function init_parser() {
             return b.sourceString
         },
         List_full:function(a,b,c,d,e) {
-            console.log('list full',b.calc(),d.calc())
             let list = d.calc().slice()
             list.unshift(b.calc())
             return list
         },
         _terminal: function() {
-            console.log("terminal",this)
+            // console.log("terminal",this)
             return this.sourceString;
+        },
+
+
+        OprExp_op_call:function(a,b,c) {
+            let op = b.calc()
+            let va = a.calc()
+            let vc = c.calc()
+            if(op === '+') return add(va,vc)
+            if(op === '-') return subtract(va,vc)
+            if(op === '*') return multiply(va,vc)
+            if(op === '/') return divide(va,vc)
         }
 
     })
@@ -58,7 +69,7 @@ export function tests(msg,arr) {
             // }
             // return t.approximately(res.getValue(), ans, 0.001);
             let val = sem.calc()
-            console.log("comparing",val,ans)
+            // console.log("comparing",val,ans)
             return t.deepEqual(val,ans);
         });
         t.end();

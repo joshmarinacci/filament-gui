@@ -3,10 +3,13 @@ Filament {
     = OprExp
 
   Operator
-    = "+" | "-"
+    = "+"
+    | "-"
+    | "*"
+    | "/"
 
   OprExp
-    = PriExp Operator PriExp  -- oper
+    = PriExp Operator PriExp --op_call
     | PriExp
 
   PriExp
