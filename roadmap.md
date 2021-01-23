@@ -12,28 +12,30 @@
 - [x] blog post on the language and some ascii code examples
 
 
-
-
-
 ## M2
-- [ ] button to add new code block
-- [ ] button to add new markdown block
-- [ ] render code and markdown pretty when not editing them
 - [x] render tables and lists as spreadsheet like view
 - [x] add 10 new examples to sidebar
 - [x] blog post on the editor
+- [ ] implement parser enough for all examples to work that don't use lambdas. make pipelines work
+- [ ] Scalar() class with unit. 
+- [ ] List() class from list literals or datasets or other. Works with records too.
+- [ ] all functions work with new list and scalar classes
+- [ ] pipeline works to compose functions
+- [ ] spec named vs indexed arguments
+- [ ] implement named and indexed args for a few functions
+- [ ] switch editor to use HL language
+- [x] implement the current syntax in an ohm parser
+- [ ] implement 10 examples using new syntax
 
-
-## M3 
-* back to research
-* review: https://cuelang.org
-* research syntaxes for code blocks, lambdas, and control flow in non-C style languages. 
+## M3
+- [ ] button to add new code block
+- [ ] button to add new markdown block
+- [ ] render code and markdown pretty when not editing them
+- [x] review: https://cuelang.org
+- [ ] research syntaxes for code blocks, lambdas, and control flow in non-C style languages. 
     smalltalk, applescript, hypertalk, dylan?
-* design better syntax for control flow, code blocks, named and lambda functions
-* implement the current syntax in an ohm parser
-* implement 10 examples using new syntax
-* switch editor to use HL language
-* blog post
+- [ ] design better syntax for control flow, code blocks, named and lambda functions
+- [ ] blog post
 
 ## M4
 * blog post
@@ -47,12 +49,10 @@
 * turtle drawing
 * add 10 new examples which use graphics
 
-
 ## M5
 * blog post
 * add unicode pretty view
 * prototype visual scratch blocks view of same code. split pane. not interactive.
-
 
 ## to be categorized
 
