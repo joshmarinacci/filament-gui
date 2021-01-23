@@ -47,6 +47,6 @@ tests('function composition', [
     ['take(range(5),2)',[0,1]],
     ['take(range(5),-2)',[3,4]],
     [`reverse(range(0,11))`,[10,9,8,7,6,5,4,3,2,1,0]],
-//     [`range(0,11) >> reverse()`,[10,9,8,7,6,5,4,3,2,1]]
+    [`range(0,11) >> reverse()`,[10,9,8,7,6,5,4,3,2,1,0]]
 //     ['range(start:0, end:20, step:5)',[0,5,10,15]],
 ])

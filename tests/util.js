@@ -85,13 +85,51 @@ function init_parser() {
         Funcall_with_args:function(a,_1,c,d,e,_2) {
             let fun_name = a.calc()
             let args = [c.calc()].concat(e.calc())
-            console.log("funcall",fun_name,args)
+            // console.log("funcall",fun_name,args)
+            //evaluate any function args
+            args = args.map(arg => {
+                if(arg.type === 'funcall') return arg.apply()
+                return arg
+            })
             if(scope[fun_name]) {
-                return scope[fun_name].apply(null,args)
+                return {
+                    fun:scope[fun_name],
+                    name:fun_name,
+                    args:args,
+                    apply:()=>scope[fun_name].apply(null,args),
+                    type:'funcall',
+                }
+                // return scope[fun_name].apply(null,args)
             } else {
                 throw new Error(`no such function ${fun_name}`)
             }
         },
+
+        Funcall_noargs:function(a,_1,_2) {
+            let fun_name = a.calc()
+            let args = []
+            return {
+                fun:scope[fun_name],
+                name:fun_name,
+                args:[],
+                apply:()=>scope[fun_name].apply(null,args),
+                type:'funcall',
+            }
+        },
+
+        PriExp_pipeline_right:function(a,b,c) {
+            let f1 = a.calc()
+            let f2 = c.calc()
+            // console.log("pipeline right", f1, f2)
+
+            let r1 = f1.fun.apply(null,f1.args)
+            // console.log("r1",r1)
+            let a2 = f2.args.slice()
+            a2.unshift(r1)
+            let r2 = f2.fun.apply(null,a2)
+            // console.log("r2",r2)
+            return r2
+        }
 
     })
 }
@@ -117,6 +155,10 @@ export function tests(msg,arr) {
             // }
             // return t.approximately(res.getValue(), ans, 0.001);
             let val = sem.calc()
+            if(val.type === 'funcall') {
+                console.log("doing funcall",str)
+                val = val.apply()
+            }
             // console.log("comparing",val,ans)
             return t.deepEqual(val,ans);
         });
