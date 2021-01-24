@@ -152,6 +152,19 @@ call by order and keyword
 chart( [1,2,3], color='red')
 ```
 
+# V2 of function args
+
+* a function is referenced by name. you can't have two functions with the same name and use args to decide between them. No multi-methods.
+* a function definition needs a name for all parameters. Any parameter may be called by keyword.
+* every parameter should have a default value or a ! indicating it is required.
+* the parameters are prepared by the runtime from the call site at runtime.
+    * all named args are filled in first, from left to right in the parameters def.
+    * any indexed arguments are filled into missing parameters, left to right.
+    * if there are no required parameters left, run the function
+    * if there are unfilled required parameters, throw an error
+* no varargs. use lists instead.
+* inside the function you just use the named parameters. don't care about positional args or indexed vs keywords.
+
 
 
 # control flow
