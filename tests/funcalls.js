@@ -1,6 +1,98 @@
 import {tests, REQUIRED, FilamentFunction} from './util.js'
 
 
+let scope = {}
+
+scope.length = new FilamentFunction(
+    'length',
+    {
+        data:REQUIRED,
+    },
+    function(data) {
+        this.log(data)
+        return data.length
+    }
+)
+
+scope.take =  new FilamentFunction(
+    "take",
+    {
+        data:REQUIRED,
+        count:REQUIRED,
+    },
+    function (data,count) {
+        this.log(data,count)
+        if(count < 0) {
+            return data.slice(data.length+count,data.length)
+        } else {
+            return data.slice(0, count)
+        }
+    })
+
+scope.drop =  new FilamentFunction(
+    "drop",
+    {
+        data:REQUIRED,
+        count:REQUIRED,
+    },
+    function (data,count) {
+        this.log('params',data,count)
+        if(count < 0) {
+            return data.slice(0,data.length+count)
+        } else {
+            return data.slice(count)
+        }
+    })
+
+
+scope.sort = new FilamentFunction(
+    "sort",
+    {
+        data:REQUIRED,
+        order:"ascending",
+    },
+    function(data,order) {
+        this.log("params",data,order)
+        data = data.slice().sort()
+        if(order === 'descending') {
+            return data.reverse()
+        } else {
+            return data
+        }
+    }
+)
+
+scope.reverse = new FilamentFunction(
+    "reverse",
+    {
+        data:REQUIRED,
+    },
+    function(data) {
+        this.log("params",data)
+        return data.reverse()
+    }
+)
+
+scope.sum = new FilamentFunction(
+    "sum",
+    {
+        data:REQUIRED,
+    },
+    function(data) {
+        return data.reduce((a,b)=>a+b)
+    }
+)
+
+scope.max = new FilamentFunction(
+    "max",
+    {
+        data:REQUIRED,
+    },
+    function (data) {
+    return data.reduce((a,b)=> a>b?a:b)
+    }
+)
+
 
 tests("functions",[
     ['[4,2,42]',[4,2,42]],
@@ -23,43 +115,6 @@ tests("functions",[
     // ['take([4,2,42],count:2) >> sort(order:"descending")',[4,2]],
 
 ],{
-    scope:{
-        length: new FilamentFunction('length',{
-                data:REQUIRED,
-            },
-            function(data) {
-                this.log(data)
-                return data.length
-            }
-        ),
-        take: new FilamentFunction("take",{
-                data:REQUIRED,
-                count:REQUIRED,
-            },
-            function (data,count) {
-                this.log(data,count)
-                if(count < 0) {
-                    return data.slice(data.length+count,data.length)
-                } else {
-                    return data.slice(0, count)
-                }
-            }),
-        sort: new FilamentFunction(
-            "sort",
-            {
-                data:REQUIRED,
-                order:"ascending",
-            },
-            function(data,order) {
-                this.log("### sort:",data,order)
-                data = data.slice().sort()
-                if(order === 'descending') {
-                    return data.reverse()
-                } else {
-                    return data
-                }
-            }
-        )
-    }
+    scope:scope,
 })
 
