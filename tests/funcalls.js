@@ -111,6 +111,12 @@ tests("functions",[
     ['sort([4,2,42], order:"descending")',[42,4,2]],
     ['sort(order:"descending",[4,2,42])',[42,4,2]],
 
+    ['sum([4,2,42])',48],
+    ['sum(data:[4,2,42])',48],
+    ['max(data:[4,2,42])',42],
+    ['reverse(data:[4,2,42])',[42,2,4]],
+    ['drop(data:[4,2,42],count:1)',[2,42]],
+
     // ['take([4,2,42],count:2) >> sort()',[2,4]],
     // ['take([4,2,42],count:2) >> sort(order:"descending")',[4,2]],
 
