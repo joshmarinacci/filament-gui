@@ -16,11 +16,12 @@
 - [x] render tables and lists as spreadsheet like view
 - [x] add 10 new examples to sidebar
 - [x] blog post on the editor
-- [ ] implement parser enough for all examples to work that don't use lambdas. make pipelines work
+- [ ] implement parser enough for all examples to work that don't use lambdas
 - [ ] Scalar() class with unit. 
 - [ ] List() class from list literals or datasets or other. Works with records too.
+- [ ] Callsite class represents a parsed function with args ready to apply
 - [ ] all functions work with new list and scalar classes
-- [ ] pipeline works to compose functions
+- [x] pipeline works to compose functions
 - [ ] spec named vs indexed arguments
 - [ ] implement named and indexed args for a few functions
 - [ ] switch editor to use HL language
@@ -38,16 +39,16 @@
 - [ ] blog post
 
 ## M4
-* blog post
-* design & impl full shape drawing system
-* design chart system to auto-detect formats and labels. lets you customize as needed for all current examples
-* scatter chart
-* bar chart
-* pie chart
-* circles and rects drawing
-* polygon and path drawing
-* turtle drawing
-* add 10 new examples which use graphics
+- [ ] design & impl full shape drawing system
+- [ ] design chart system to auto-detect formats and labels. lets you customize as needed for all current examples
+- [ ] scatter chart
+- [x] bar chart
+- [ ] pie chart
+- [ ] circles and rects drawing
+- [ ] polygon and path drawing
+- [ ] turtle drawing
+- [ ] add 10 new examples which use graphics
+- [ ] blog post
 
 ## M5
 * blog post

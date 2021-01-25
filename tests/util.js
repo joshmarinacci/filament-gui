@@ -80,6 +80,36 @@ const scope = {
 
 tp(test)
 
+class Callsite {
+    constructor(scope, name, args) {
+        this.type = 'funcall'
+        this.scope = scope
+        this.name = name
+        this.args = args
+        // console.log("created callsite",name,args)
+    }
+    apply() {
+        // console.log("applying",this.name,this.args)
+        //evaluate any function args
+        let args = this.args.map(arg => {
+            if(arg.type === 'funcall') return arg.apply()
+            return arg
+        })
+        // console.log("applied args",args)
+        return this.scope[this.name].apply(null,args)
+    }
+    applyWithPipeline(val) {
+        let args = this.args.slice()
+        args.unshift(val)
+        //evaluate any function args
+        args = args.map(arg => {
+            if(arg.type === 'funcall') return arg.apply()
+            return arg
+        })
+        return this.scope[this.name].apply(null,args)
+    }
+}
+
 
 function init_parser(scope) {
     let source = fs.readFileSync(new URL('../src/grammar.ohm', import.meta.url)).toString();
@@ -130,20 +160,6 @@ function init_parser(scope) {
             return -b.calc()
         },
 
-        Arg_indexed_arg: function(a) {
-            return {
-                type:'indexed',
-                value:a.calc(),
-            }
-        },
-        Arg_named_arg: function(a,b,c) {
-            // console.log("named arg",a.calc(),b.calc(),c.calc())
-            return {
-                type:'named',
-                name:a.calc(),
-                value:c.calc(),
-            }
-        },
         Funcall_with_args:function(a,_1,c,d,e,_2) {
             let fun_name = a.calc()
             let args = [c.calc()].concat(e.calc())
