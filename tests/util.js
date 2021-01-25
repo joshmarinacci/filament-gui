@@ -4,9 +4,56 @@ import test from "tape"
 import tp from "tape-approximately"
 import {add, cos, divide, factorial, multiply, power, sin, subtract, tan} from '../src/math.js'
 import {drop, join, length, map, range, reverse, select, sort, sum, take} from '../src/lists.js'
+export const REQUIRED = Symbol('REQUIRED')
+export class FilamentFunction {
+    constructor(name,params, fun) {
+        this.name = name
+        this.params = params
+        this.fun = fun
+    }
+    log() {
+        let args = Array.prototype.slice.call(arguments)
+        console.log('###',this.name.toUpperCase(),...args)
+    }
+    apply_function(args) {
+        console.log("applying args",args)
+        console.log("to the function",this.name)
+        let params = Object.entries(this.params).map(([key,value]) =>{
+            console.log("looking at",key,'=',value)
+            console.log("remaining args",args)
+            //look for matching arg
+            let n1 = args.findIndex(a => a.type === 'named' && a.name === key)
+            if(n1 >= 0) {
+                console.log("found named ", args[n1])
+                let arg = args[n1]
+                args.splice(n1,1)
+                return arg.value
+            } else {
+                //grab the first indexed parameter we can find
+                console.log("finding indexed")
+                let n = args.findIndex(a => a.type === 'indexed')
+                if(n >= 0) {
+                    console.log("found", args[n])
+                    let arg = args[n]
+                    args.splice(n,1)
+                    return arg.value
+                } else {
+                    console.log("no indexed found")
+                    console.log("checking for default",value)
+                    if(value === REQUIRED) throw new Error(`parameter ${key} is required`)
+                    return value
+                }
+            }
+        })
+        return this.apply_with_parameters(params)
+    }
+    apply_with_parameters(params) {
+        this.log("running with params",params)
+        return this.fun.apply(this,params)
+    }
+}
 
-
-let source, grammar, semantics
+// let source, grammar, semantics
 const scope = {
     add: add,
     subtract: subtract,
@@ -33,10 +80,11 @@ const scope = {
 
 tp(test)
 
-function init_parser() {
-    source = fs.readFileSync(new URL('../src/grammar.ohm', import.meta.url)).toString();
-    grammar = ohm.grammar(source);
-    semantics = grammar.createSemantics();
+
+function init_parser(scope) {
+    let source = fs.readFileSync(new URL('../src/grammar.ohm', import.meta.url)).toString();
+    let grammar = ohm.grammar(source);
+    let semantics = grammar.createSemantics();
     semantics.addOperation('calc',{
         ident:function(first,rest) {
             return first.calc() + "" + rest.calc().join("")
@@ -82,84 +130,48 @@ function init_parser() {
             return -b.calc()
         },
 
+        Arg_indexed_arg: function(a) {
+            return {
+                type:'indexed',
+                value:a.calc(),
+            }
+        },
+        Arg_named_arg: function(a,b,c) {
+            // console.log("named arg",a.calc(),b.calc(),c.calc())
+            return {
+                type:'named',
+                name:a.calc(),
+                value:c.calc(),
+            }
+        },
         Funcall_with_args:function(a,_1,c,d,e,_2) {
             let fun_name = a.calc()
             let args = [c.calc()].concat(e.calc())
-            // console.log("funcall",fun_name,args)
-            //evaluate any function args
-            args = args.map(arg => {
-                if(arg.type === 'funcall') return arg.apply()
-                return arg
-            })
-            if(scope[fun_name]) {
-                return {
-                    fun:scope[fun_name],
-                    name:fun_name,
-                    args:args,
-                    apply:()=>scope[fun_name].apply(null,args),
-                    type:'funcall',
-                }
-                // return scope[fun_name].apply(null,args)
-            } else {
-                throw new Error(`no such function ${fun_name}`)
-            }
+            // console.log(`funcall '${fun_name}' args:`,args)
+            if(!scope.hasOwnProperty(fun_name)) throw new Error(`no such function ${fun_name}`)
+            return scope[fun_name].apply_function(args)
+            // return scope[fun_name].fun.apply(null,args)
         },
-
-        Funcall_noargs:function(a,_1,_2) {
-            let fun_name = a.calc()
-            let args = []
-            return {
-                fun:scope[fun_name],
-                name:fun_name,
-                args:[],
-                apply:()=>scope[fun_name].apply(null,args),
-                type:'funcall',
-            }
-        },
-
-        PriExp_pipeline_right:function(a,b,c) {
-            let f1 = a.calc()
-            let f2 = c.calc()
-            // console.log("pipeline right", f1, f2)
-
-            let r1 = f1.fun.apply(null,f1.args)
-            // console.log("r1",r1)
-            let a2 = f2.args.slice()
-            a2.unshift(r1)
-            let r2 = f2.fun.apply(null,a2)
-            // console.log("r2",r2)
-            return r2
-        }
 
     })
+    return {
+        source, grammar, semantics
+    }
 }
 
-init_parser()
-
-export function tests(msg,arr) {
+export function tests(msg,arr, opts) {
+    let scopes = scope
+    if(opts && opts.scope) scopes = opts.scope
+    let parser = init_parser(scopes)
     test(msg, (t)=>{
         arr.forEach((tcase) => {
             let str = tcase[0];
             let ans = tcase[1];
-            let m = grammar.match(str)
-            // console.log("m is",m)
+            let m = parser.grammar.match(str)
             if(m.failed()) throw new Error("match failed on: " + str);
-            let sem = semantics(m);
-            // console.log(sem.calc())
-
-            // if(res.type === 'funcall') {
-            //     res = res.invoke();
-            // }
-            // if(res.type === 'string') {
-            //     return t.equal(res.string, ans);
-            // }
+            let sem = parser.semantics(m);
             // return t.approximately(res.getValue(), ans, 0.001);
             let val = sem.calc()
-            if(val.type === 'funcall') {
-                console.log("doing funcall",str)
-                val = val.apply()
-            }
-            // console.log("comparing",val,ans)
             return t.deepEqual(val,ans);
         });
         t.end();
