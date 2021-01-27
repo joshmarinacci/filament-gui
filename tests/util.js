@@ -86,27 +86,20 @@ class Callsite {
         this.scope = scope
         this.name = name
         this.args = args
-        // console.log("created callsite",name,args)
+        console.log("created callsite",name,args)
     }
     apply() {
-        // console.log("applying",this.name,this.args)
-        //evaluate any function args
-        let args = this.args.map(arg => {
-            if(arg.type === 'funcall') return arg.apply()
-            return arg
-        })
-        // console.log("applied args",args)
-        return this.scope[this.name].apply(null,args)
+        return this.scope[this.name].apply_function(this.args)
     }
     applyWithPipeline(val) {
         let args = this.args.slice()
-        args.unshift(val)
+        let arg = {
+            type:'indexed',
+            value:val,
+        }
+        args.unshift(arg)
         //evaluate any function args
-        args = args.map(arg => {
-            if(arg.type === 'funcall') return arg.apply()
-            return arg
-        })
-        return this.scope[this.name].apply(null,args)
+        return this.scope[this.name].apply_function(args)
     }
 }
 
@@ -177,11 +170,19 @@ function init_parser(scope) {
         Funcall_with_args:function(a,_1,c,d,e,_2) {
             let fun_name = a.calc()
             let args = [c.calc()].concat(e.calc())
-            // console.log(`funcall '${fun_name}' args:`,args)
             if(!scope.hasOwnProperty(fun_name)) throw new Error(`no such function ${fun_name}`)
-            return scope[fun_name].apply_function(args)
-            // return scope[fun_name].fun.apply(null,args)
+            return new Callsite(scope, fun_name, args)
         },
+        Funcall_noargs:function(a,b,c) {
+            let fun_name = a.calc()
+            return new Callsite(scope,fun_name,[])
+        },
+        PriExp_pipeline_right:function(a,_,b) {
+            let fa = a.calc()
+            let fb = b.calc()
+            let va =  fa.apply()
+            return fb.applyWithPipeline(va)
+        }
     })
     return {
         source, grammar, semantics
@@ -201,6 +202,7 @@ export function tests(msg,arr, opts) {
             let sem = parser.semantics(m);
             // return t.approximately(res.getValue(), ans, 0.001);
             let val = sem.calc()
+            if(val.type === 'funcall')  val = val.apply()
             return t.deepEqual(val,ans);
         });
         t.end();

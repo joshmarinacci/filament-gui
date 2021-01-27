@@ -117,10 +117,14 @@ tests("functions",[
     ['reverse(data:[4,2,42])',[42,2,4]],
     ['drop(data:[4,2,42],count:1)',[2,42]],
 
-    // ['take([4,2,42],count:2) >> sort()',[2,4]],
-    // ['take([4,2,42],count:2) >> sort(order:"descending")',[4,2]],
 
-],{
-    scope:scope,
-})
+],{ scope })
+
+tests("pipelines",[
+    ['[4,2,42]',[4,2,42]],
+    ['length([4,2,42])',3],
+    ['take([4,2,42],count:2)',[4,2]],
+    ['take([4,2,42],count:2) >> sort()',[2,4]],
+    ['take([4,2,42],count:2) >> sort(order:"descending")',[4,2]],
+],{ scope })
 
