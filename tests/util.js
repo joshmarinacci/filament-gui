@@ -160,6 +160,20 @@ function init_parser(scope) {
             return -b.calc()
         },
 
+        Arg_indexed_arg: function(a) {
+            return {
+                type:'indexed',
+                value:a.calc(),
+            }
+        },
+        Arg_named_arg: function(a,b,c) {
+            // console.log("named arg",a.calc(),b.calc(),c.calc())
+            return {
+                type:'named',
+                name:a.calc(),
+                value:c.calc(),
+            }
+        },
         Funcall_with_args:function(a,_1,c,d,e,_2) {
             let fun_name = a.calc()
             let args = [c.calc()].concat(e.calc())
@@ -168,7 +182,6 @@ function init_parser(scope) {
             return scope[fun_name].apply_function(args)
             // return scope[fun_name].fun.apply(null,args)
         },
-
     })
     return {
         source, grammar, semantics
