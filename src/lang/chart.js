@@ -1,6 +1,7 @@
 import {CanvasResult} from '../canvas.js'
 import {max} from './lists.js'
 import {compareAsc, compareDesc, parse as parseDate, eachYearOfInterval, differenceInYears, format as formatDate} from 'date-fns'
+import {FilamentFunction, REQUIRED} from './parser.js'
 
 
 function draw_legend(ctx, canvas, data, x_label, y_label) {
@@ -33,7 +34,11 @@ function draw_scatter(ctx, canvas, data, x, y) {
     })
 }
 
-export function chart(data,{x,x_label,y,y_label, type='bar'}={width:300, height:400,}) {
+export const chart = new FilamentFunction('chart',
+    {
+        data:REQUIRED,
+    },
+    function (data,{x,x_label,y,y_label, type='bar'}={width:300, height:400,}) {
     return new CanvasResult((canvas)=>{
         let ctx = canvas.getContext('2d')
         ctx.save()
@@ -57,7 +62,7 @@ export function chart(data,{x,x_label,y,y_label, type='bar'}={width:300, height:
         }
         ctx.restore()
     })
-}
+})
 
 function clear(ctx,canvas) {
     ctx.fillStyle = 'white'
@@ -79,6 +84,7 @@ function draw_bars(ctx, canvas, data, x_label, y) {
     let get_y = (datum) => datum
     if(typeof y === 'function') get_y = y
     if(typeof y === 'string') get_y = (d) => d[y]
+    console.log("data is",data)
     let values = data.map(get_y)
 
     let max_val = max(values)
