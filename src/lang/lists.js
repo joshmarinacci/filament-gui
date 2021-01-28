@@ -1,3 +1,5 @@
+import {FilamentFunction, REQUIRED} from './parser.js'
+
 function gen_range(min,max,step) {
     let list = []
     for(let i=min; i<max; i+=step) {
@@ -20,43 +22,55 @@ export function range(a,b,step) {
 
 
 // * __length__: returns the length of the list
-export function length(list) {
-    if(!list) throw new Error("length(list) missing list")
-    return list.length
-}
-
+export const length = new FilamentFunction(
+    'length',
+    {
+        data:REQUIRED,
+    },
+    function(data) {
+        this.log(data)
+        return data.length
+    }
+)
 
 function is_dataset(list) {
     return list.data?true:false
 }
 
 // * __take__: take the first N elements from a list to make a new list `take([1,2,3], 2) = [1,2]`
-export function take(list,num) {
-    if(!list) throw new Error("take needs a list to take from")
-    if(typeof num === 'undefined') num = 1
-    // if it's a table
-    if(is_dataset(list)) {
-        return {
-            data: {
-                items:take(list.data.items,num),
-                schema:list.data.schema
-            },
+export const take =  new FilamentFunction(
+    "take",
+    {
+        data:REQUIRED,
+        count:REQUIRED,
+    },
+    function (data,count) {
+        this.log(data,count)
+        if(count < 0) {
+            return data.slice(data.length+count,data.length)
+        } else {
+            return data.slice(0, count)
         }
-    }
+    })
 
-    if(num < 0) {
-        return list.slice(list.length+num,list.length)
-    }
-    return list.slice(0,num)
-}
 
 // * __drop__: return list with the number of elements removed from the start. `drop([1,2,3],1) = [2,3]`
-export function drop(list, num) {
-    if(!list) throw new Error("take needs a list to take from")
-    if(typeof num === 'undefined') num = 1
-    if(num < 0) return list.slice(0,list.length+num)
-    return list.slice(num)
-}
+export const drop =  new FilamentFunction(
+    "drop",
+    {
+        data:REQUIRED,
+        count:REQUIRED,
+    },
+    function (data,count) {
+        this.log('params',data,count)
+        if(count < 0) {
+            return data.slice(0,data.length+count)
+        } else {
+            return data.slice(count)
+        }
+    })
+
+
 
 
 // * __join__: concatentate two lists, returning a new list. is this needed?
@@ -78,28 +92,46 @@ export function map(list,cb) {
 // * __for__:  loops over every element in a list with a lambda, but returns the original list: `(list, lam)`
 
 // * __sort__: sort list returning a new list, by: property to use for sorting `sort(data by:"date")` (should we use `order` instead?)
-export function sort(list,opts) {
-    if(opts && opts.by) {
-        return list.slice().sort((a,b)=>{
-            a = a[opts.by]
-            b = b[opts.by]
-            //special case for strings
-            if(a.localeCompare) return a.localeCompare(b)
-            return a-b
-        })
+export const sort = new FilamentFunction(
+    "sort",
+    {
+        data:REQUIRED,
+        order:"ascending",
+    },
+    function(data,order) {
+        this.log("params",data,order)
+        data = data.slice().sort()
+        if(order === 'descending') {
+            return data.reverse()
+        } else {
+            return data
+        }
     }
-    return list.slice().sort()
-}
+)
+
 // * __reverse__: return a list with the order reversed  `reverse(data)`
-export function reverse(list) {
-    return list.reverse()
-}
+export const reverse = new FilamentFunction(
+    "reverse",
+    {
+        data:REQUIRED,
+    },
+    function(data) {
+        this.log("params",data)
+        return data.reverse()
+    }
+)
 
 
 // * __sum__: adds all data points together
-export function sum(list) {
-    return list.reduce((a,b)=>a+b)
-}
+export const sum = new FilamentFunction(
+    "sum",
+    {
+        data:REQUIRED,
+    },
+    function(data) {
+        return data.reduce((a,b)=>a+b)
+    }
+)
 
 
 export function select(list, opts) {
@@ -107,6 +139,13 @@ export function select(list, opts) {
     return list.filter(where)
 }
 
-export function max(list) {
-    return list.reduce((a,b)=> a>b?a:b)
-}
+export const max = new FilamentFunction(
+    "max",
+    {
+        data:REQUIRED,
+    },
+    function (data) {
+        return data.reduce((a,b)=> a>b?a:b)
+    }
+)
+
