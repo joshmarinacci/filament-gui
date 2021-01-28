@@ -118,8 +118,7 @@ export const reverse = new FilamentFunction("reverse",
 
 
 // * __sum__: adds all data points together
-export const sum = new FilamentFunction(
-    "sum",
+export const sum = new FilamentFunction("sum",
     {
         data:REQUIRED,
     },
@@ -134,8 +133,7 @@ export function select(list, opts) {
     return list.filter(where)
 }
 
-export const max = new FilamentFunction(
-    "max",
+export const max = new FilamentFunction("max",
     {
         data:REQUIRED,
     },
