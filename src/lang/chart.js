@@ -1,8 +1,16 @@
 import {CanvasResult} from '../canvas.js'
-import {max} from './lists.js'
+import {max as RealMax} from './lists.js'
 import {compareAsc, compareDesc, parse as parseDate, eachYearOfInterval, differenceInYears, format as formatDate} from 'date-fns'
 import {FilamentFunction, REQUIRED} from './parser.js'
 
+
+const max = (data) => {
+    let arg = {
+        type:'indexed',
+        value:data,
+    }
+    return RealMax.apply_function([arg])
+}
 
 function draw_legend(ctx, canvas, data, x_label, y_label) {
     let font_height = 20

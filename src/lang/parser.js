@@ -152,8 +152,8 @@ export class FilamentFunction {
         console.log('###',this.name.toUpperCase(),...args)
     }
     apply_function(args) {
-        // console.log("applying args",args)
-        // console.log("to the function",this.name)
+        console.log("applying args",args)
+        console.log("to the function",this.name)
         let params = Object.entries(this.params).map(([key,value]) =>{
             // console.log("looking at",key,'=',value)
             // console.log("remaining args",args)

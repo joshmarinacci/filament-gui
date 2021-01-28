@@ -65,7 +65,7 @@ take(range(min:0, max:100,step:10), -5)
     // },
     {
         title:'syllables for each letter',
-        code:`chart(dataset('alphabet'), {x_label:'letter', y:'syllables'})`
+        code:`chart(dataset('alphabet'), x_label:'letter', y:'syllables')`
     },
     {
         title:"elements number vs weight",
