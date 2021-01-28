@@ -22,8 +22,7 @@ export function range(a,b,step) {
 
 
 // * __length__: returns the length of the list
-export const length = new FilamentFunction(
-    'length',
+export const length = new FilamentFunction(    'length',
     {
         data:REQUIRED,
     },
@@ -38,8 +37,7 @@ function is_dataset(list) {
 }
 
 // * __take__: take the first N elements from a list to make a new list `take([1,2,3], 2) = [1,2]`
-export const take =  new FilamentFunction(
-    "take",
+export const take =  new FilamentFunction(  "take",
     {
         data:REQUIRED,
         count:REQUIRED,
@@ -55,8 +53,7 @@ export const take =  new FilamentFunction(
 
 
 // * __drop__: return list with the number of elements removed from the start. `drop([1,2,3],1) = [2,3]`
-export const drop =  new FilamentFunction(
-    "drop",
+export const drop =  new FilamentFunction(  "drop",
     {
         data:REQUIRED,
         count:REQUIRED,
@@ -92,8 +89,7 @@ export function map(list,cb) {
 // * __for__:  loops over every element in a list with a lambda, but returns the original list: `(list, lam)`
 
 // * __sort__: sort list returning a new list, by: property to use for sorting `sort(data by:"date")` (should we use `order` instead?)
-export const sort = new FilamentFunction(
-    "sort",
+export const sort = new FilamentFunction( "sort",
     {
         data:REQUIRED,
         order:"ascending",
@@ -110,8 +106,7 @@ export const sort = new FilamentFunction(
 )
 
 // * __reverse__: return a list with the order reversed  `reverse(data)`
-export const reverse = new FilamentFunction(
-    "reverse",
+export const reverse = new FilamentFunction("reverse",
     {
         data:REQUIRED,
     },
