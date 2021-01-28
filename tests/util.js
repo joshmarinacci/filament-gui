@@ -2,8 +2,8 @@ import fs from 'fs'
 import ohm from "ohm-js"
 import test from "tape"
 import tp from "tape-approximately"
-import {add, cos, divide, factorial, multiply, power, sin, subtract, tan} from '../src/math.js'
-import {drop, join, length, map, range, reverse, select, sort, sum, take} from '../src/lists.js'
+import {add, cos, divide, factorial, multiply, power, sin, subtract, tan} from '../src/lang/math.js'
+import {drop, join, length, map, range, reverse, select, sort, sum, take} from '../src/lang/lists.js'
 export const REQUIRED = Symbol('REQUIRED')
 export class FilamentFunction {
     constructor(name,params, fun) {

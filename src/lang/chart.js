@@ -1,4 +1,4 @@
-import {CanvasResult} from './canvas.js'
+import {CanvasResult} from '../canvas.js'
 import {max} from './lists.js'
 import {compareAsc, compareDesc, parse as parseDate, eachYearOfInterval, differenceInYears, format as formatDate} from 'date-fns'
 

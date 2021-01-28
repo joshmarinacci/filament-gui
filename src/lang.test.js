@@ -3,7 +3,7 @@
  */
 
 
-import {add, subtract, multiply, divide, factorial, mod, power, negate, sin, cos, tan} from './math.js'
+import {add, subtract, multiply, divide, factorial, mod, power, negate, sin, cos, tan} from './lang/math.js'
 
 test('add', () => {
     // 4 + 2 >> 6
