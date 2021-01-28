@@ -1,5 +1,5 @@
 import {useEffect, useRef} from 'react'
-import {Primitive} from './base.js'
+import {Primitive} from './lang/base.js'
 
 export class CanvasResult extends Primitive {
     constructor(cb) {
