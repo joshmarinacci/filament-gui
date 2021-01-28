@@ -1,4 +1,5 @@
-import {tests, REQUIRED, FilamentFunction} from './util.js'
+import {FilamentFunction, REQUIRED} from '../src/lang/parser.js'
+import {tests} from './util.js'
 
 
 let scope = {}
