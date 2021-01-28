@@ -40,13 +40,13 @@ tests("functions",[
     ['length([1,2,3])',3],
     ['range(5)',[0,1,2,3,4]],
     [`join([1,2,3], [4,5,6])`,[1,2,3,4,5,6]],
-    [`range(0,20,5)`,[0,5,10,15]],
+    [`range(min:0,max:20,step:5)`,[0,5,10,15]],
 ])
 
 tests('function composition', [
     ['take(range(5),2)',[0,1]],
     ['take(range(5),-2)',[3,4]],
-    [`reverse(range(0,11))`,[10,9,8,7,6,5,4,3,2,1,0]],
-    [`range(0,11) >> reverse()`,[10,9,8,7,6,5,4,3,2,1,0]]
-//     ['range(start:0, end:20, step:5)',[0,5,10,15]],
+    [`reverse(range(min:0,max:11))`,[10,9,8,7,6,5,4,3,2,1,0]],
+    [`range(min:0,max:11) >> reverse()`,[10,9,8,7,6,5,4,3,2,1,0]],
+    ['range(min:0, max:20, step:5)',[0,5,10,15]],
 ])

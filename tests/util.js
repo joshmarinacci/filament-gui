@@ -6,26 +6,11 @@ import {Parser} from '../src/lang/parser.js'
 
 // let source, grammar, semantics
 const SCOPE = {
-    add: add,
-    subtract: subtract,
-    multiply: multiply,
-    divide: divide,
-    power:power,
-
-    sin:sin,
-    cos:cos,
-    tan:tan,
-
-    length: length,
-    sum: sum,
-    range: range,
-    map: map,
-    take: take,
-    drop: drop,
-    sort: sort,
-    join: join,
-    select: select,
-    reverse:reverse,
+    add, subtract, multiply, divide, power,
+    // sin:sin,
+    // cos:cos,
+    // tan:tan,
+    drop, length, sum, range, join, take, reverse,
 }
 
 

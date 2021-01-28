@@ -1,19 +1,19 @@
 /*
 
-React hands string to parser. Wants result back. Must be async.
-wants to use a 'standard' scope.
+// React hands string to parser. Wants result back. Must be async.
+// wants to use a 'standard' scope.
+// unit tests hand string to parser, wants result back. wants to use a custom
+// scope.
 
-
-
-unit tests hand string to parser, wants result back. wants to use a custom
-scope.
+hook up simple tests too
+Use parser to run code in react
+rewrite all std lib using filament functions
 
 if parsing error, hand back an error result?
 if function crashes, throw a real error?
-
-option to enable or disable units
-
+option to enable or disable units?
 scope is an array of functions so we can easily slice and dice it.
+assemble a scope separate from the parser / evaluator
 
 */
 
@@ -60,11 +60,11 @@ export class Parser {
                 let op = b.calc()
                 let va = a.calc()
                 let vc = c.calc()
-                if(op === '+') return add(va,vc)
-                if(op === '-') return subtract(va,vc)
-                if(op === '*') return multiply(va,vc)
-                if(op === '/') return divide(va,vc)
-                if(op === '**') return power(va,vc)
+                if(op === '+') return add.fun(va,vc)
+                if(op === '-') return subtract.fun(va,vc)
+                if(op === '*') return multiply.fun(va,vc)
+                if(op === '/') return divide.fun(va,vc)
+                if(op === '**') return power.fun(va,vc)
                 throw new Error(`unknown binary operator ${op}`)
             },
             OprExp_unop:function(a,b) {
@@ -124,9 +124,10 @@ class Callsite {
         this.scope = scope
         this.name = name
         this.args = args
-        console.log("created callsite",name,args)
+        // console.log("created callsite",name,args)
     }
     apply() {
+        if(!this.scope[this.name]) throw new Error(`function not found: ${this.name}`)
         return this.scope[this.name].apply_function(this.args)
     }
     applyWithPipeline(val) {
@@ -152,30 +153,30 @@ export class FilamentFunction {
         console.log('###',this.name.toUpperCase(),...args)
     }
     apply_function(args) {
-        console.log("applying args",args)
-        console.log("to the function",this.name)
+        // console.log("applying args",args)
+        // console.log("to the function",this.name)
         let params = Object.entries(this.params).map(([key,value]) =>{
-            console.log("looking at",key,'=',value)
-            console.log("remaining args",args)
+            // console.log("looking at",key,'=',value)
+            // console.log("remaining args",args)
             //look for matching arg
             let n1 = args.findIndex(a => a.type === 'named' && a.name === key)
             if(n1 >= 0) {
-                console.log("found named ", args[n1])
+                // console.log("found named ", args[n1])
                 let arg = args[n1]
                 args.splice(n1,1)
                 return arg.value
             } else {
                 //grab the first indexed parameter we can find
-                console.log("finding indexed")
+                // console.log("finding indexed")
                 let n = args.findIndex(a => a.type === 'indexed')
                 if(n >= 0) {
-                    console.log("found", args[n])
+                    // console.log("found", args[n])
                     let arg = args[n]
                     args.splice(n,1)
                     return arg.value
                 } else {
-                    console.log("no indexed found")
-                    console.log("checking for default",value)
+                    // console.log("no indexed found")
+                    // console.log("checking for default",value)
                     if(value === REQUIRED) throw new Error(`parameter ${key} is required`)
                     return value
                 }
@@ -184,7 +185,15 @@ export class FilamentFunction {
         return this.apply_with_parameters(params)
     }
     apply_with_parameters(params) {
-        this.log("running with params",params)
+        params = params.map(p => {
+            console.log("parameter",p)
+            if(p.type === 'funcall') {
+                console.log("must evaluate argument")
+                return p.apply()
+            }
+            return p
+        })
+        //if parameter is function, apply it first and replace with new value
         return this.fun.apply(this,params)
     }
 }

@@ -10,15 +10,15 @@ function gen_range(min,max,step) {
 
 // * __range__: generate a list of numbers: `(max), (min,max), (min,max,step)`
 
-export function range(a,b,step) {
-    if(!step) step = 1
-    if(typeof a === 'undefined' || a === null) throw new Error("range requires at least one argument")
-    if(typeof b === 'undefined') {
-        return gen_range(0,a,step)
-    } else {
-        return gen_range(a,b,step)
-    }
-}
+export const range = new FilamentFunction('range', {
+    max:REQUIRED,
+    min:0,
+    step:1
+},
+    function(max,min,step){
+        return gen_range(min,max,step)
+})
+
 
 
 // * __length__: returns the length of the list
@@ -43,7 +43,7 @@ export const take =  new FilamentFunction(  "take",
         count:REQUIRED,
     },
     function (data,count) {
-        this.log(data,count)
+        // this.log(data,count)
         if(count < 0) {
             return data.slice(data.length+count,data.length)
         } else {
@@ -71,10 +71,16 @@ export const drop =  new FilamentFunction(  "drop",
 
 
 // * __join__: concatentate two lists, returning a new list. is this needed?
-export function join(a,b) {
-    if(!Array.isArray(a)) a = [a]
-    return a.concat(b)
-}
+export const join =  new FilamentFunction(  "join",
+    {
+        data:REQUIRED,
+        more:REQUIRED,
+    },
+    function (data,more) {
+        this.log('params',data,more)
+        if(!Array.isArray(more)) more = [more]
+        return data.concat(more)
+    })
 
 
 // * __map__:  convert every element in a list using a lambda function: `(list, lam)`

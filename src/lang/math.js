@@ -1,3 +1,5 @@
+import {FilamentFunction, REQUIRED} from './parser.js'
+
 function binop(a,b,cb) {
     if((!Array.isArray(a)) && (Array.isArray(b))) return b.map(v => cb(a,v))
     if((Array.isArray(a)) && (!Array.isArray(b))) return a.map(v => cb(v,b))
@@ -9,11 +11,17 @@ function unop(a,cb) {
     return cb(a)
 }
 
-export const add = (a,b) => binop(a,b,(a,b)=>a+b)
-export const subtract = (a, b) => binop(a,b,(a,b)=>a-b)
-export const multiply = (a,b) => binop(a,b,(a,b)=>a*b)
-export const divide = (a,b) => binop(a,b,(a,b)=>a/b)
-export const power = (a,b) => Math.pow(a,b)
+export const add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
+    function(a,b) { return binop(a,b,(a,b)=>a+b) })
+export const subtract = new FilamentFunction('subtract',{a:REQUIRED, b:REQUIRED},
+    function (a,b) { return binop(a,b,(a,b)=>a-b) })
+export const multiply = new FilamentFunction('multiply',{a:REQUIRED, b:REQUIRED},
+    function (a,b) { return binop(a,b,(a,b)=>a*b) })
+export const divide = new FilamentFunction('divide',{a:REQUIRED, b:REQUIRED},
+    function (a,b) { return binop(a,b,(a,b)=>a/b) })
+export const power = new FilamentFunction('power',{a:REQUIRED, b:REQUIRED},
+    function (a,b) { return binop(a,b,(a,b)=>Math.pow(a,b)) })
+
 export const negate = (a) =>unop(a,a=>-a)
 export const factorial = (a) => unop(a,(a)=>{
     if(a === 0 || a === 1) return 1
