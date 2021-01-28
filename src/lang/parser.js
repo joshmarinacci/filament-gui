@@ -17,19 +17,18 @@ assemble a scope separate from the parser / evaluator
 
 */
 
-import fs from 'fs'
 import ohm from 'ohm-js'
 import {add, divide, factorial, multiply, power, subtract} from './math.js'
 
 export const REQUIRED = Symbol('REQUIRED')
 
 export class Parser {
-    constructor(scope) {
+    constructor(scope, grammar_source) {
         this.scope = scope
+        this.grammar_source = grammar_source
         this.init(this.scope)
     }
     init(scope) {
-        this.grammar_source = fs.readFileSync(new URL('grammar.ohm', import.meta.url)).toString();
         this.grammar = ohm.grammar(this.grammar_source);
         this.semantics = this.grammar.createSemantics();
         this.semantics.addOperation('calc',{

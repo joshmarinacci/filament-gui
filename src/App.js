@@ -3,7 +3,7 @@ import './App.css'
 
 import {HBox, VBox} from './gui/ui.js'
 import {ResultArea} from './gui/views.js'
-import {real_eval} from './lang/lang.js'
+import {real_eval, real_eval2} from './lang/lang.js'
 import "codemirror/lib/codemirror.css"
 import "codemirror/theme/mdn-like.css"
 
@@ -16,7 +16,7 @@ function App() {
     const [code, setCode] = useState('5+6')
     const [result, setResult] = useState(null)
 
-    const doEval = (code) => real_eval(code).then(d => setResult(d))
+    const doEval = (code) => real_eval2(code).then(d => setResult(d))
 
     return (
         <HBox fill>

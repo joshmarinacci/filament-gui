@@ -3,6 +3,8 @@ import {drop, join, map, reverse, select, sort, sum, take, range, length} from '
 import {chart, histogram, timeline} from './chart.js'
 import {dataset, stockhistory} from './dataset.js'
 
+import {default as src} from "./grammar.ohm"
+import {Parser} from './parser.js'
 export const scope = {
     add: add,
     subtract: subtract,
@@ -34,7 +36,23 @@ export const scope = {
 }
 
 
-
+export async function real_eval2(code) {
+    console.log("really evaluating",code)
+    console.log("src is",src)
+    return fetch(src).then(r => r.text()).then(txt => {
+        console.log("got the text",txt)
+        let parser = new Parser(scope,txt)
+        let m = parser.parse(code)
+        console.log("match",m)
+        if(m.failed()) throw new Error("match failed on: " + code);
+        let val = parser.calc(m)
+        if(val.type === 'funcall')  val = val.apply()
+        console.log("value",val)
+        return val
+    })
+    // let parser = new Parser(scope,src)
+    // return -99
+}
 export async function real_eval(code) {
 
     let lines = code.split("\n")

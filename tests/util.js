@@ -1,3 +1,4 @@
+import fs from 'fs'
 import test from "tape"
 import tp from "tape-approximately"
 import {add, cos, divide, factorial, multiply, power, sin, subtract, tan} from '../src/lang/math.js'
@@ -17,11 +18,12 @@ const SCOPE = {
 tp(test)
 
 
+let grammar_source = fs.readFileSync(new URL('grammar.ohm', import.meta.url)).toString();
 
 export function tests(msg,arr, opts) {
     let scope = SCOPE
     if(opts && opts.scope) scope = opts.scope
-    let parser = new Parser(scope)
+    let parser = new Parser(scope, grammar_source)
     test(msg, (t)=>{
         arr.forEach((tcase) => {
             let str = tcase[0];
