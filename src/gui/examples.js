@@ -55,6 +55,10 @@ take(range(min:0, max:100,step:10), -5)
         title:'simple chart ',
         code:`chart(range(10))`,
     },
+    {
+        title:'pipeline example',
+        code:`range(10) >> chart()`
+    },
     // {
     //     title:'bars of x**2',
     //     code:`chart(map(range(0,10), x=>power(x,2)))`
@@ -63,6 +67,10 @@ take(range(min:0, max:100,step:10), -5)
     //     title:'bars of sin() 0->10',
     //     code:`chart(map(divide(range(0,100),10), x=>cos(x)))`
     // },
+    {
+        title:'alphabet data',
+        code: `dataset('alphabet')`
+    },
     {
         title:'syllables for each letter',
         code:`chart(dataset('alphabet'), x_label:'letter', y:'syllables')`
