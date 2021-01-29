@@ -72,6 +72,10 @@ take(range(min:0, max:100,step:10), -5)
         code: `dataset('alphabet')`
     },
     {
+        title:'length of data',
+        code:`dataset('alphabet') >> length()`
+    },
+    {
         title:'syllables for each letter',
         code:`chart(dataset('alphabet'), x_label:'letter', y:'syllables')`
     },
