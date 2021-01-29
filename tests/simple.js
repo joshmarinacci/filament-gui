@@ -35,6 +35,7 @@ tests('arithmetic',[
 tests("strings",[
     [`"fortytwo"`,"fortytwo"],
     [`"forty two"`,"forty two"],
+    [`"forty_two"`,"forty_two"],
 ])
 
 tests("functions",[

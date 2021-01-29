@@ -63,7 +63,7 @@ Filament {
     = number unit
 
   string
-    = "\"" (letter|space)* "\""
-    | "\'" (letter|space)* "\'"
+    = "\"" (letter|space|digit|underscore)* "\""
+    | "\'" (letter|space|digit|underscore)* "\'"
 }
 
