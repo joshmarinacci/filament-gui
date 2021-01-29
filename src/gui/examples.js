@@ -105,11 +105,10 @@ histogram(states)`
     },
     {
         title:'timeline of states entering the union',
-        code: `let states = await dataset('states')
-timeline(states, date:'statehood_date', name:'name')`
+        code: `dataset('states') >> timeline(date:'statehood_date', name:'name')`
     },
     {
         title:'history of apple stock last 5 years',
-        code: `chart(await stockhistory('AAPL'), y:'close')`
+        code: `chart(stockhistory('AAPL'), y:'close')`
     }
 ]
