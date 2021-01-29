@@ -89,9 +89,7 @@ take(range(min:0, max:100,step:10), -5)
     },
     {
         title:'5 tallest buildings. name vs height',
-        code: `let buildings = await dataset('tallest_buildings')
-        let b2 = take(buildings,5) 
-        chart(b2, y:'height', x_label:'name')`
+        code: `dataset('tallest_buildings') >> take(count:5) >> chart(y:'height', x_label:'name')`
     },
     {
         title:'most populous countries',

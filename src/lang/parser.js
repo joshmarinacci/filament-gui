@@ -176,7 +176,7 @@ export class FilamentFunction {
                 } else {
                     // console.log("no indexed found")
                     // console.log("checking for default",value)
-                    if(value === REQUIRED) throw new Error(`parameter ${key} is required`)
+                    if(value === REQUIRED) throw new Error(`parameter ${key} is required in function ${this.name}`)
                     return value
                 }
             }
