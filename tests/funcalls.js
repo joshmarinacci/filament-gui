@@ -42,6 +42,6 @@ tests("pipelines",[
 
 
 tests('async functions',[
-    ['length(dataset("alphabet"))',26]
+    ['length(dataset("alphabet"))',26],
     ['dataset("alphabet") >> length()',26],
 ],{scope})
