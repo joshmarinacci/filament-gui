@@ -1,16 +1,7 @@
 import {CanvasResult} from '../canvas.js'
-import {max as RealMax} from './lists.js'
 import {compareAsc, compareDesc, parse as parseDate, eachYearOfInterval, differenceInYears, format as formatDate} from 'date-fns'
 import {FilamentFunction, REQUIRED} from './parser.js'
 
-
-const max = (data) => {
-    let arg = {
-        type:'indexed',
-        value:data,
-    }
-    return RealMax.apply_function([arg])
-}
 
 function draw_legend(ctx, canvas, data, x_label, y_label) {
     let font_height = 20
@@ -23,6 +14,9 @@ function draw_legend(ctx, canvas, data, x_label, y_label) {
     let yy = font_height
     ctx.fillText(legend,xx,yy)
 }
+
+const max = (data) => data.reduce((a,b)=> a>b?a:b)
+
 
 function draw_scatter(ctx, canvas, data, x, y) {
     let x_values = data.map(d => d[x])
@@ -45,18 +39,26 @@ function draw_scatter(ctx, canvas, data, x, y) {
 export const chart = new FilamentFunction('chart',
     {
         data:REQUIRED,
+        x:null,
+        // x_label:null,
+        y:null,
+        // y_label:null,
+        type:'bar',
     },
-    function (data,{x,x_label,y,y_label, type='bar'}={width:300, height:400,}) {
+    function (data, x, y, type) {
+    this.log("running the chart with data",data,'y is',y)
     return new CanvasResult((canvas)=>{
         let ctx = canvas.getContext('2d')
         ctx.save()
         clear(ctx,canvas)
         if(data.data && data.data.items) data = data.data.items
 
-        if(!x_label) x_label = x?x:x_label
-        if(!x_label) x_label = 'index'
-        if(!y_label) y_label = y?y:y_label
-        if(!y_label) y_label = 'value'
+        let x_label = 'index'
+        let y_label = 'value'
+        // if(!x_label) x_label = x?x:x_label
+        // if(!x_label) x_label = 'index'
+        // if(!y_label) y_label = y?y:y_label
+        // if(!y_label) y_label = 'value'
         // ctx.scale(1,-1)
         // ctx.translate(0,-canvas.height)
         // draw_border(ctx, canvas)

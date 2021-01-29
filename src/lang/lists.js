@@ -28,6 +28,7 @@ export const length = new FilamentFunction(    'length',
     },
     function(data) {
         this.log(data)
+        if(is_dataset(data)) return data.data.items.length
         return data.length
     }
 )

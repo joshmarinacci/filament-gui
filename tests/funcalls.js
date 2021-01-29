@@ -1,8 +1,9 @@
 import {tests} from './util.js'
 import {drop, length, max, reverse, sort, sum, take} from '../src/lang/lists.js'
+import {dataset} from '../src/lang/dataset.js'
 
 
-let scope = {drop, length, max, reverse, sort, sum, take}
+let scope = {drop, length, max, reverse, sort, sum, take, dataset}
 
 tests("functions",[
     ['[4,2,42]',[4,2,42]],
@@ -38,3 +39,8 @@ tests("pipelines",[
     ['take([4,2,42],count:2) >> sort(order:"descending")',[4,2]],
 ],{ scope })
 
+
+
+tests('async functions',[
+    ['length(dataset("alphabet"))',26]
+],{scope})

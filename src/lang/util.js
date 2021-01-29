@@ -1,3 +1,5 @@
+import {default as fetch} from 'node-fetch'
+
 class JoshCache {
     constructor() {
         this.data = {}

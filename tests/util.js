@@ -25,7 +25,7 @@ export function tests(msg,arr, opts) {
     if(opts && opts.scope) scope = opts.scope
     let parser = new Parser(scope, grammar_source)
     test(msg, (t)=>{
-        arr.forEach((tcase) => {
+        let proms = arr.map((tcase) => {
             let str = tcase[0];
             let ans = tcase[1];
             let m = parser.parse(str)
@@ -34,8 +34,12 @@ export function tests(msg,arr, opts) {
             // return t.approximately(res.getValue(), ans, 0.001);
             let val = parser.calc(m)
             if(val.type === 'funcall')  val = val.apply()
-            return t.deepEqual(val,ans);
+            return Promise.resolve(val).then(val => {
+                t.deepEqual(val,ans);
+            })
         });
-        t.end();
+        Promise.allSettled(proms).then(()=>{
+            t.end()
+        })
     });
 }

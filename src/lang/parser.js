@@ -186,13 +186,16 @@ export class FilamentFunction {
     apply_with_parameters(params) {
         params = params.map(p => {
             console.log("parameter",p)
-            if(p.type === 'funcall') {
+            if(p&&p.type === 'funcall') {
                 console.log("must evaluate argument")
-                return p.apply()
+                return Promise.resolve(p.apply())
             }
-            return p
+            return Promise.resolve(p)
         })
-        //if parameter is function, apply it first and replace with new value
-        return this.fun.apply(this,params)
+        console.log("final params",params)
+        return Promise.all(params).then(params=>{
+            console.log("real final params",params)
+            return this.fun.apply(this,params)
+        })
     }
 }
