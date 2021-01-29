@@ -1,13 +1,20 @@
 import {parse as parseDate} from 'date-fns'
 import {cached_json_fetch} from './util.js'
+import {FilamentFunction, REQUIRED} from './parser.js'
 
 let AV_API_KEY= '1S4KT3P0F4XXIVRL'
 
-export async function dataset(name) {
-    let url = `https://api.silly.io/api/list/${name}`
-    console.log("loading",url)
-    return await cached_json_fetch(url)
-}
+export const dataset = new FilamentFunction('dataset',
+    {
+        name:REQUIRED,
+    },
+    async function (name) {
+        let url = `https://api.silly.io/api/list/${name}`
+        console.log("loading",url)
+        return await cached_json_fetch(url)
+    }
+)
+
 
 
 export async function stockhistory(symbol) {
