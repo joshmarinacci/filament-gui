@@ -69,24 +69,24 @@ take(range(min:0, max:100,step:10), -5)
     },
     {
         title:"elements number vs weight",
-        code: `chart(dataset('elements'), {x:'number', y:'weight', type:'scatter'})`
+        code: `chart(dataset('elements'), x:'number', y:'weight', type:'scatter')`
     },
     {
         title:"planets radius vs orbit radius",
         code: `let planets = await dataset('planets')
-        chart(planets,{type:'scatter', x:'orbital_radius',y:'mean_radius'})
+        chart(planets,type:'scatter', x:'orbital_radius',y:'mean_radius')
         `
     },
     {
         title:'5 tallest buildings. name vs height',
         code: `let buildings = await dataset('tallest_buildings')
         let b2 = take(buildings,5) 
-        chart(b2, {y:'height', x_label:'name'})`
+        chart(b2, y:'height', x_label:'name')`
     },
     {
         title:'most populous countries',
         code: `let countries = take(await dataset('countries'), 10)
-chart(countries, {x_label:'name', y:(y)=>parseInt(y.population), y_label:'population'})`
+chart(countries, x_label:'name', y:(y)=>parseInt(y.population), y_label:'population')`
     },
     {
         title:'histogram of states first letters',
@@ -98,10 +98,10 @@ histogram(states)`
     {
         title:'timeline of states entering the union',
         code: `let states = await dataset('states')
-timeline(states, {date:'statehood_date', name:'name'})`
+timeline(states, date:'statehood_date', name:'name')`
     },
     {
         title:'history of apple stock last 5 years',
-        code: `chart(await stockhistory('AAPL'), {y:'close'})`
+        code: `chart(await stockhistory('AAPL'), y:'close')`
     }
 ]

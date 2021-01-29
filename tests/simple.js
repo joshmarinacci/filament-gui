@@ -32,6 +32,11 @@ tests('arithmetic',[
     // ['4 mod 2',4%2],
 ])
 
+tests("strings",[
+    [`"fortytwo"`,"fortytwo"],
+    [`"forty two"`,"forty two"],
+])
+
 tests("functions",[
     ['42',42],
     ['add(42,42)',84],
@@ -41,6 +46,9 @@ tests("functions",[
     ['range(5)',[0,1,2,3,4]],
     [`join([1,2,3], [4,5,6])`,[1,2,3,4,5,6]],
     [`range(min:0,max:20,step:5)`,[0,5,10,15]],
+    [`length("forty")`,5],
+    [`length(data:'forty')`,5],
+    //  chart(dataset('alphabet'), x_label:'letter', y:'syllables')
 ])
 
 tests('function composition', [

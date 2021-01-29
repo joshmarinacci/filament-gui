@@ -48,10 +48,12 @@ Filament {
     | number      -- without_unit
 
   ident  (an identifier)
-    = letter alnum*
+    = letter (letter | number | underscore)*
 
   unit
     = letter+
+
+  underscore = "_"
 
   number  (a number)
     = digit* "." digit+  -- float
@@ -61,7 +63,7 @@ Filament {
     = number unit
 
   string
-    = "\"" letter* "\""
-    | "\'" letter* "\'"
+    = "\"" (letter|space)* "\""
+    | "\'" (letter|space)* "\'"
 }
 
