@@ -116,7 +116,19 @@ class FNamedArg {
 }
 const named   = (n,v) => new FNamedArg(n,v)
 
+class Pipeline {
+    constructor(dir,first,next) {
+        this.type = 'pipeline'
+        this.direction = dir
+        this.first = first
+        this.next = next
+    }
+    toString() {
+        return this.first.toString() + ">>" + this.next.toString()
+    }
+}
 
+const pipeline_right = (a,b) => new Pipeline('right',a,b)
 
 
 let grammar_source = fs.readFileSync(new URL('../src/lang/grammar.ohm', import.meta.url)).toString();
@@ -174,6 +186,10 @@ semantics.addOperation('ast',{
     },
     Funcall_noargs:function(ident,a,b) {
         return call(ident.ast(),[])
+    },
+
+    PriExp_pipeline_right:function(a,b,c) {
+        return pipeline_right(a.ast(),c.ast())
     }
 
 })
@@ -324,10 +340,35 @@ function test_function_calls() {
 }
 function test_pipelines() {
     verify_ast("pipelines", [
-        ['func() >> funk()','func() >> funk()'],
-        ['func([42]) >> funk()','func([42]) >> func()']
-        ['func(arg: _42, [4_2 ],) >> func(count:42) >> funk(42) >> answer',
-            'func([42], arg:42) >> func(count:42) >> func(42) >> answer']
+        ['func() >> funk()',
+            pipeline_right(
+                call('func',[]),
+                call('funk',[]),
+            ),
+            'func()>>funk()',42],
+        ['func([42]) >> funk()',
+            pipeline_right(
+                call('func',[indexed( list([scalar(42)]) )]),
+                call('funk',[])
+            )
+            ,'func([42])>>funk()',42],
+        ['func(42) >> func(count:42)',
+            pipeline_right(
+                call('func',[indexed(scalar(42))]),
+                call('func',[named('count',scalar(42))]),
+            ),
+            'func(42)>>func(count:42)', 42 ],
+        ['func(42) >> func(count:42) >> func(42)',
+            pipeline_right(
+                call('func',[indexed(scalar(42))]),
+                pipeline_right(
+                    call('func',[named('count',scalar(42))]),
+                    call('func',[indexed(scalar(42))]),
+                ),
+            ),
+            'func(42)>>func(count:42)>>func(42)',42]
+        // ['func(arg: _42, [4_2 ],) >> func(count:42) >> funk(42) >> answer',
+        //     'func([42], arg:42) >> func(count:42) >> func(42) >> answer']
     ])
 }
 function test_blocks() {
@@ -387,7 +428,7 @@ function doAll() {
     test_operators()
     // test_units()
     test_function_calls()
-    // test_pipelines()
+    test_pipelines()
     // test_comments()
     // test_blocks()
     // test_variable_assignment()
