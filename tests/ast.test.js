@@ -68,6 +68,9 @@ semantics.addOperation('ast',{
     number_integer:function(a) {
         return scalar(parseInt(strip_under(a.sourceString)))
     },
+    number_float:function(a,b,c) {
+        return scalar(parseFloat(strip_under(a.sourceString + b.sourceString + c.sourceString)))
+    },
     number_hex:function(_,a) {
         return scalar(parseInt(strip_under(a.sourceString),16))
     },
@@ -106,10 +109,10 @@ function test_literals() {
         ['4_2', scalar(42), '42', 42],
 
         //floating point
-        // ['4.2','4.2'],
-        // ['04.2','4.2'],
-        // ['4.20','4.2'],
-        // ['4_._2','4.2'],
+        ['4.2',scalar(4.2), '4.2', 4.2],
+        ['04.2',scalar(4.2),'4.2',4.2],
+        ['4.20',scalar(4.2),'4.2',4.2],
+        ['4_._2',scalar(4.2),'4.2',4.2],
 
         //hex
         ['0x42', scalar(0x42), '66',0x42],
@@ -117,7 +120,7 @@ function test_literals() {
         //lists
         ['[4,2,42]', list([scalar(4),scalar(2),scalar(42)]), '[4,2,42]',[4,2,42]],
         ['[4, 2, 42]', list([scalar(4),scalar(2),scalar(42)]), '[4,2,42]',[4,2,42]],
-        // ['[4.2, 02.4, 4_2]', '[4,2,42]'],
+        ['[4.2, 02.4, 4_2]', list([scalar(4.2),scalar(2.4),scalar(42)]), '[4.2,2.4,42]',[4.2,2.4,42]],
 
         //underscores
         ['[4_, _2, 4_2]',list([scalar(4),scalar(2),scalar(42)]), '[4,2,42]', [4,2,42]],
