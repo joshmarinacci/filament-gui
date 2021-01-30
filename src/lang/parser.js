@@ -107,8 +107,7 @@ export class Parser {
             PriExp_pipeline_right:function(a,_,b) {
                 let fa = a.calc()
                 let fb = b.calc()
-                let va =  fa.apply()
-                return fb.applyWithPipeline(va)
+                return fb.applyWithPipeline(fa)
             }
         })
     }
@@ -123,7 +122,7 @@ export class Parser {
 
 class Callsite {
     constructor(scope, name, args) {
-        this.type = 'funcall'
+        this.type = 'callsite'
         this.scope = scope
         this.name = name
         this.args = args
@@ -133,11 +132,12 @@ class Callsite {
         if(!this.scope[this.name]) throw new Error(`function not found: ${this.name}`)
         return this.scope[this.name].apply_function(this.args)
     }
-    applyWithPipeline(val) {
+    applyWithPipeline(fa) {
+        // console.log("doing pipeline with fa",fa)
         let args = this.args.slice()
         let arg = {
             type:'indexed',
-            value:val,
+            value:fa,
         }
         args.unshift(arg)
         //evaluate any function args
@@ -190,7 +190,7 @@ export class FilamentFunction {
     apply_with_parameters(params) {
         params = params.map(p => {
             console.log("parameter",p)
-            if(p&&p.type === 'funcall') {
+            if(p&&p.type === 'callsite') {
                 console.log("must evaluate argument")
                 return Promise.resolve(p.apply())
             }

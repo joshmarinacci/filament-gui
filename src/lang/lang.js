@@ -46,7 +46,7 @@ export async function real_eval2(code) {
         console.log("match",m)
         if(m.failed()) throw new Error("match failed on: " + code);
         let val = parser.calc(m)
-        if(val.type === 'funcall')  val = val.apply()
+        if(val.type === 'callsite')  val = val.apply()
         console.log("value",val)
         return val
     })

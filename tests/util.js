@@ -33,7 +33,7 @@ export function tests(msg,arr, opts) {
             // let sem = parser.semantics(m);
             // return t.approximately(res.getValue(), ans, 0.001);
             let val = parser.calc(m)
-            if(val.type === 'funcall')  val = val.apply()
+            if(val.type === 'callsite')  val = val.apply()
             return Promise.resolve(val).then(val => {
                 t.deepEqual(val,ans);
             })

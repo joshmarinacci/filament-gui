@@ -59,5 +59,4 @@ tests('function composition', [
     [`reverse(range(min:0,max:11))`,[10,9,8,7,6,5,4,3,2,1,0]],
     [`range(min:0,max:11) >> reverse()`,[10,9,8,7,6,5,4,3,2,1,0]],
     ['range(min:0, max:20, step:5)',[0,5,10,15]],
-    // ['dataset(‘tallest_buildings’) >> take(count:5)',[]]
 ])
