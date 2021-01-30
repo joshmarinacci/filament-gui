@@ -2,27 +2,42 @@ import test from "tape"
 import fs from 'fs'
 import ohm from 'ohm-js'
 
-const scalar = n => ({
-    type:'scalar',
-    value:n,
-    toString:function() {
+class FScalar {
+    constructor(value) {
+        this.type = 'scalar'
+        this.value = value
+    }
+    toString() {
         return (""+this.value)
     }
-})
-const string = n => ({
-    type:'string',
-    value:n,
-    toString:function() {
+}
+const scalar = n => new FScalar(n)
+
+class FString {
+    constructor(value) {
+        this.type = 'string'
+        this.value = value
+    }
+    toString() {
         return `"${this.value}"`
     }
-})
-const list = arr => ({
-    type:'list',
-    value:arr,
-    toString:function() {
+}
+
+const string = n => new FString(n)
+
+class FList {
+    constructor(arr) {
+        this.type = 'list'
+        this.value = arr
+    }
+
+    toString() {
         return `[${this.value.join(",")}]`
     }
-})
+}
+
+const list = arr => new FList(arr)
+
 const call = (name,...args) => {
     return {
         type:'call',
@@ -61,13 +76,12 @@ function verify_ast_to_string(name, tests) {
     test(name, (t)=>{
         Promise.allSettled(tests.map((tcase) => {
             console.log("tcase",tcase)
-            let [code,ans] = tcase
-            console.log("case",code,' -> ', ans)
+            let [code,obj,str,val] = tcase
             let match = grammar.match(code)
             let ast = semantics(match).ast()
             console.log("ast",ast)
-            console.log("final",ast.toString())
-            t.deepEqual(ast.toString(),ans)
+            t.deepLooseEqual(ast,obj)
+            t.deepEqual(ast.toString(),str)
         })).then(()=>t.end())
     })
 }
@@ -76,9 +90,9 @@ function verify_ast_to_string(name, tests) {
 function test_literals() {
     verify_ast_to_string("literals", [
         //integers
-        ['4', '4'],
-        ['42', '42'],
-        ['4_2', '42'],
+        ['4', scalar(4), '4', 4],
+        ['42', scalar(42), '42', 42],
+        ['4_2', scalar(42), '42', 42],
 
         //floating point
         // ['4.2','4.2'],
@@ -87,22 +101,26 @@ function test_literals() {
         // ['4_._2','4.2'],
 
         //hex
-        ['0x42', '66'],
+        ['0x42', scalar(0x42), '66',0x42],
 
         //lists
-        ['[4,2,42]', '[4,2,42]'],
-        ['[4, 2, 42]', '[4,2,42]'],
+        ['[4,2,42]', list([scalar(4),scalar(2),scalar(42)]), '[4,2,42]',[4,2,42]],
+        ['[4, 2, 42]', list([scalar(4),scalar(2),scalar(42)]), '[4,2,42]',[4,2,42]],
         // ['[4.2, 02.4, 4_2]', '[4,2,42]'],
 
         //underscores
-        ['[4_, _2, 4_2]', '[4,2,42]'],
+        ['[4_, _2, 4_2]',list([scalar(4),scalar(2),scalar(42)]), '[4,2,42]', [4,2,42]],
 
         //strings
-        [`"fortytwo"`, `"fortytwo"`],
-        [`"forty two"`, `"forty two"`],
-        [`'forty two'`, `"forty two"`],
+        [`"fortytwo"`, string('fortytwo'), `"fortytwo"`,'fortytwo'],
+        [`"forty two"`, string('forty two'), `"forty two"`,'forty two'],
+        [`'forty two'`, string('forty two'),`"forty two"`,'forty two'],
 
-        // [`["forty two", '42']`,`["fortytwo","42"]`]
+        [`["fortytwo", 42]`,
+            list([string("fortytwo"),scalar(42)]),
+            `["fortytwo",42]`,
+            ['fortytwo',42],
+        ]
 
         //booleans
         // ['true','true'],
