@@ -49,13 +49,10 @@
 
 # alternatives
 
-pipeline: `|` `|>` `->`
-
-anonymous function calls: `(x)=>(x*2)` or `(x)={x*2}`
-
-apply operator over a list `@/` `//` or `over`.  ex:  `+ over [1,2,3]` to calculate the total.
-
-* `-` or whitespace inside identifiers. Would this cause more trouble than it's worth?
+* pipeline: `|` `|>` `->`
+* anonymous function calls: `(x)=>(x*2)` or `(x)={x*2}`
+* apply operator over a list `@/` `//` or `over`.  ex:  `+ over [1,2,3]` to calculate the total.
+* allowing `-` or whitespace inside identifiers. Would this cause more trouble than it's worth?
 
 
 # Unicode operators and identifiers
