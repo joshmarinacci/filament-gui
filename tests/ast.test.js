@@ -168,21 +168,25 @@ function test_literals() {
 
 function test_comments() {
     verify_ast("comments", [
-        ['//comment', "//comment"],
-        ['//42 * 58',"//42 * 58"],
-        ['//    text    ',"//    text    "],
+        ['//comment', null, "//comment", null],
+        ['//42 * 58', null, "//42 * 58", null],
+        ['//    text    ', null, "//    text    ", null],
     ])
 }
 
 function test_units() {
     verify_ast("literals", [
-        [`42m`,"42 meter"],
-        [`42ft`,"42 foot"],
-        [`42m/s`,"42 meter/second"],
-        ['42%','0.42'],
-        ['42 %','0.42'],
-        ['42 ft as in','42 foot as inch'],
-        ['42 feet as inches','42 foot as inch'],
+        [`42m`,scalar(42,'meter'),"42 meter",42],
+        [`42ft`,scalar(42,'foot'),"42 foot",42],
+        [`42m/s`,scalar(42,'meter/second'),"42 meter/second",42],
+        ['42%',scalar(0.42),'0.42',0.42],
+        ['42 %',scalar(0.42),'0.42',0.42],
+        ['42 ft as in',
+            call('convert',[indexed(scalar(42,'foot')),named("unit","inch")]),
+            '42 foot as inch',42],
+        ['42 feet as inches',
+            call('convert',[indexed(scalar(42,'foot')),named("unit","inch")]),
+            '42 foot as inch',42],
     ])
 }
 
