@@ -10,6 +10,9 @@ class FScalar {
     toString() {
         return (""+this.value)
     }
+    evalJS() {
+        return this.value
+    }
 }
 const scalar = n => new FScalar(n)
 
@@ -20,6 +23,9 @@ class FString {
     }
     toString() {
         return `"${this.value}"`
+    }
+    evalJS() {
+        return this.value
     }
 }
 
@@ -33,6 +39,9 @@ class FList {
 
     toString() {
         return `[${this.value.join(",")}]`
+    }
+    evalJS() {
+        return this.value.map(obj => obj.evalJS())
     }
 }
 
@@ -72,7 +81,7 @@ semantics.addOperation('ast',{
     }
 })
 
-function verify_ast_to_string(name, tests) {
+function verify_ast(name, tests) {
     test(name, (t)=>{
         Promise.allSettled(tests.map((tcase) => {
             console.log("tcase",tcase)
@@ -82,13 +91,15 @@ function verify_ast_to_string(name, tests) {
             console.log("ast",ast)
             t.deepLooseEqual(ast,obj)
             t.deepEqual(ast.toString(),str)
+            console.log("resolved to",ast.evalJS())
+            t.deepEqual(ast.evalJS(),val)
         })).then(()=>t.end())
     })
 }
 
 
 function test_literals() {
-    verify_ast_to_string("literals", [
+    verify_ast("literals", [
         //integers
         ['4', scalar(4), '4', 4],
         ['42', scalar(42), '42', 42],
@@ -132,7 +143,7 @@ function test_literals() {
 
 
 function test_comments() {
-    verify_ast_to_string("comments", [
+    verify_ast("comments", [
         ['//comment', "//comment"],
         ['//42 * 58',"//42 * 58"],
         ['//    text    ',"//    text    "],
@@ -140,7 +151,7 @@ function test_comments() {
 }
 
 function test_units() {
-    verify_ast_to_string("literals", [
+    verify_ast("literals", [
         [`42m`,"42 meter"],
         [`42ft`,"42 foot"],
         [`42m/s`,"42 meter/second"],
@@ -152,7 +163,7 @@ function test_units() {
 }
 
 function test_variable_assignment() {
-    verify_ast_to_string("variables and identifiers", [
+    verify_ast("variables and identifiers", [
         [`aprime << 13`, `aprime << 13`],
         [`a_prime<< 13`, `aprime << 13`],
         [`APRIME << 13`, `aprime << 13`],
@@ -166,7 +177,7 @@ function test_variable_assignment() {
 }
 
 function test_operators() {
-    verify_ast_to_string("binary operators", [
+    verify_ast("binary operators", [
         ['4+2','add(4,2)'],
         ['4-2','subtract(4,2)'],
         ['4*2','multiply(4,2)'],
@@ -174,7 +185,7 @@ function test_operators() {
         ['4**2','power(4,2)'],
         ['4 mod 2','mod(4,2)'],
     ])
-    verify_ast_to_string('boolean operators',[
+    verify_ast('boolean operators',[
         ['4<2','lessthan(4,2)'],
         ['4 > 2','greaterthan(4,2)'],
         ['4 = 2','equal(4,2)'],
@@ -185,7 +196,7 @@ function test_operators() {
         ['true or false', 'or(true,false)'],
     ])
 
-    verify_ast_to_string('unary operators',[
+    verify_ast('unary operators',[
         ['-42','-42'],
         ['-4/2','-4/2'],
         ['4!','factorial(4)'],
@@ -194,7 +205,7 @@ function test_operators() {
 }
 
 function test_function_calls() {
-    verify_ast_to_string("function calls", [
+    verify_ast("function calls", [
         ['func(42)','func(42)'],
         ['func([42])','func([42])'],
         ['func(data:42)','func(data:42)'],
@@ -211,7 +222,7 @@ function test_function_calls() {
 }
 
 function test_pipelines() {
-    verify_ast_to_string("pipelines", [
+    verify_ast("pipelines", [
         ['func() >> funk()','func() >> funk()'],
         ['func([42]) >> funk()','func([42]) >> func()']
         ['func(arg: _42, [4_2 ],) >> func(count:42) >> funk(42) >> answer',
@@ -220,7 +231,7 @@ function test_pipelines() {
 }
 
 function test_blocks() {
-    verify_ast_to_string("blocks", [
+    verify_ast("blocks", [
         [`4
           2`,'4\n2'],
         [`4*2
@@ -240,7 +251,7 @@ function test_blocks() {
 }
 
 function test_unicode_replacement() {
-    verify_ast_to_string("unicode", [
+    verify_ast("unicode", [
         ['ø','theta'],
         ['π','pi'],
         ['','alpha'],
@@ -252,7 +263,7 @@ function test_unicode_replacement() {
 
 }
 function test_conditionals() {
-    verify_ast_to_string('conditionals',[
+    verify_ast('conditionals',[
         [`if true { 42 }`,'if(true, {42},{})'],
         [`if _false { 42 }`,'if(false,{42},{})'],
         [`if true { 42 } else { 24 }`,'if(true,{42},{24})'],
@@ -263,7 +274,7 @@ function test_conditionals() {
    ])
 }
 function test_function_definitions() {
-    verify_ast_to_string('function definitions',[
+    verify_ast('function definitions',[
         [`def chart(data=?,x="index",y="value") {
               log("doing a chart")
               42 
