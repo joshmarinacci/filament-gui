@@ -22,6 +22,7 @@ import {add, divide, factorial, multiply, power, subtract} from './math.js'
 
 export const REQUIRED = Symbol('REQUIRED')
 
+const strip_under = s => s.replaceAll("_","")
 export class Parser {
     constructor(scope, grammar_source) {
         this.scope = scope
@@ -33,13 +34,16 @@ export class Parser {
         this.semantics = this.grammar.createSemantics();
         this.semantics.addOperation('calc',{
             ident:function(first,rest) {
-                return first.calc() + "" + rest.calc().join("")
+                return strip_under(first.calc() + "" + rest.calc().join(""))
             },
             number_integer:function(a) {
-                return parseInt(a.sourceString)
+                return parseInt(strip_under(a.sourceString))
             },
             number_float:function(a,b,c) {
-                return parseFloat(a.sourceString + b.sourceString + c.sourceString)
+                return parseFloat(strip_under(a.sourceString + b.sourceString + c.sourceString))
+            },
+            number_hex:function(a,b) {
+                return parseInt(strip_under(b.sourceString),16)
             },
             string:function(a,b,c) {
                 return b.sourceString

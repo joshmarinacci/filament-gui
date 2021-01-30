@@ -4,10 +4,11 @@ import {tests} from './util.js'
 tests('parsing 42 in different formats', [
     ['42',42],
     ['4.2',4.2],
-    // ['0x42',0x42],
+    ['0x42',0x42],
+    ['0XFF',0xFF],
     // ['4.2e2',420],
     // ['42e2',4200],
-    // ['42_000_000',42*1000*1000],
+    ['42_000_000',42*1000*1000],
     // ['42%',0.42],
     // ['66.6%',0.666]
     // ['4.2 ft',[42,'ft']]
@@ -58,4 +59,5 @@ tests('function composition', [
     [`reverse(range(min:0,max:11))`,[10,9,8,7,6,5,4,3,2,1,0]],
     [`range(min:0,max:11) >> reverse()`,[10,9,8,7,6,5,4,3,2,1,0]],
     ['range(min:0, max:20, step:5)',[0,5,10,15]],
+    // ['dataset(‘tallest_buildings’) >> take(count:5)',[]]
 ])

@@ -42,28 +42,31 @@ Filament {
     = "[" PriExp ("," PriExp)* "]" -- full
     | "[" "]"        -- empty
 
+
+  hexdigunder = "a".."f"|"A".."F"|"0".."9" | "_"
+  underscore = "_"
+  digunder = digit | underscore
+  q = "\'"
+  qq = "\""
+  str = letter | space | underscore | digit
+  string
+    = qq (~qq any)* qq
+    |  q (~q  any)*  q
+
+  number  (a number)
+    = ("0x" | "0X") hexdigunder+  -- hex
+    | digunder* "." digunder+     -- float
+    | digunder+                   -- integer
+
+  unit = letter+
+  numberunit = number unit
+
+  ident = letter (letter | number | underscore)*
+
   UnitNumber
     = number unit -- with_unit
     | numberunit  -- with_unit2
     | number      -- without_unit
 
-  ident  (an identifier)
-    = letter (letter | number | underscore)*
-
-  unit
-    = letter+
-
-  underscore = "_"
-
-  number  (a number)
-    = digit* "." digit+  -- float
-    | digit+             -- integer
-
-  numberunit
-    = number unit
-
-  string
-    = "\"" (letter|space|digit|underscore)* "\""
-    | "\'" (letter|space|digit|underscore)* "\'"
 }
 
