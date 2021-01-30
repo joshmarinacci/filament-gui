@@ -27,6 +27,7 @@ Filament {
     | "-" PriExp   -- neg
     | List
     | UnitNumber
+    | bool
     | string
     | ident
 
@@ -60,6 +61,8 @@ Filament {
 
   unit = letter+
   numberunit = number unit
+
+  bool = "true" | "false"
 
   ident = letter (letter | number | underscore)*
 

@@ -31,6 +31,21 @@ class FString {
 
 const string = n => new FString(n)
 
+class FBoolean {
+    constructor(value) {
+        this.type = 'boolean'
+        this.value = value
+    }
+    toString() {
+        return (this.value == true)?"true":"false"
+    }
+    evalJS() {
+        return this.value
+    }
+}
+
+const boolean = v => new FBoolean(v)
+
 class FList {
     constructor(arr) {
         this.type = 'list'
@@ -77,6 +92,11 @@ semantics.addOperation('ast',{
     string:function(_1,str,_2) {
         return string(str.sourceString)
     },
+    bool:function(a) {
+        if(a.sourceString.toLowerCase()==='true') return boolean(true)
+        if(a.sourceString.toLowerCase()==='false') return boolean(false)
+        throw new Error("invalid boolean",a.sourceString)
+    },
     List_full:function(a,b,c,d,e) {
         let arr = d.ast().slice()
         arr.unshift(b.ast())
@@ -93,6 +113,7 @@ function verify_ast(name, tests) {
             let ast = semantics(match).ast()
             console.log("ast",ast)
             t.deepLooseEqual(ast,obj)
+            console.log("to string",ast.toString())
             t.deepEqual(ast.toString(),str)
             console.log("resolved to",ast.evalJS())
             t.deepEqual(ast.evalJS(),val)
@@ -134,13 +155,13 @@ function test_literals() {
             list([string("fortytwo"),scalar(42)]),
             `["fortytwo",42]`,
             ['fortytwo',42],
-        ]
+        ],
 
         //booleans
-        // ['true','true'],
-        // ['TRUE','true'],
-        // ['false','false'],
-        // ['_Fa_lSE','false'],
+        ['true',boolean(true),'true',true],
+        // ['TRUE',boolean(true),'true',true],
+        ['false', new FBoolean(false), 'false',false],
+        // ['FalSE',boolean(false),'false',false],
     ])
 }
 
