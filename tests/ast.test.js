@@ -82,16 +82,17 @@ const list = arr => new FList(arr)
 
 class FCall {
     constructor(name,args) {
+        console.log("#### making call",name,args)
         this.type = 'call'
         this.name = name
         this.args = args
-        // console.log("#### making call",this.name,this.args)
     }
     toString() {
         return `${this.name}(${this.args.map(a => a.toString()).join(",")})`
     }
 }
 const call = (name,args) => new FCall(name,args)
+
 class FIndexedArg {
     constructor(value) {
         this.type = 'indexed'
@@ -102,6 +103,7 @@ class FIndexedArg {
     }
 }
 const indexed = v => new FIndexedArg(v)
+
 const named   = (n,v) => ({type:'named', value:v})
 
 
@@ -143,7 +145,24 @@ semantics.addOperation('ast',{
 
     PriExp_neg:function(_,a) {
         return call('negate',[indexed(a.ast())])
+    },
+
+    ident:function(a,b) {
+        return strip_under(a.sourceString + b.sourceString).toLowerCase()
+    },
+    Arg_indexed_arg:function(arg) {
+        return indexed(arg.ast())
+    },
+    Funcall_with_args:function(ident,_,first,c,d,e) {
+        let name = ident.ast()
+        console.log("funcall with args",name)
+        console.log("first",first.ast())
+        return call(name,[first.ast()])
+    },
+    Funcall_noargs:function(ident,a,b) {
+        return call(ident.ast(),[])
     }
+
 })
 
 function verify_ast(name, tests) {
@@ -271,18 +290,19 @@ function test_operators() {
 function test_function_calls() {
     verify_ast("function calls", [
         //func returns data or first arg
-        ['func(42)',call('func',[indexed[scalar(42)]]),'func(42)',42],
-        ['func([42])',call('func',[indexed[list([scalar(42)])]]),'func([42])',[42]],
-        ['func(data:42)',call('func',[named('data',scalar(42))]),'func(data:42)',42],
-        ['func(data:[42],count:42)',call('func',[named('data',list([scalar(42)])),named('count',scalar(42))]),'func(data:[42], count:42)',[42]],
-        ['func(count:42, [42])',call('func',[named('count',scalar(42)),indexed(list([scalar(42)]))]),'func(data, count:42)',[42]],
-        ['func(func(42))',call('func',[call('func',[indexed(scalar(42))])]),'func(func(42))',42],
-        ['func(data,func(42))','func(data,func(42))'],
+        ['func()',call('func',[]),'func()',42],
+        ['func(42)',call('func',[indexed(scalar(42))]),'func(42)',42],
+        // ['func([42])',call('func',[indexed[list([scalar(42)])]]),'func([42])',[42]],
+        // ['func(data:42)',call('func',[named('data',scalar(42))]),'func(data:42)',42],
+        // ['func(data:[42],count:42)',call('func',[named('data',list([scalar(42)])),named('count',scalar(42))]),'func(data:[42], count:42)',[42]],
+        // ['func(count:42, [42])',call('func',[named('count',scalar(42)),indexed(list([scalar(42)]))]),'func(data, count:42)',[42]],
+        // ['func(func(42))',call('func',[call('func',[indexed(scalar(42))])]),'func(func(42))',42],
+        // ['func(data,func(42))','func(data,func(42))'],
         //func(count:foo,func())
-        ['func(count:data, func(42))','func(func(42), count:data)'],
+        // ['func(count:data, func(42))','func(func(42), count:data)'],
         //func(count:func(),data:[]),
-        ['func(count:func(42), data:[42])','func(count:func(42), data:[42])'],
-        ['func(count:func,func(),func)','func(func(),func,count:func)'],
+        // ['func(count:func(42), data:[42])','func(count:func(42), data:[42])'],
+        // ['func(count:func,func(),func)','func(func(),func,count:func)'],
     ])
 }
 function test_pipelines() {
@@ -349,7 +369,7 @@ function doAll() {
     test_literals()
     test_operators()
     // test_units()
-    // test_function_calls()
+    test_function_calls()
     // test_pipelines()
     // test_comments()
     // test_blocks()
