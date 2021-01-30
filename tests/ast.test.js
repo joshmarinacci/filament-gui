@@ -2,6 +2,24 @@ import test from "tape"
 import fs from 'fs'
 import ohm from 'ohm-js'
 
+const FUNCS = {
+}
+
+const OPS = {
+    '+':'add',
+    '-':'subtract',
+    '*':'multiply',
+    '/':'divide',
+    '**':'power',
+    '<':'lessthan',
+    '>':'greaterthan',
+    '=':'equal',
+    '<>':'notequal',
+    '<=':'lessthanorequal',
+    '>=':'greaterthanorequal',
+    // '<':'lessthan',
+    // '<':'lessthan',
+}
 class FScalar {
     constructor(value) {
         this.type = 'scalar'
@@ -62,14 +80,28 @@ class FList {
 
 const list = arr => new FList(arr)
 
-const call = (name,...args) => {
-    return {
-        type:'call',
-        name:name,
-        args:[...args],
+class FCall {
+    constructor(name,args) {
+        this.type = 'call'
+        this.name = name
+        this.args = args
+        // console.log("#### making call",this.name,this.args)
+    }
+    toString() {
+        return `${this.name}(${this.args.map(a => a.toString()).join(",")})`
     }
 }
-const indexed = v => ({type:'indexed', value:v})
+const call = (name,args) => new FCall(name,args)
+class FIndexedArg {
+    constructor(value) {
+        this.type = 'indexed'
+        this.value = value
+    }
+    toString() {
+        return this.value.toString()
+    }
+}
+const indexed = v => new FIndexedArg(v)
 const named   = (n,v) => ({type:'named', value:v})
 
 
@@ -101,22 +133,32 @@ semantics.addOperation('ast',{
         let arr = d.ast().slice()
         arr.unshift(b.ast())
         return list(arr)
+    },
+
+    OprExp_binop:function(a,b,c) {
+        let op = b.sourceString
+        if(OPS[op]) return call(OPS[op],[indexed(a.ast()),indexed(c.ast())])
+        throw new Error(`Unknown operator: ${op}`)
+    },
+
+    PriExp_neg:function(_,a) {
+        return call('negate',[indexed(a.ast())])
     }
 })
 
 function verify_ast(name, tests) {
     test(name, (t)=>{
         Promise.allSettled(tests.map((tcase) => {
-            console.log("tcase",tcase)
+            // console.log("tcase",tcase)
             let [code,obj,str,val] = tcase
             let match = grammar.match(code)
             let ast = semantics(match).ast()
-            console.log("ast",ast)
+            // console.log("ast",ast)
             t.deepLooseEqual(ast,obj)
-            console.log("to string",ast.toString())
+            // console.log("to string",ast.toString())
             t.deepEqual(ast.toString(),str)
-            console.log("resolved to",ast.evalJS())
-            t.deepEqual(ast.evalJS(),val)
+            // console.log("resolved to",ast.evalJS())
+            // t.deepEqual(ast.evalJS(),val)
         })).then(()=>t.end())
     })
 }
@@ -164,8 +206,6 @@ function test_literals() {
         // ['FalSE',boolean(false),'false',false],
     ])
 }
-
-
 function test_comments() {
     verify_ast("comments", [
         ['//comment', null, "//comment", null],
@@ -173,7 +213,6 @@ function test_comments() {
         ['//    text    ', null, "//    text    ", null],
     ])
 }
-
 function test_units() {
     verify_ast("literals", [
         [`42m`,scalar(42,'meter'),"42 meter",42],
@@ -189,57 +228,55 @@ function test_units() {
             '42 foot as inch',42],
     ])
 }
-
 function test_variable_assignment() {
     verify_ast("variables and identifiers", [
-        [`aprime << 13`, `aprime << 13`],
-        [`a_prime<< 13`, `aprime << 13`],
-        [`APRIME << 13`, `aprime << 13`],
-        [`aPrime << 13`, `aprime << 13`],
-        ['42 >> answer','42 >> answer'],
-        ['answer << 42','42 >> answer'],
-        ['answer24 << 42','42 >> answer24'],
-        ['answ24er << 42','42 >> answ24er'],
-        ['_a_n_sw24er << 42','42 >> answ24er'],
+        [`aprime << 13`,assign('aprime',scalar(13)), `aprime << 13`,13],
+        [`a_prime<< 13`,assign('aprime',scalar(13)), `aprime << 13`,13],
+        [`APRIME << 13`,assign('aprime',scalar(13)), `aprime << 13`,13],
+        [`13 >> aPrime`,assign('aprime',scalar(13)), `aprime << 13`,13],
+        ['42 >> answer',assign('answer',scalar(42)), '42 >> answer',42],
+        ['answer << 42',assign('answer',scalar(42)),'42 >> answer',42],
+        ['answer24 << 42',assign('answer24',scalar(42)),'42 >> answer24',42],
+        ['answ24er << 42',assign('answ24er',scalar(42)),'42 >> answ24er',42],
+        ['_a_n_sw24er << 42',assign('answ24er',scalar(42)),'42 >> answ24er',42],
     ])
 }
-
 function test_operators() {
     verify_ast("binary operators", [
-        ['4+2','add(4,2)'],
-        ['4-2','subtract(4,2)'],
-        ['4*2','multiply(4,2)'],
-        ['4/2','divide(4,2)'],
-        ['4**2','power(4,2)'],
-        ['4 mod 2','mod(4,2)'],
+        ['4+2',call('add',[indexed(scalar(4)),indexed(scalar(2))]),'add(4,2)',6],
+        ['4-2',call('subtract',[indexed(scalar(4)),indexed(scalar(2))]),'subtract(4,2)',2],
+        ['4*2',call('multiply',[indexed(scalar(4)),indexed(scalar(2))]),'multiply(4,2)',8],
+        ['4/2',call('divide',[indexed(scalar(4)),indexed(scalar(2))]),'divide(4,2)',2],
+        ['4**2',call('power',[indexed(scalar(4)),indexed(scalar(2))]),'power(4,2)',16],
+        // ['4 mod 2',call('mod',[indexed(scalar(4)),indexed(scalar(2))]),'mod(4,2)',0],
     ])
     verify_ast('boolean operators',[
-        ['4<2','lessthan(4,2)'],
-        ['4 > 2','greaterthan(4,2)'],
-        ['4 = 2','equal(4,2)'],
-        ['4 <> 2','notequal(4,2)'],
-        ['4 <= 2', 'lessthanorequal(4,2)'],
-        ['4 >= 2', 'greaterthanorequal(4,2)'],
-        ['true and false', 'and(true,false)'],
-        ['true or false', 'or(true,false)'],
+        ['4 < 2',call('lessthan',[indexed(scalar(4)),indexed(scalar(2))]),'lessthan(4,2)',false],
+        ['4 > 2',call('greaterthan',[indexed(scalar(4)),indexed(scalar(2))]),'greaterthan(4,2)',true],
+        ['4 = 2',call('equal',[indexed(scalar(4)),indexed(scalar(2))]),'equal(4,2)',false],
+        ['4 <> 2',call('notequal',[indexed(scalar(4)),indexed(scalar(2))]),'notequal(4,2)',true],
+        ['4 <= 2',call('lessthanorequal',[indexed(scalar(4)),indexed(scalar(2))]), 'lessthanorequal(4,2)',false],
+        ['4 >= 2',call('greaterthanorequal',[indexed(scalar(4)),indexed(scalar(2))]), 'greaterthanorequal(4,2)',true],
+        // ['true and false',call('and',[indexed(scalar(4)),indexed(scalar(2))]), 'and(true,false)',false],
+        // ['true or false',call('or',[indexed(scalar(4)),indexed(scalar(2))]), 'or(true,false)',true],
     ])
 
     verify_ast('unary operators',[
-        ['-42','-42'],
-        ['-4/2','-4/2'],
-        ['4!','factorial(4)'],
-        ['not x','not(x)'],
+        ['-42',call('negate',[indexed(scalar(42))]),'negate(42)',-42],
+        ['-4/2',call('divide',[indexed(call('negate',[indexed(scalar(4))])),indexed(scalar(2))]),'divide(negate(4),2)',-2],
+        // ['4!',call('factorial',[indexed(scalar(4))]),'factorial(4)',1*2*3*4],
+        // ['not true',call('not',[indexed(boolean(true))]),'not(x)',false],
     ])
 }
-
 function test_function_calls() {
     verify_ast("function calls", [
-        ['func(42)','func(42)'],
-        ['func([42])','func([42])'],
-        ['func(data:42)','func(data:42)'],
-        ['func(data:[42],count:42)','func(data:[42], count:42)'],
-        ['func(count:42, data)','func(data, count:42)'],
-        ['func(func(42))','func(func(42))'],
+        //func returns data or first arg
+        ['func(42)',call('func',[indexed[scalar(42)]]),'func(42)',42],
+        ['func([42])',call('func',[indexed[list([scalar(42)])]]),'func([42])',[42]],
+        ['func(data:42)',call('func',[named('data',scalar(42))]),'func(data:42)',42],
+        ['func(data:[42],count:42)',call('func',[named('data',list([scalar(42)])),named('count',scalar(42))]),'func(data:[42], count:42)',[42]],
+        ['func(count:42, [42])',call('func',[named('count',scalar(42)),indexed(list([scalar(42)]))]),'func(data, count:42)',[42]],
+        ['func(func(42))',call('func',[call('func',[indexed(scalar(42))])]),'func(func(42))',42],
         ['func(data,func(42))','func(data,func(42))'],
         //func(count:foo,func())
         ['func(count:data, func(42))','func(func(42), count:data)'],
@@ -248,7 +285,6 @@ function test_function_calls() {
         ['func(count:func,func(),func)','func(func(),func,count:func)'],
     ])
 }
-
 function test_pipelines() {
     verify_ast("pipelines", [
         ['func() >> funk()','func() >> funk()'],
@@ -257,7 +293,6 @@ function test_pipelines() {
             'func([42], arg:42) >> func(count:42) >> func(42) >> answer']
     ])
 }
-
 function test_blocks() {
     verify_ast("blocks", [
         [`4
@@ -277,7 +312,6 @@ function test_blocks() {
         `,'dataset("pokemon")\ntake(pokemon,5) >> chart(pokemon, y:"attack", xlabel:"name")'],
     ])
 }
-
 function test_unicode_replacement() {
     verify_ast("unicode", [
         ['ø','theta'],
@@ -310,9 +344,10 @@ function test_function_definitions() {
             [`def get_attack(pokemon) { pokemon.attack }`,"def get_attack(pokemon=?) {\npokemon.attack\n}\n"],
     ])
 }
+
 function doAll() {
     test_literals()
-    // test_operators()
+    test_operators()
     // test_units()
     // test_function_calls()
     // test_pipelines()
