@@ -365,7 +365,7 @@ function test_units() {
         [`42mps`,scalar(42,'meter/second'),"42 meter/second",42],
         [`42mpss`,scalar(42,'meter/second/second'),"42 meter/second/second",42],
         ['42%', scalar(42,'percent'),'42 percent',42],
-        ['42 %',scalar(42,'percent'),'42 percent',0.42],
+        ['42 %',scalar(42,'percent'),'42 percent',42],
         // ['42 ft as inch',
         //     call('convertunit',[indexed(scalar(42,'foot')),indexed("inch")]),
         //     'convertunit(42 foot,inch)',42],
@@ -525,7 +525,7 @@ function test_function_definitions() {
 function doAll() {
     test_literals()
     test_operators()
-    // test_units()
+    test_units()
     // test_function_calls()
     // test_pipelines()
     // test_comments()
