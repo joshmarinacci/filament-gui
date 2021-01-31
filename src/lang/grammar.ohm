@@ -9,6 +9,7 @@ Filament {
     | "mod"
     | "<>" | "<=" | ">="
     | "<" | ">" | "="
+    | "as"
 
   UnOp
     = "!"
@@ -59,7 +60,8 @@ Filament {
     | digunder* "." digunder+     -- float
     | digunder+                   -- integer
 
-  unit = letter+
+  unit = "%" | letter+
+
   numberunit = number unit
 
   bool = "true" | "false"

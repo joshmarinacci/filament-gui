@@ -17,22 +17,46 @@ const OPS = {
     '<>':'notequal',
     '<=':'lessthanorequal',
     '>=':'greaterthanorequal',
+    'as':'convertunit'
     // '<':'lessthan',
     // '<':'lessthan',
 }
+
+const UNITS = {
+    'meter':'meter',
+    'm':'meter',
+    'meters':'meter',
+    'foot':'foot',
+    'ft':'foot',
+    'feet':'foot',
+    '%':'percent',
+    'percent':'percent',
+    'in':'inch',
+    'mps':'meter/second',
+    'meter/second':'meter/second',
+    'mpss':'meter/second/second',
+    'meter/second/second':'meter/second/second',
+}
+
 class FScalar {
-    constructor(value) {
+    constructor(value,unit) {
         this.type = 'scalar'
         this.value = value
+        this.unit = unit
+        if(value instanceof FScalar) {
+            this.value = this.value.value
+        }
+        // console.log("Unit is",unit)
     }
     toString() {
+        if(this.unit) return (""+this.value+' '+this.unit)
         return (""+this.value)
     }
     evalJS() {
         return this.value
     }
 }
-const scalar = n => new FScalar(n)
+const scalar = (n,u) => new FScalar(n,u)
 
 class FString {
     constructor(value) {
@@ -160,6 +184,18 @@ semantics.addOperation('ast',{
     number_float:function(a,b,c) {
         return scalar(parseFloat(strip_under(a.sourceString + b.sourceString + c.sourceString)))
     },
+    unit:function(a) {
+        // console.log("calling unit",a.sourceString)
+        let name = a.sourceString
+        if(UNITS[name]) return UNITS[name]
+        throw new Error(`unknown unit type '${name}'`)
+    },
+    UnitNumber_with_unit:function(a,b) {
+        // console.log("unit number")
+        // console.log("number is",a.ast())
+        // console.log("unit is",b.ast())
+        return scalar(a.ast(),b.ast())
+    },
     number_hex:function(_,a) {
         return scalar(parseInt(strip_under(a.sourceString),16))
     },
@@ -285,18 +321,19 @@ function test_comments() {
     ])
 }
 function test_units() {
-    verify_ast("literals", [
+    verify_ast("numbers with units", [
         [`42m`,scalar(42,'meter'),"42 meter",42],
         [`42ft`,scalar(42,'foot'),"42 foot",42],
-        [`42m/s`,scalar(42,'meter/second'),"42 meter/second",42],
-        ['42%',scalar(0.42),'0.42',0.42],
-        ['42 %',scalar(0.42),'0.42',0.42],
-        ['42 ft as in',
-            call('convert',[indexed(scalar(42,'foot')),named("unit","inch")]),
-            '42 foot as inch',42],
-        ['42 feet as inches',
-            call('convert',[indexed(scalar(42,'foot')),named("unit","inch")]),
-            '42 foot as inch',42],
+        [`42mps`,scalar(42,'meter/second'),"42 meter/second",42],
+        [`42mpss`,scalar(42,'meter/second/second'),"42 meter/second/second",42],
+        ['42%', scalar(42,'percent'),'42 percent',42],
+        ['42 %',scalar(42,'percent'),'42 percent',0.42],
+        // ['42 ft as inch',
+        //     call('convertunit',[indexed(scalar(42,'foot')),indexed("inch")]),
+        //     'convertunit(42 foot,inch)',42],
+        // ['42 feet as inches',
+        //     call('convert',[indexed(scalar(42,'foot')),indexed("inch")]),
+        //     'convertunit(42 foot,inch)',42],
     ])
 }
 function test_variable_assignment() {
@@ -450,7 +487,7 @@ function test_function_definitions() {
 function doAll() {
     test_literals()
     test_operators()
-    // test_units()
+    test_units()
     test_function_calls()
     test_pipelines()
     // test_comments()
