@@ -156,8 +156,8 @@ export class FilamentFunction {
         console.log('###',this.name.toUpperCase(),...args)
     }
     apply_function(args) {
-        console.log("applying args",args)
-        console.log("to the function",this.name)
+        // this.log("applying args",args)
+        // this.log("to the function",this.name)
         let params = Object.entries(this.params).map(([key,value]) =>{
             // console.log("looking at",key,'=',value)
             // console.log("remaining args",args)
@@ -189,16 +189,16 @@ export class FilamentFunction {
     }
     apply_with_parameters(params) {
         params = params.map(p => {
-            console.log("parameter",p)
+            // console.log("parameter",p)
             if(p&&p.type === 'callsite') {
-                console.log("must evaluate argument")
+                // console.log("must evaluate argument")
                 return Promise.resolve(p.apply())
             }
             return Promise.resolve(p)
         })
-        console.log("final params",params)
+        // console.log("final params",params)
         return Promise.all(params).then(params=>{
-            console.log("real final params",params)
+            // console.log("real final params",params)
             return this.fun.apply(this,params)
         })
     }
