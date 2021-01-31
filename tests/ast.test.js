@@ -82,7 +82,7 @@ const list = arr => new FList(arr)
 
 class FCall {
     constructor(name,args) {
-        console.log("#### making call",name,args)
+        // console.log("#### making call",name,args)
         this.type = 'call'
         this.name = name
         this.args = args
@@ -124,11 +124,28 @@ class Pipeline {
         this.next = next
     }
     toString() {
-        return this.first.toString() + ">>" + this.next.toString()
+        if(this.direction === 'right') {
+            return this.first.toString() + ">>" + this.next.toString()
+        }
+        if(this.direction === 'left') {
+            return this.next.toString() + "<<" + this.first.toString()
+        }
     }
 }
 
 const pipeline_right = (a,b) => new Pipeline('right',a,b)
+const pipeline_left = (a,b) => new Pipeline('left',a,b)
+
+class Identifier {
+    constructor(name) {
+        this.type = 'identifier'
+        this.name = name
+    }
+    toString() {
+        return this.name
+    }
+}
+const ident = (n) => new Identifier(n)
 
 
 let grammar_source = fs.readFileSync(new URL('../src/lang/grammar.ohm', import.meta.url)).toString();
@@ -148,6 +165,9 @@ semantics.addOperation('ast',{
     },
     string:function(_1,str,_2) {
         return string(str.sourceString)
+    },
+    ident:function(first,rest) {
+        return ident(first.sourceString,rest.sourceString)
     },
     bool:function(a) {
         if(a.sourceString.toLowerCase()==='true') return boolean(true)
@@ -190,7 +210,10 @@ semantics.addOperation('ast',{
 
     PriExp_pipeline_right:function(a,b,c) {
         return pipeline_right(a.ast(),c.ast())
-    }
+    },
+    PriExp_pipeline_left:function(a,b,c) {
+        return pipeline_left(c.ast(),a.ast())
+    },
 
 })
 
@@ -278,15 +301,15 @@ function test_units() {
 }
 function test_variable_assignment() {
     verify_ast("variables and identifiers", [
-        [`aprime << 13`,assign('aprime',scalar(13)), `aprime << 13`,13],
-        [`a_prime<< 13`,assign('aprime',scalar(13)), `aprime << 13`,13],
-        [`APRIME << 13`,assign('aprime',scalar(13)), `aprime << 13`,13],
-        [`13 >> aPrime`,assign('aprime',scalar(13)), `aprime << 13`,13],
-        ['42 >> answer',assign('answer',scalar(42)), '42 >> answer',42],
-        ['answer << 42',assign('answer',scalar(42)),'42 >> answer',42],
-        ['answer24 << 42',assign('answer24',scalar(42)),'42 >> answer24',42],
-        ['answ24er << 42',assign('answ24er',scalar(42)),'42 >> answ24er',42],
-        ['_a_n_sw24er << 42',assign('answ24er',scalar(42)),'42 >> answ24er',42],
+        [`aprime<<13`,pipeline_left(scalar(13),'aprime'), `aprime<<13`,13],
+        [`a_prime << 13`,pipeline_left(scalar(13),'aprime'), `aprime<<13`,13],
+        [`APRIME << 13`,pipeline_left(scalar(13),'aprime'), `aprime<<13`,13],
+        [`13 >> aPrime`,pipeline_right(scalar(13),'aprime'), `13>>aprime`,13],
+        ['42 >> answer',pipeline_right(scalar(42),'answer'), '42>>answer',42],
+        ['answer << 42',pipeline_left(scalar(42),'answer'), 'answer<<42',42],
+        ['answer24 << 42',pipeline_left(scalar(42),'answer24'),'answer24<<42',42],
+        ['answ24er << 42',pipeline_left(scalar(42),'answ24er'),'answ24er<<42',42],
+        // ['42 >> _a_n_sw24er',pipeline_right(scalar(42),'answ24er'),'42>>answ24er',42],
     ])
 }
 function test_operators() {
@@ -392,7 +415,8 @@ function test_blocks() {
 }
 function test_unicode_replacement() {
     verify_ast("unicode", [
-        ['ø','theta'],
+        ['foo',ident("foo"),'foo',42],
+        ['ø',ident('ø'),'theta',42],
         ['π','pi'],
         ['','alpha'],
         ['','sigma'],
@@ -431,7 +455,7 @@ function doAll() {
     test_pipelines()
     // test_comments()
     // test_blocks()
-    // test_variable_assignment()
+    test_variable_assignment()
     // test_unicode_replacement()
     // test_conditionals()
     // test_function_definitions()
