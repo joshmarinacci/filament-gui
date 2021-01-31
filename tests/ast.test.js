@@ -14,6 +14,7 @@ import {
     power,
     subtract
 } from "../src/lang/math.js"
+import {FilamentFunction, REQUIRED} from '../src/lang/parser.js'
 
 const FUNCS = {
 }
@@ -286,12 +287,14 @@ class Scope {
     }
 }
 
+const func = new FilamentFunction("func",{data:null},(data)=>data)
 
 function verify_ast(name, tests) {
     let scope = new Scope()
     scope.install(add, subtract, multiply, divide)
     scope.install(power, negate)
     scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
+    scope.install(func)
     test(name, (t)=>{
         Promise.allSettled(tests.map((tcase) => {
             // console.log("tcase",tcase)
@@ -415,25 +418,29 @@ function test_operators() {
     ])
 }
 function test_function_calls() {
+    let _42 = scalar(42)
+    let list_42 = list([scalar(42)])
     verify_ast("function calls", [
         //'func' function returns data or first arg
-        ['func()',call('func',[]),'func()',42],
-        ['func(42)',call('func',[indexed(scalar(42))]),'func(42)',42],
-        ['func([42])',call('func',[indexed(list([scalar(42)]))]),'func([42])',[42]],
-        ['func(data:42)',call('func',[named('data',scalar(42))]),'func(data:42)',42],
-        ['func(data:[42],count:42)',call('func',[named('data',list([scalar(42)])),named('count',scalar(42))]),'func(data:[42],count:42)',[42]],
-        ['func(count:42, [42])',call('func',[named('count',scalar(42)),indexed(list([scalar(42)]))]),'func(count:42,[42])',[42]],
-        ['func(func(42))',call('func',[indexed(call('func',[indexed(scalar(42))]))]),'func(func(42))',42],
+        ['func()',call('func',[]),'func()',null],
+        ['func(42)',call('func',[indexed(scalar(42))]),'func(42)',_42],
+        ['func([42])',call('func',[indexed(list([scalar(42)]))]),'func([42])',list_42],
+        ['func(data:42)',call('func',[named('data',scalar(42))]),'func(data:42)',scalar(42)],
+        ['func(data:[42],count:42)',call('func',[named('data',list([scalar(42)])),named('count',scalar(42))]),'func(data:[42],count:42)',list_42],
+        ['func(count:42, [42])',call('func',[named('count',scalar(42)),indexed(list([scalar(42)]))]),'func(count:42,[42])',list_42],
+        // ['func(func(42))',call('func',[indexed(call('func',[indexed(scalar(42))]))]),'func(func(42))',_42],
         ['func(42,func(42))',
             call('func',[indexed(scalar(42)),indexed(call('func',[indexed(scalar(42))]))]),
-            'func(42,func(42))',42],
+            'func(42,func(42))',_42],
         ['func(count:func,func(),func)',
             call('func',[
                 named('count','func'),
                 indexed(call('func',[])),
                 indexed('func'),
             ])
-            ,'func(count:func,func(),func)'],
+            ,'func(count:func,func(),func)',
+            call('func',[])
+        ],
     ])
 }
 function test_pipelines() {
@@ -526,7 +533,7 @@ function doAll() {
     test_literals()
     test_operators()
     test_units()
-    // test_function_calls()
+    test_function_calls()
     // test_pipelines()
     // test_comments()
     // test_blocks()
