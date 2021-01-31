@@ -131,7 +131,15 @@ class FCall {
     evalJS(scope) {
         if(!scope.lookup(this.name)) throw new Error(`function '${this.name}' not found`)
         let fun = scope.lookup(this.name)
+        console.log('args',this.args)
         return fun.apply_function(this.args)
+    }
+    evalJS_with_pipeline(scope,prepend) {
+        if(!scope.lookup(this.name)) throw new Error(`function '${this.name}' not found`)
+        let fun = scope.lookup(this.name)
+        console.log("eval with prepend args",prepend)
+        let args = [prepend].concat(this.args)
+        return fun.apply_function(args)
     }
 }
 const call = (name,args) => new FCall(name,args)
@@ -173,6 +181,16 @@ class Pipeline {
         if(this.direction === 'left') {
             return this.next.toString() + "<<" + this.first.toString()
         }
+    }
+    evalJS(scope) {
+        console.log("evaluating pipeline")
+        return this.first.evalJS(scope).then(fval => {
+            console.log("fval",fval)
+            return this.next.evalJS_with_pipeline(scope,indexed(fval)).then(nval => {
+                console.log("nval",nval)
+                return nval
+            })
+        })
     }
 }
 
@@ -221,9 +239,9 @@ semantics.addOperation('ast',{
     string:function(_1,str,_2) {
         return string(str.sourceString)
     },
-    ident:function(first,rest) {
-        return ident(first.sourceString,rest.sourceString)
-    },
+    // ident:function(first,rest) {
+    //     return ident(first.sourceString,rest.sourceString)
+    // },
     bool:function(a) {
         if(a.sourceString.toLowerCase()==='true') return boolean(true)
         if(a.sourceString.toLowerCase()==='false') return boolean(false)
@@ -288,13 +306,14 @@ class Scope {
 }
 
 const func = new FilamentFunction("func",{data:null},(data)=>data)
+const funk = new FilamentFunction("funk",{data:null},(data)=>data)
 
 function verify_ast(name, tests) {
     let scope = new Scope()
     scope.install(add, subtract, multiply, divide)
     scope.install(power, negate)
     scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
-    scope.install(func)
+    scope.install(func,funk)
     test(name, (t)=>{
         Promise.allSettled(tests.map((tcase) => {
             // console.log("tcase",tcase)
@@ -417,9 +436,9 @@ function test_operators() {
         // ['not true',call('not',[indexed(boolean(true))]),'not(x)',false],
     ])
 }
+let _42 = scalar(42)
+let list_42 = list([scalar(42)])
 function test_function_calls() {
-    let _42 = scalar(42)
-    let list_42 = list([scalar(42)])
     verify_ast("function calls", [
         //'func' function returns data or first arg
         ['func()',call('func',[]),'func()',null],
@@ -450,19 +469,19 @@ function test_pipelines() {
                 call('func',[]),
                 call('funk',[]),
             ),
-            'func()>>funk()',42],
+            'func()>>funk()',null],
         ['func([42]) >> funk()',
             pipeline_right(
                 call('func',[indexed( list([scalar(42)]) )]),
                 call('funk',[])
             )
-            ,'func([42])>>funk()',42],
+            ,'func([42])>>funk()',list_42],
         ['func(42) >> func(count:42)',
             pipeline_right(
                 call('func',[indexed(scalar(42))]),
                 call('func',[named('count',scalar(42))]),
             ),
-            'func(42)>>func(count:42)', 42 ],
+            'func(42)>>func(count:42)', _42 ],
         ['func(42) >> func(count:42) >> func(42)',
             pipeline_right(
                 call('func',[indexed(scalar(42))]),
@@ -471,9 +490,16 @@ function test_pipelines() {
                     call('func',[indexed(scalar(42))]),
                 ),
             ),
-            'func(42)>>func(count:42)>>func(42)',42]
-        // ['func(arg: _42, [4_2 ],) >> func(count:42) >> funk(42) >> answer',
-        //     'func([42], arg:42) >> func(count:42) >> func(42) >> answer']
+            'func(42)>>func(count:42)>>func(42)', _42],
+        // ['func(arg: _42, [4_2 ]) >> func(count:42) >> funk(42) >> answer',
+        //     pipeline_right(
+        //         call('func',[
+        //             named('arg',scalar(42)),
+        //             indexed(list(scalar(42)))
+        //         ])
+        //     ),
+        //     'func([42], arg:42) >> func(count:42) >> func(42) >> answer',
+        // ]
     ])
 }
 function test_blocks() {
@@ -534,7 +560,7 @@ function doAll() {
     test_operators()
     test_units()
     test_function_calls()
-    // test_pipelines()
+    test_pipelines()
     // test_comments()
     // test_blocks()
     // test_variable_assignment()
