@@ -373,9 +373,30 @@ g2_semantics.addOperation('ast',{
 
     Block:function(_1,statements,_2) {
         return block(statements.ast())
-    }
+    },
+
+    DefArg:function(a,_,c) {
+        return [a.ast().name,c.ast()]
+    },
+    FundefExp:function(def,name,_1,args,_2,block) {
+        return fundef(name.ast().name, args.ast(),block.ast())
+    },
 
 })
+
+class FunctionDefintion {
+    constructor(name, args, blocks) {
+        this.type = 'function_definition'
+        this.name = name
+        this.args = args
+        this.blocks = blocks
+    }
+    toString() {
+        let args = this.args.map(a => a[0].toString()+":"+a[1].toString())
+        return `def ${this.name}(${args.join(",")}) {${this.blocks.toString()}}`
+    }
+}
+const fundef = (name,args,block) => new FunctionDefintion(name,args,block)
 
 
 class Scope {
@@ -667,11 +688,19 @@ function test_conditionals() {
 }
 function test_function_definitions() {
     verify_ast('function definitions',[
-        [`def chart(data=?,x="index",y="value") {
-              log("doing a chart")
+        [
+            `def chart(data:?,x:"index",y:"value") {
               42 
-              }`,'def chart(data=? x="index", y="value") {\nlog("doing a chart")\n42\n}\n"'],
-            [`def get_attack(pokemon) { pokemon.attack }`,"def get_attack(pokemon=?) {\npokemon.attack\n}\n"],
+              }`,
+            fundef("chart",[
+                ['data','?'],
+                ['x',string('index')],
+                ['y',string('value')],
+            ],block([scalar(42)])),
+            'def chart(data:?,x:"index",y:"value") {42}',
+            null
+        ],
+            // [`def get_attack(pokemon) { pokemon.attack }`,"def get_attack(pokemon=?) {\npokemon.attack\n}\n"],
     ])
 }
 
