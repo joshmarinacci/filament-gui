@@ -183,7 +183,7 @@ class Pipeline {
     }
 }
 const pipeline_right = (a,b) => new Pipeline('right',a,b)
-const pipeline_left = (a,b) => new Pipeline('left',a,b)
+const pipeline_left = (a,b) => new Pipeline('left',b,a)
 
 class Identifier {
     constructor(name) {
@@ -195,6 +195,21 @@ class Identifier {
     }
 }
 const ident = (n) => new Identifier(n)
+
+class Block {
+    constructor(sts) {
+        this.type = 'block'
+        this.statements = sts
+    }
+    toString() {
+        return this.statements.map(s => s.toString()).join("\n")
+    }
+    evalJS(scope) {
+        let res = this.statements.map(s => s.evalJS(scope))
+        return res[res.length-1]
+    }
+}
+const block = (sts) => new Block(sts)
 
 let grammar_source = fs.readFileSync(new URL('../src/lang/grammar.ohm', import.meta.url)).toString();
 let grammar = ohm.grammar(grammar_source);
@@ -349,22 +364,16 @@ g2_semantics.addOperation('ast',{
         return call(name.name,list)
     },
 
-    Pipeline_right:function(a,b,c) {
-        console.log("pipeline right")
-        return pipeline_right(a.ast(),c.ast())
+    Pipeline_right:function(first,_,next) {
+        return pipeline_right(first.ast(),next.ast())
     },
-    /*
-    Funcall_noargs:function(ident,a,b) {
-        return call(ident.ast(),[])
+    Pipeline_left:function(next,_,first) {
+        return pipeline_left(next.ast(),first.ast())
     },
 
-    PriExp_pipeline_right:function(a,b,c) {
-        return pipeline_right(a.ast(),c.ast())
-    },
-    PriExp_pipeline_left:function(a,b,c) {
-        return pipeline_left(c.ast(),a.ast())
-    },
-    */
+    Block:function(_1,statements,_2) {
+        return block(statements.ast())
+    }
 
 })
 
@@ -585,21 +594,51 @@ function test_pipelines() {
 }
 function test_blocks() {
     verify_ast("blocks", [
-        [`4
-          2`,'4\n2'],
-        [`4*2
-          2+4`,'4*2\n2+4'],
-        [`add(4,2)`,`add(4,2)`],
-        [`add([4,2,3])`,'add([4,2,3])'],
-        ['add(4,2) sub(4,2)','add(4,2)\nsub(4,2)'],
-        [`
-        foo << 2
-        
-        foo + 4_0
-        `,"foo<<2\nfoo+40"],
-        [`pokemons << dataset('pokemon')
-          take(pokemon,5) >> chart(pokemon, y:"attack", xLabel:'name')
-        `,'dataset("pokemon")\ntake(pokemon,5) >> chart(pokemon, y:"attack", xlabel:"name")'],
+        [`{4
+          2}`,
+            block([scalar(4),scalar(2)]),
+            '4\n2',
+            2
+        ],
+        [`{4*2
+          2+4}`,
+            block([
+                call('multiply',[indexed(scalar(4)),indexed(scalar(2))]),
+                call('add',[indexed(scalar(2)),indexed(scalar(4))]),
+
+            ]),
+            'multiply(4,2)\nadd(2,4)',
+            6
+        ],
+        [`add(4,2)`,
+            call('add',[indexed(scalar(4)),indexed(scalar(2))]),
+            `add(4,2)`,
+            6
+        ],
+        // [`add([4,2,3])`,'add([4,2,3])'],
+        ['{ add(4,2) subtract(4,2) }',
+            block([
+                call('add',[indexed(scalar(4)),indexed(scalar(2))]),
+                call('subtract',[indexed(scalar(4)),indexed(scalar(2))]),
+            ]),
+            'add(4,2)\nsubtract(4,2)',
+            2
+        ],
+        // [`{ func() << func(2)
+        // func(4_0) }`,
+        //     block([
+        //         pipeline_left(
+        //             call("func",[]),
+        //             call("func",[scalar(2)]),
+        //         ),
+        //         call('func',[indexed(scalar(40))])
+        //     ]),
+        //     "foo()<<2\nfunc(40)",
+        //     scalar(40)
+        // ],
+        // [`pokemons << dataset('pokemon')
+        //   take(pokemon,5) >> chart(pokemon, y:"attack", xLabel:'name')
+        // `,'dataset("pokemon")\ntake(pokemon,5) >> chart(pokemon, y:"attack", xlabel:"name")'],
     ])
 }
 function test_unicode_replacement() {
@@ -643,7 +682,7 @@ function doAll() {
     test_function_calls()
     test_pipelines()
     // test_comments()
-    // test_blocks()
+    test_blocks()
     // test_variable_assignment()
     // test_unicode_replacement()
     // test_conditionals()
