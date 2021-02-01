@@ -1,0 +1,52 @@
+Filament {
+  Exp
+    = Pipeline | BinExp | FundefExp | FuncallExp | Block
+    | List | bool | ident | unitnumber | number | string
+
+  Pipeline
+    = Exp ">>" Exp --right
+    | Exp "<<" Exp --left
+
+
+  Block = "{" Exp* "}"
+
+  FuncallExp = ident "(" ListOf<Arg,","> ")"
+  Arg
+    = ident ":" Exp --named
+    | Exp           --indexed
+
+  FundefExp = "def" ident "(" ListOf<DefArg,","> ")" Block
+  DefArg = ident ":" ("?" | Exp)
+
+  List = "[" ListOf<Exp,","> "]"
+
+
+  BinExp = Exp binop Exp
+  binop = "mod" | "and" | "or" | "as" | "**" | "+" | "-" | "*" | "/"
+  | "<=" | ">=" | "<>" | "<" | ">" | "="
+
+  under = "_"
+  ident  (an identifier)
+    = letter (letter | digit | under)*
+
+  number  (a number)
+    = ("0x" | "0X") hexdigunder+  -- hex
+    | underdigit* "." underdigit+ -- fract
+    | underdigit+                 -- whole
+  underdigit = digit | under
+  hexdigunder = "a".."f"|"A".."F"|"0".."9" | "_"
+  unit = "%" | letter+
+  unitnumber = number unit
+
+  q = "\'"
+  qq = "\""
+
+  string (text string)
+    = q (~q any)* q
+    | qq (~qq any)* qq
+
+  eol = "\n"
+  comment = "//" (~"\n" any)* (eol|end)
+  bool = "true" | "false"
+
+}
