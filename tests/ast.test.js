@@ -16,9 +16,6 @@ import {
 } from "../src/lang/math.js"
 import {FilamentFunction, REQUIRED} from '../src/lang/parser.js'
 
-const FUNCS = {
-}
-
 const OPS = {
     '+':'add',
     '-':'subtract',
@@ -32,8 +29,6 @@ const OPS = {
     '<=':'lessthanorequal',
     '>=':'greaterthanorequal',
     'as':'convertunit'
-    // '<':'lessthan',
-    // '<':'lessthan',
 }
 
 const UNITS = {
@@ -57,10 +52,7 @@ class FScalar {
         this.type = 'scalar'
         this.value = value
         this.unit = unit
-        if(value instanceof FScalar) {
-            this.value = this.value.value
-        }
-        // console.log("Unit is",unit)
+        if(value instanceof FScalar) this.value = this.value.value
     }
     toString() {
         if(this.unit) return (""+this.value+' '+this.unit)
@@ -84,7 +76,6 @@ class FString {
         return this.value
     }
 }
-
 const string = n => new FString(n)
 
 class FBoolean {
@@ -93,13 +84,12 @@ class FBoolean {
         this.value = value
     }
     toString() {
-        return (this.value == true)?"true":"false"
+        return (this.value === true)?"true":"false"
     }
     evalJS() {
         return this.value
     }
 }
-
 const boolean = v => new FBoolean(v)
 
 class FList {
@@ -115,7 +105,6 @@ class FList {
         return this.value.map(obj => obj.evalJS())
     }
 }
-
 const list = arr => new FList(arr)
 
 class FCall {
@@ -183,17 +172,11 @@ class Pipeline {
         }
     }
     evalJS(scope) {
-        console.log("evaluating pipeline")
         return this.first.evalJS(scope).then(fval => {
-            console.log("fval",fval)
-            return this.next.evalJS_with_pipeline(scope,indexed(fval)).then(nval => {
-                console.log("nval",nval)
-                return nval
-            })
+            return this.next.evalJS_with_pipeline(scope,indexed(fval))
         })
     }
 }
-
 const pipeline_right = (a,b) => new Pipeline('right',a,b)
 const pipeline_left = (a,b) => new Pipeline('left',a,b)
 
@@ -207,7 +190,6 @@ class Identifier {
     }
 }
 const ident = (n) => new Identifier(n)
-
 
 let grammar_source = fs.readFileSync(new URL('../src/lang/grammar.ohm', import.meta.url)).toString();
 let grammar = ohm.grammar(grammar_source);
