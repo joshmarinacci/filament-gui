@@ -15,6 +15,7 @@ import {
     subtract
 } from "../src/lang/math.js"
 import {FilamentFunction, REQUIRED} from '../src/lang/parser.js'
+import {boolean, ident, list, scalar, string, indexed, block, call, named, pipeline_left, pipeline_right} from './ast.js'
 
 const OPS = {
     '+':'add',
@@ -47,251 +48,8 @@ const UNITS = {
     'meter/second/second':'meter/second/second',
 }
 
-class FScalar {
-    constructor(value,unit) {
-        this.type = 'scalar'
-        this.value = value
-        this.unit = unit
-        if(value instanceof FScalar) this.value = this.value.value
-        if(!unit) this.unit = null
-        if(Array.isArray(unit)) {
-            if (unit.length === 0) this.unit = null
-            if (unit.length === 1) this.unit = unit[0]
-        }
-    }
-    toString() {
-        if(this.unit) return (""+this.value+' '+this.unit)
-        return (""+this.value)
-    }
-    evalJS() {
-        return this.value
-    }
-}
-const scalar = (n,u) => new FScalar(n,u)
 
-class FString {
-    constructor(value) {
-        this.type = 'string'
-        this.value = value
-    }
-    toString() {
-        return `"${this.value}"`
-    }
-    evalJS() {
-        return this.value
-    }
-}
-const string = n => new FString(n)
-
-class FBoolean {
-    constructor(value) {
-        this.type = 'boolean'
-        this.value = value
-    }
-    toString() {
-        return (this.value === true)?"true":"false"
-    }
-    evalJS() {
-        return this.value
-    }
-}
-const boolean = v => new FBoolean(v)
-
-class FList {
-    constructor(arr) {
-        this.type = 'list'
-        this.value = arr
-    }
-
-    toString() {
-        return `[${this.value.join(",")}]`
-    }
-    evalJS() {
-        return this.value.map(obj => obj.evalJS())
-    }
-}
-const list = arr => new FList(arr)
-
-class FCall {
-    constructor(name,args) {
-        // console.log("#### making call",name,args)
-        this.type = 'call'
-        this.name = name
-        this.args = args
-    }
-    toString() {
-        return `${this.name}(${this.args.map(a => a.toString()).join(",")})`
-    }
-    evalJS(scope) {
-        if(!scope.lookup(this.name)) throw new Error(`function '${this.name}' not found`)
-        let fun = scope.lookup(this.name)
-        // console.log('args',this.args)
-        return fun.apply_function(this.args)
-    }
-    evalJS_with_pipeline(scope,prepend) {
-        if(!scope.lookup(this.name)) throw new Error(`function '${this.name}' not found`)
-        let fun = scope.lookup(this.name)
-        console.log("eval with prepend args",prepend)
-        let args = [prepend].concat(this.args)
-        return fun.apply_function(args)
-    }
-}
-const call = (name,args) => new FCall(name,args)
-
-class FIndexedArg {
-    constructor(value) {
-        this.type = 'indexed'
-        this.value = value
-    }
-    toString() {
-        return this.value.toString()
-    }
-}
-const indexed = v => new FIndexedArg(v)
-
-class FNamedArg {
-    constructor(name,value) {
-        this.type = 'named'
-        this.name = name
-        this.value = value
-    }
-    toString() {
-        return this.name.toString() + ":" + this.value.toString()
-    }
-}
-const named   = (n,v) => new FNamedArg(n,v)
-
-class Pipeline {
-    constructor(dir,first,next) {
-        this.type = 'pipeline'
-        this.direction = dir
-        this.first = first
-        this.next = next
-    }
-    toString() {
-        if(this.direction === 'right') {
-            return this.first.toString() + ">>" + this.next.toString()
-        }
-        if(this.direction === 'left') {
-            return this.next.toString() + "<<" + this.first.toString()
-        }
-    }
-    evalJS(scope) {
-        return this.first.evalJS(scope).then(fval => {
-            return this.next.evalJS_with_pipeline(scope,indexed(fval))
-        })
-    }
-}
-const pipeline_right = (a,b) => new Pipeline('right',a,b)
-const pipeline_left = (a,b) => new Pipeline('left',b,a)
-
-class Identifier {
-    constructor(name) {
-        this.type = 'identifier'
-        this.name = name
-    }
-    toString() {
-        return this.name
-    }
-}
-const ident = (n) => new Identifier(n)
-
-class Block {
-    constructor(sts) {
-        this.type = 'block'
-        this.statements = sts
-    }
-    toString() {
-        return this.statements.map(s => s.toString()).join("\n")
-    }
-    evalJS(scope) {
-        let res = this.statements.map(s => s.evalJS(scope))
-        return res[res.length-1]
-    }
-}
-const block = (sts) => new Block(sts)
-
-let grammar_source = fs.readFileSync(new URL('../src/lang/grammar.ohm', import.meta.url)).toString();
-let grammar = ohm.grammar(grammar_source);
-let semantics = grammar.createSemantics();
 const strip_under = s => s.replaceAll("_","")
-semantics.addOperation('ast',{
-    // _terminal: function() {  return this.sourceString;  },
-    number_integer:function(a) {
-        return scalar(parseInt(strip_under(a.sourceString)))
-    },
-    number_float:function(a,b,c) {
-        return scalar(parseFloat(strip_under(a.sourceString + b.sourceString + c.sourceString)))
-    },
-    unit:function(a) {
-        // console.log("calling unit",a.sourceString)
-        let name = a.sourceString
-        if(UNITS[name]) return UNITS[name]
-        throw new Error(`unknown unit type '${name}'`)
-    },
-    UnitNumber_with_unit:function(a,b) {
-        // console.log("unit number")
-        // console.log("number is",a.ast())
-        // console.log("unit is",b.ast())
-        return scalar(a.ast(),b.ast())
-    },
-    number_hex:function(_,a) {
-        return scalar(parseInt(strip_under(a.sourceString),16))
-    },
-    string:function(_1,str,_2) {
-        return string(str.sourceString)
-    },
-    // ident:function(first,rest) {
-    //     return ident(first.sourceString,rest.sourceString)
-    // },
-    bool:function(a) {
-        if(a.sourceString.toLowerCase()==='true') return boolean(true)
-        if(a.sourceString.toLowerCase()==='false') return boolean(false)
-        throw new Error("invalid boolean",a.sourceString)
-    },
-    List_full:function(a,b,c,d,e) {
-        let arr = d.ast().slice()
-        arr.unshift(b.ast())
-        return list(arr)
-    },
-
-    OprExp_binop:function(a,b,c) {
-        let op = b.sourceString
-        if(OPS[op]) return call(OPS[op],[indexed(a.ast()),indexed(c.ast())])
-        throw new Error(`Unknown operator: ${op}`)
-    },
-
-    PriExp_neg:function(_,a) {
-        return call('negate',[indexed(a.ast())])
-    },
-
-    ident:function(a,b) {
-        return strip_under(a.sourceString + b.sourceString).toLowerCase()
-    },
-    Arg_indexed_arg:function(arg) {
-        return indexed(arg.ast())
-    },
-    Arg_named_arg:function(name,_,arg) {
-        return named(name.ast(),arg.ast())
-    },
-    Funcall_with_args:function(ident,_1,first,_2,rest,_3) {
-        let name = ident.ast()
-        let args = [first.ast()].concat(rest.ast())
-        return call(name,args)
-    },
-    Funcall_noargs:function(ident,a,b) {
-        return call(ident.ast(),[])
-    },
-
-    PriExp_pipeline_right:function(a,b,c) {
-        return pipeline_right(a.ast(),c.ast())
-    },
-    PriExp_pipeline_left:function(a,b,c) {
-        return pipeline_left(c.ast(),a.ast())
-    },
-
-})
-
 let g2_source = fs.readFileSync(new URL("../src/lang/filament.ohm", import.meta.url)).toString()
 let g2 = ohm.grammar(g2_source)
 let g2_semantics = g2.createSemantics()
@@ -480,7 +238,7 @@ function test_literals() {
         //booleans
         ['true',boolean(true),'true',true],
         // ['TRUE',boolean(true),'true',true],
-        ['false', new FBoolean(false), 'false',false],
+        ['false', boolean(false), 'false',false],
         // ['FalSE',boolean(false),'false',false],
     ])
 }
@@ -704,6 +462,39 @@ function test_function_definitions() {
     ])
 }
 
+function eval_ast() {
+
+}
+function test_gui_examples() {
+    eval_ast('gui_examples',[
+        [`[1,2,3]`,list([1,2,3])],
+        [`add([1,2,3], [4,5,6])`],
+        [`range(min:0,max:20,step:5)`],
+        ['take(range(min:0, max:100,step:10), -5)'],
+        [`join([1,2,3], [4,5,6])`],
+        [`reverse(range(11))`],
+        [`range(10000)`],
+        [`chart(range(10))`],
+        [`range(10) >> chart()`],
+        [`dataset('alphabet')`],
+        [`dataset('alphabet') >> length()`],
+        [`chart(dataset('alphabet'), x_label:'letter', y:'syllables')`],
+        [ `chart(dataset('elements'), x:'number', y:'weight', type:'scatter')`],
+        [ `dataset('planets') >> chart(type:'scatter', x:'orbital_radius',y:'mean_radius')`],
+        [ `dataset('tallest_buildings') >> take(count:5) >> chart(y:'height', x_label:'name')`],
+        [ `let countries = take(await dataset('countries'), 10)
+           chart(countries, x_label:'name', y:(y)=>parseInt(y.population), y_label:'population')`],
+        [ `let states = await dataset('states')
+            const first_letter = (s) => take(s.name, 1)
+            states = map(states, first_letter)
+            histogram(states)`],
+        [ `dataset('states') >> timeline(date:'statehood_date', name:'name')`],
+        [ `chart(stockhistory('AAPL'), y:'close')`],
+    ])
+
+
+}
+
 function doAll() {
     test_literals()
     test_operators()
@@ -716,6 +507,7 @@ function doAll() {
     // test_unicode_replacement()
     // test_conditionals()
     // test_function_definitions()
+    // test_gui_examples()
 }
 
 doAll()
