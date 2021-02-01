@@ -60,10 +60,26 @@ class FList {
     evalJS() {
         return this.value.map(obj => obj.evalJS())
     }
+    evalFilament() {
+        return this
+    }
 }
 export const list = arr => new FList(arr)
 
+function is_number(ret) {
+    if(typeof ret === 'number') return true
+    return false
+}
+
+function is_array(ret) {
+    if(Array.isArray(ret)) return true
+    return false
+}
+
 class FCall {
+    log() {
+        console.log("## FCall ## ",...this.args)
+    }
     constructor(name,args) {
         // console.log("#### making call",name,args)
         this.type = 'call'
@@ -86,8 +102,34 @@ class FCall {
         let args = [prepend].concat(this.args)
         return fun.apply_function(args)
     }
+    evalFilament(scope) {
+        this.log(`evaluating "${this.name}" with args`,this.args)
+        let fun = scope.lookup(this.name)
+        if(!fun) throw new Error(`function '${this.name}' not found`)
+        console.log("real function")
+        return fun.apply_function(this.args).then(ret => {
+            console.log("return value",ret)
+            if(is_number(ret)) return scalar(ret)
+            if(is_array(ret)) return list(ret)
+            return ret
+        })
+    }
 }
 export const call = (name,args) => new FCall(name,args)
+
+class FunctionDefintion {
+    constructor(name, args, blocks) {
+        this.type = 'function_definition'
+        this.name = name
+        this.args = args
+        this.blocks = blocks
+    }
+    toString() {
+        let args = this.args.map(a => a[0].toString()+":"+a[1].toString())
+        return `def ${this.name}(${args.join(",")}) {${this.blocks.toString()}}`
+    }
+}
+export const fundef = (name,args,block) => new FunctionDefintion(name,args,block)
 
 class FIndexedArg {
     constructor(value) {

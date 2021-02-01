@@ -15,7 +15,20 @@ import {
     subtract
 } from "../src/lang/math.js"
 import {FilamentFunction, REQUIRED} from '../src/lang/parser.js'
-import {boolean, ident, list, scalar, string, indexed, block, call, named, pipeline_left, pipeline_right} from './ast.js'
+import {
+    boolean,
+    ident,
+    list,
+    scalar,
+    string,
+    indexed,
+    block,
+    call,
+    named,
+    pipeline_left,
+    pipeline_right,
+    fundef
+} from './ast.js'
 
 const OPS = {
     '+':'add',
@@ -142,19 +155,6 @@ g2_semantics.addOperation('ast',{
 
 })
 
-class FunctionDefintion {
-    constructor(name, args, blocks) {
-        this.type = 'function_definition'
-        this.name = name
-        this.args = args
-        this.blocks = blocks
-    }
-    toString() {
-        let args = this.args.map(a => a[0].toString()+":"+a[1].toString())
-        return `def ${this.name}(${args.join(",")}) {${this.blocks.toString()}}`
-    }
-}
-const fundef = (name,args,block) => new FunctionDefintion(name,args,block)
 
 
 class Scope {
@@ -196,6 +196,53 @@ function verify_ast(name, tests) {
             let prom = ast.evalJS(scope)
             return Promise.resolve(prom).then((res)=> t.deepEqual(res,val))
         })).then(()=>t.end())
+    })
+}
+
+const is_scalar = (a) => a.type === 'scalar'
+
+const is_list = (b) => b.type === 'list'
+
+
+
+export const real_add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
+    function(a,b) {
+        this.log("adding",a,b)
+        if(is_scalar(a) && is_scalar(b)) return scalar(a.value + b.value)
+        if(is_list(a) && is_list(b)) {
+            a.map((aa,i)=>{
+                return scalar(aa.value + b.get(i).value)
+            })
+        }
+        this.log("erroring")
+        throw new Error("can't add " + a.toString() + " " + b.toString())
+    })
+
+
+function eval_ast(name, tests) {
+    let scope = new Scope()
+    scope.install(real_add)
+    // scope.install(add, subtract, multiply, divide)
+    // scope.install(power, negate)
+    // scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
+    // scope.install(func,funk)
+    // scope.install(convertunit)
+    test(name, t => {
+        Promise.allSettled(tests.map(tcase => {
+            console.log("eval ast test case",tcase)
+            let [code,val] = tcase
+            let match = g2.match(code)
+            let ast = g2_semantics(match).ast()
+            console.log("ast",ast)
+            return Promise.resolve(ast.evalFilament(scope))
+                .then(r => t.deepEqual(r,val))
+                .catch(e => {
+                    console.log("error here",e)
+                })
+        })).then(() => t.end())
+            .catch(e => {
+                console.error(e)
+            })
     })
 }
 
@@ -462,34 +509,32 @@ function test_function_definitions() {
     ])
 }
 
-function eval_ast() {
-
-}
 function test_gui_examples() {
     eval_ast('gui_examples',[
-        [`[1,2,3]`,list([1,2,3])],
-        [`add([1,2,3], [4,5,6])`],
-        [`range(min:0,max:20,step:5)`],
-        ['take(range(min:0, max:100,step:10), -5)'],
-        [`join([1,2,3], [4,5,6])`],
-        [`reverse(range(11))`],
-        [`range(10000)`],
-        [`chart(range(10))`],
-        [`range(10) >> chart()`],
-        [`dataset('alphabet')`],
-        [`dataset('alphabet') >> length()`],
-        [`chart(dataset('alphabet'), x_label:'letter', y:'syllables')`],
-        [ `chart(dataset('elements'), x:'number', y:'weight', type:'scatter')`],
-        [ `dataset('planets') >> chart(type:'scatter', x:'orbital_radius',y:'mean_radius')`],
-        [ `dataset('tallest_buildings') >> take(count:5) >> chart(y:'height', x_label:'name')`],
-        [ `let countries = take(await dataset('countries'), 10)
-           chart(countries, x_label:'name', y:(y)=>parseInt(y.population), y_label:'population')`],
-        [ `let states = await dataset('states')
-            const first_letter = (s) => take(s.name, 1)
-            states = map(states, first_letter)
-            histogram(states)`],
-        [ `dataset('states') >> timeline(date:'statehood_date', name:'name')`],
-        [ `chart(stockhistory('AAPL'), y:'close')`],
+        ['add(1,2)',scalar(3)],
+        [`[1,2,3]`,list([scalar(1),scalar(2),scalar(3)])],
+        [`add([1,2], [3,4])`,list([scalar(4),scalar(6)])],
+        // [`range(min:0,max:20,step:5)`],
+        // ['take(range(min:0, max:100,step:10), -5)'],
+        // [`join([1,2,3], [4,5,6])`],
+        // [`reverse(range(11))`],
+        // [`range(10000)`],
+        // [`chart(range(10))`],
+        // [`range(10) >> chart()`],
+        // [`dataset('alphabet')`],
+        // [`dataset('alphabet') >> length()`],
+        // [`chart(dataset('alphabet'), x_label:'letter', y:'syllables')`],
+        // [ `chart(dataset('elements'), x:'number', y:'weight', type:'scatter')`],
+        // [ `dataset('planets') >> chart(type:'scatter', x:'orbital_radius',y:'mean_radius')`],
+        // [ `dataset('tallest_buildings') >> take(count:5) >> chart(y:'height', x_label:'name')`],
+        // [ `let countries = take(await dataset('countries'), 10)
+        //    chart(countries, x_label:'name', y:(y)=>parseInt(y.population), y_label:'population')`],
+        // [ `let states = await dataset('states')
+        //     const first_letter = (s) => take(s.name, 1)
+        //     states = map(states, first_letter)
+        //     histogram(states)`],
+        // [ `dataset('states') >> timeline(date:'statehood_date', name:'name')`],
+        // [ `chart(stockhistory('AAPL'), y:'close')`],
     ])
 
 
@@ -507,7 +552,7 @@ function doAll() {
     // test_unicode_replacement()
     // test_conditionals()
     // test_function_definitions()
-    // test_gui_examples()
+    test_gui_examples()
 }
 
 doAll()
