@@ -212,13 +212,22 @@ class Pipeline extends ASTNode {
         })
     }
     evalFilament(scope) {
-        // this.log(`evaluating ${this.direction} `, this.first, 'then',this.next)
+        this.log(`evaluating ${this.direction} `, this.first, 'then',this.next)
         return this.first.evalFilament(scope)
-            .then(val1 => this.next.evalFilament(scope,indexed(val1)))
-            .then(val2 => {
-                // this.log("second returned",val2)
-                return val2
+            .then(val1 => {
+                // this.log("val1 is",val1)
+                // this.log("next is",this.next)
+                if(this.next.type === 'identifier') {
+                    // this.log("this is a variable assignment")
+                    return scope.set_var(this.next.name, val1)
+                } else {
+                    return this.next.evalFilament(scope, indexed(val1))
+                }
             })
+            // .then(val2 => {
+            //     // this.log("second returned",val2)
+            //     return val2
+            // })
     }
 }
 export const pipeline_right = (a,b) => new Pipeline('right',a,b)
@@ -232,11 +241,15 @@ class Identifier {
     toString() {
         return this.name
     }
+    evalFilament(scope) {
+        return scope.lookup(this.name)
+    }
 }
 export const ident = (n) => new Identifier(n)
 
-class Block {
+class FBlock extends ASTNode{
     constructor(sts) {
+        super()
         this.type = 'block'
         this.statements = sts
     }
@@ -247,5 +260,18 @@ class Block {
         let res = this.statements.map(s => s.evalJS(scope))
         return res[res.length-1]
     }
+    evalFilament(scope) {
+        // this.log("running the block")
+        let p = Promise.resolve(); // Q() in q
+
+        this.statements.forEach(file =>
+            p = p.then(() => file.evalFilament(scope))
+        )
+        return p.then(res => {
+            this.log("block is done. final value is",res)
+            return res
+        })
+
+    }
 }
-export const block = (sts) => new Block(sts)
+export const block = (sts) => new FBlock(sts)

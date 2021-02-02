@@ -163,12 +163,18 @@ class Scope {
         this.funs= {}
     }
     lookup(name) {
+        // console.log("SCOPE: lookup",name)
         return this.funs[name]
     }
     install(...funs) {
         funs.forEach(fun => {
             this.funs[fun.name] = fun
         })
+    }
+    set_var(name,value) {
+        this.funs[name] = value
+        // console.log("SCOPE: set var",name)
+        return value
     }
 }
 
@@ -604,6 +610,11 @@ function test_gui_examples() {
         [`range(10) >> take(2)`,scalar_list(0,1)],
         // [`dataset('alphabet')`],
         [`dataset('alphabet') >> length()`,s(26)],
+        [`{
+            alpha << dataset('alphabet')
+            length(alpha)
+            }
+        `,s(26)],
         // [`chart(dataset('alphabet'), x_label:'letter', y:'syllables')`],
         // [ `chart(dataset('elements'), x:'number', y:'weight', type:'scatter')`],
         [`dataset('planets') >> length()`,s(8)],
