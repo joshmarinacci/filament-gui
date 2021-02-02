@@ -250,11 +250,30 @@ export const real_take = new FilamentFunction('take',
         }
     })
 
+export const real_join = new FilamentFunction('join',{
+    data:REQUIRED,
+    more:REQUIRED,
+},
+function(data,more) {
+    this.log('params',data,more)
+    return list(data.value.concat(more.value))
+}
+)
+
+export const real_reverse = new FilamentFunction('reverse',{
+    data:REQUIRED,
+},function(data) {
+    this.log("params",data)
+    return list(data.value.reverse())
+})
+
 function eval_ast(name, tests) {
     let scope = new Scope()
     scope.install(real_add)
     scope.install(real_range)
     scope.install(real_take)
+    scope.install(real_join)
+    scope.install(real_reverse)
     // scope.install(add, subtract, multiply, divide)
     // scope.install(power, negate)
     // scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
@@ -543,18 +562,20 @@ function test_function_definitions() {
 }
 
 function test_gui_examples() {
+    const s = (n,u)=>scalar(n,u)
+    const scalar_list = (...nums) => list(nums.map(n => scalar(n)))
     eval_ast('gui_examples',[
         ['add(1,2)',scalar(3)],
         [`[1,2,3]`,list([scalar(1),scalar(2),scalar(3)])],
         [`add([1,2], [3,4])`,list([scalar(4),scalar(6)])],
         [`range(min:0,max:20,step:5)`,list([scalar(0),scalar(5),scalar(10),scalar(15)])],
-        ['take(range(10),2)',list([scalar(0),scalar(1)])],
+        ['take(range(10),2)',scalar_list(0,1)],
         ['take(range(min:0, max:100,step:10), 4)', list([scalar(0),scalar(10),scalar(20),scalar(30)])],
-        // [`join([1,2,3], [4,5,6])`],
-        // [`reverse(range(11))`],
+        [`join([1,2,3], [4,5,6])`,scalar_list(1,2,3,4,5,6)],
+        [`reverse(range(11))`,scalar_list(10,9,8,7,6,5,4,3,2,1,0)],
         // [`range(10000)`],
         // [`chart(range(10))`],
-        // [`range(10) >> chart()`],
+        [`range(10) >> take(2)`,scalar_list(0,1)],
         // [`dataset('alphabet')`],
         // [`dataset('alphabet') >> length()`],
         // [`chart(dataset('alphabet'), x_label:'letter', y:'syllables')`],

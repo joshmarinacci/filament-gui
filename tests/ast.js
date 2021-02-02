@@ -105,12 +105,15 @@ class FCall {
         let args = [prepend].concat(this.args)
         return fun.apply_function(args)
     }
-    evalFilament(scope) {
+    evalFilament(scope, prepend) {
         this.log(`ff evaluating "${this.name}" with args`,this.args)
         let fun = scope.lookup(this.name)
         if(!fun) throw new Error(`function '${this.name}' not found`)
         this.log(`real function ${this.name}`)
-        let params = fun.match_args_to_params(this.args)
+        let args = this.args.slice()
+        if(prepend) args.unshift(prepend)
+        this.log("args to match are",args)
+        let params = fun.match_args_to_params(args)
         this.log("parms are",params)
         let params2 = params.map(a => {
             this.log("evaluating argument",a)
@@ -176,8 +179,17 @@ class FNamedArg {
 }
 export const named   = (n,v) => new FNamedArg(n,v)
 
-class Pipeline {
+class ASTNode {
+    constructor() {
+    }
+    log() {
+        console.log(`## AST Node ${this.type} ## `,...arguments)
+    }
+}
+
+class Pipeline extends ASTNode {
     constructor(dir,first,next) {
+        super()
         this.type = 'pipeline'
         this.direction = dir
         this.first = first
@@ -194,6 +206,16 @@ class Pipeline {
     evalJS(scope) {
         return this.first.evalJS(scope).then(fval => {
             return this.next.evalJS_with_pipeline(scope,indexed(fval))
+        })
+    }
+    evalFilament(scope) {
+        // this.log(`evaluating ${this.direction} `, this.first, 'then',this.next)
+        return this.first.evalFilament(scope).then(val1 => {
+            // this.log("first returned",val1)
+            return this.next.evalFilament(scope,indexed(val1)).then(val2 => {
+                // this.log("second returned",val2)
+                return val2
+            })
         })
     }
 }
