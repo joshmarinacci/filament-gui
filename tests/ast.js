@@ -34,6 +34,9 @@ class FString {
     evalJS() {
         return this.value
     }
+    evalFilament() {
+        return this
+    }
 }
 export const string = n => new FString(n)
 
@@ -210,13 +213,12 @@ class Pipeline extends ASTNode {
     }
     evalFilament(scope) {
         // this.log(`evaluating ${this.direction} `, this.first, 'then',this.next)
-        return this.first.evalFilament(scope).then(val1 => {
-            // this.log("first returned",val1)
-            return this.next.evalFilament(scope,indexed(val1)).then(val2 => {
+        return this.first.evalFilament(scope)
+            .then(val1 => this.next.evalFilament(scope,indexed(val1)))
+            .then(val2 => {
                 // this.log("second returned",val2)
                 return val2
             })
-        })
     }
 }
 export const pipeline_right = (a,b) => new Pipeline('right',a,b)

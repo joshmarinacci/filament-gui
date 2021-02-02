@@ -29,6 +29,7 @@ import {
     pipeline_right,
     fundef
 } from './ast.js'
+import {cached_json_fetch} from '../src/lang/util.js'
 
 const OPS = {
     '+':'add',
@@ -267,6 +268,29 @@ export const real_reverse = new FilamentFunction('reverse',{
     return list(data.value.reverse())
 })
 
+
+export const real_dataset = new FilamentFunction('dataset', {
+        name:REQUIRED,
+    },
+    async function (name) {
+        let url = `https://api.silly.io/api/list/${name.value}`
+        this.log("loading",url)
+        return await cached_json_fetch(url).then(json => {
+            return list(json.data.items)
+        })
+    }
+)
+
+export const real_length = new FilamentFunction('length', {
+        data:REQUIRED,
+    },
+    function(data) {
+        this.log(data)
+        return scalar(data.value.length)
+    }
+)
+
+
 function eval_ast(name, tests) {
     let scope = new Scope()
     scope.install(real_add)
@@ -274,6 +298,8 @@ function eval_ast(name, tests) {
     scope.install(real_take)
     scope.install(real_join)
     scope.install(real_reverse)
+    scope.install(real_dataset)
+    scope.install(real_length)
     // scope.install(add, subtract, multiply, divide)
     // scope.install(power, negate)
     // scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
@@ -577,9 +603,10 @@ function test_gui_examples() {
         // [`chart(range(10))`],
         [`range(10) >> take(2)`,scalar_list(0,1)],
         // [`dataset('alphabet')`],
-        // [`dataset('alphabet') >> length()`],
+        [`dataset('alphabet') >> length()`,s(26)],
         // [`chart(dataset('alphabet'), x_label:'letter', y:'syllables')`],
         // [ `chart(dataset('elements'), x:'number', y:'weight', type:'scatter')`],
+        [`dataset('planets') >> length()`,s(8)],
         // [ `dataset('planets') >> chart(type:'scatter', x:'orbital_radius',y:'mean_radius')`],
         // [ `dataset('tallest_buildings') >> take(count:5) >> chart(y:'height', x_label:'name')`],
         // [ `let countries = take(await dataset('countries'), 10)
