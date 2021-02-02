@@ -155,9 +155,7 @@ export class FilamentFunction {
         let args = Array.prototype.slice.call(arguments)
         console.log('###',this.name.toUpperCase(),...args)
     }
-    apply_function(args) {
-        // this.log("applying args",args)
-        // this.log("to the function",this.name)
+    match_args_to_params(args) {
         let params = Object.entries(this.params).map(([key,value]) =>{
             // console.log("looking at",key,'=',value)
             // console.log("remaining args",args)
@@ -185,6 +183,12 @@ export class FilamentFunction {
                 }
             }
         })
+        return params
+    }
+    apply_function(args) {
+        this.log("applying args",args)
+        this.log("to the function",this.name)
+        let params = this.match_args_to_params(args)
         return this.apply_with_parameters(params)
     }
     apply_with_parameters(params) {

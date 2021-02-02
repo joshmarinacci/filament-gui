@@ -17,6 +17,9 @@ class FScalar {
     evalJS() {
         return this.value
     }
+    evalFilament() {
+        return this
+    }
 }
 export const scalar = (n,u) => new FScalar(n,u)
 
@@ -78,7 +81,7 @@ function is_array(ret) {
 
 class FCall {
     log() {
-        console.log("## FCall ## ",...this.args)
+        console.log("## FCall ## ",...arguments)
     }
     constructor(name,args) {
         // console.log("#### making call",name,args)
@@ -103,15 +106,21 @@ class FCall {
         return fun.apply_function(args)
     }
     evalFilament(scope) {
-        this.log(`evaluating "${this.name}" with args`,this.args)
+        this.log(`ff evaluating "${this.name}" with args`,this.args)
         let fun = scope.lookup(this.name)
         if(!fun) throw new Error(`function '${this.name}' not found`)
-        console.log("real function")
-        return fun.apply_function(this.args).then(ret => {
-            console.log("return value",ret)
-            if(is_number(ret)) return scalar(ret)
-            if(is_array(ret)) return list(ret)
-            return ret
+        this.log(`real function ${this.name}`)
+        let params = fun.match_args_to_params(this.args)
+        this.log("parms are",params)
+        let params2 = params.map(a => {
+            this.log("evaluating argument",a)
+            return a.evalFilament(scope)
+        })
+        console.log("real final params",params2)
+        return Promise.all(params2).then(params2 => {
+            let ret = fun.fun.apply(fun,params2)
+            console.log("ret is",ret)
+            return Promise.resolve(ret)
         })
     }
 }
@@ -132,6 +141,9 @@ class FunctionDefintion {
 export const fundef = (name,args,block) => new FunctionDefintion(name,args,block)
 
 class FIndexedArg {
+    log() {
+        console.log("## FIndexedArg ## ",...arguments)
+    }
     constructor(value) {
         this.type = 'indexed'
         this.value = value
@@ -139,10 +151,17 @@ class FIndexedArg {
     toString() {
         return this.value.toString()
     }
+    evalFilament(scope) {
+        this.log("evaluating value",this.value)
+        return this.value.evalFilament(scope)
+    }
 }
 export const indexed = v => new FIndexedArg(v)
 
 class FNamedArg {
+    log() {
+        console.log("## FNamedArg ## ",...arguments)
+    }
     constructor(name,value) {
         this.type = 'named'
         this.name = name
@@ -150,6 +169,9 @@ class FNamedArg {
     }
     toString() {
         return this.name.toString() + ":" + this.value.toString()
+    }
+    evalFilament(scope) {
+        this.log("evaluating",this.value)
     }
 }
 export const named   = (n,v) => new FNamedArg(n,v)

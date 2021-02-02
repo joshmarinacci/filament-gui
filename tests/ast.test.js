@@ -210,18 +210,51 @@ export const real_add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
         this.log("adding",a,b)
         if(is_scalar(a) && is_scalar(b)) return scalar(a.value + b.value)
         if(is_list(a) && is_list(b)) {
-            a.map((aa,i)=>{
-                return scalar(aa.value + b.get(i).value)
+            let arr = a.value.map((aa,i)=>{
+                return scalar(aa.value + b.value[i].value)
             })
+            return list(arr)
         }
         this.log("erroring")
         throw new Error("can't add " + a.toString() + " " + b.toString())
     })
 
+export const real_range = new FilamentFunction('range',
+    {
+        max:REQUIRED,
+        min:scalar(0),
+        step:scalar(1)
+    },
+    function(max,min,step) {
+        this.log("making a range",max,min,step)
+        function gen_range(min,max,step) {
+            let list = []
+            for(let i=min; i<max; i+=step) {
+                list.push(i)
+            }
+            return list
+        }
+        return list(gen_range(min.value,max.value,step.value).map(v => scalar(v)))
+    })
+
+export const real_take = new FilamentFunction('take',
+    {
+        data:REQUIRED,
+        count:REQUIRED,
+    },function(data,count) {
+    this.log("taking from data",data,'with count',count)
+        if(count < 0) {
+            return list(data.value.slice(data.value.length+count.value,data.value.length))
+        } else {
+            return list(data.value.slice(0, count.value))
+        }
+    })
 
 function eval_ast(name, tests) {
     let scope = new Scope()
     scope.install(real_add)
+    scope.install(real_range)
+    scope.install(real_take)
     // scope.install(add, subtract, multiply, divide)
     // scope.install(power, negate)
     // scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
@@ -514,8 +547,9 @@ function test_gui_examples() {
         ['add(1,2)',scalar(3)],
         [`[1,2,3]`,list([scalar(1),scalar(2),scalar(3)])],
         [`add([1,2], [3,4])`,list([scalar(4),scalar(6)])],
-        // [`range(min:0,max:20,step:5)`],
-        // ['take(range(min:0, max:100,step:10), -5)'],
+        [`range(min:0,max:20,step:5)`,list([scalar(0),scalar(5),scalar(10),scalar(15)])],
+        ['take(range(10),2)',list([scalar(0),scalar(1)])],
+        ['take(range(min:0, max:100,step:10), 4)', list([scalar(0),scalar(10),scalar(20),scalar(30)])],
         // [`join([1,2,3], [4,5,6])`],
         // [`reverse(range(11))`],
         // [`range(10000)`],
@@ -541,6 +575,7 @@ function test_gui_examples() {
 }
 
 function doAll() {
+    test_gui_examples()
     test_literals()
     test_operators()
     test_units()
@@ -552,7 +587,6 @@ function doAll() {
     // test_unicode_replacement()
     // test_conditionals()
     // test_function_definitions()
-    test_gui_examples()
 }
 
 doAll()
