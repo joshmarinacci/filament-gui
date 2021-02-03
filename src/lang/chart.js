@@ -1,6 +1,7 @@
 import {CanvasResult} from '../canvas.js'
 import {compareAsc, compareDesc, parse as parseDate, eachYearOfInterval, differenceInYears, format as formatDate} from 'date-fns'
 import {FilamentFunction, REQUIRED} from './parser.js'
+import {string} from './ast.js'
 
 
 function draw_legend(ctx, canvas, data, x_label, y_label) {
@@ -43,7 +44,7 @@ export const chart = new FilamentFunction('chart',
         // x_label:null,
         y:null,
         // y_label:null,
-        type:'bar',
+        type:string('bar'),
     },
     function (data, x, y, type) {
     this.log("running the chart with data",data,'y is',y)
@@ -62,11 +63,11 @@ export const chart = new FilamentFunction('chart',
         // ctx.scale(1,-1)
         // ctx.translate(0,-canvas.height)
         // draw_border(ctx, canvas)
-        if(type === 'bar') {
+        if(type.value === 'bar') {
             draw_bars(ctx,canvas,data,x_label,y)
             draw_legend(ctx,canvas,data,x_label,y_label)
         }
-        if(type === 'scatter') {
+        if(type.value === 'scatter') {
             draw_scatter(ctx,canvas,data,x,y)
             draw_legend(ctx,canvas,data,x_label,y_label)
         }
@@ -90,19 +91,19 @@ function draw_border(ctx, canvas) {
 function draw_bars(ctx, canvas, data, x_label, y) {
     let edge_gap = 25
     let bar_gap = 10
-    const bar_width = (canvas.width - edge_gap*2)/data.length
+    const bar_width = (canvas.width - edge_gap*2)/data.value.length
     let get_y = (datum) => datum
     if(typeof y === 'function') get_y = y
     if(typeof y === 'string') get_y = (d) => d[y]
     console.log("data is",data)
-    let values = data.map(get_y)
+    let values = data.value.map(get_y)
 
     let max_val = max(values)
     // console.log("max is",max_val)
     let scale = (canvas.height-edge_gap*2)/max_val
     // console.log("scale is",scale)
 
-    data.forEach((datu,i)=>{
+    data.value.forEach((datu,i)=>{
         let value = get_y(datu)
         let label = i+""
         if(x_label !== 'index') label = datu[x_label]

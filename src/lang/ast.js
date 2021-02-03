@@ -94,7 +94,7 @@ export const list = arr => new FList(arr)
 
 class FCall {
     log() {
-        console.log("## FCall ## ",...arguments)
+        console.log("## FCall ## ",this.name,...arguments)
     }
     constructor(name,args) {
         // console.log("#### making call",name,args)
@@ -132,13 +132,14 @@ class FCall {
         let params = fun.match_args_to_params(args)
         this.log("parms are",params)
         let params2 = params.map(a => {
+            if(a === null || typeof a === 'undefined') return a
             this.log("evaluating argument",a)
             return a.evalFilament(scope)
         })
-        console.log("real final params",params2)
+        this.log("real final params",params2)
         return Promise.all(params2).then(params2 => {
             let ret = fun.fun.apply(fun,params2)
-            console.log("ret is",ret)
+            this.log("ret is",ret)
             return Promise.resolve(ret)
         })
     }

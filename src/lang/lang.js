@@ -13,6 +13,8 @@ scope.install(range)
 scope.install(take)
 scope.install(join)
 scope.install(reverse)
+scope.install(length)
+scope.install(chart)
 
 export async function real_eval2(code) {
     console.log("really evaluating",code)
