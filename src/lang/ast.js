@@ -1,3 +1,11 @@
+class ASTNode {
+    constructor() {
+    }
+    log() {
+        console.log(`## AST Node ${this.type} ## `,...arguments)
+    }
+}
+
 export class Scope {
     constructor() {
         this.funs= {}
@@ -74,10 +82,36 @@ class FBoolean {
 }
 export const boolean = v => new FBoolean(v)
 
+function pack(val) {
+    if(typeof val === 'number') return scalar(val)
+    console.log("can't unpack value",val)
+    return val
+}
+function unpack(v) {
+    if(v.type === 'scalar') return v.value
+    if(v.type === 'string') return v.value
+    console.log("can't unpack value",v)
+    return v
+}
+
+
 class FList {
     constructor(arr) {
         this.type = 'list'
         this.value = arr
+    }
+
+    _get_data_array() {
+        return this.value
+    }
+    _get_length() {
+        return this.value.length
+    }
+    _map(cb) {
+        return this.value.map(cb)
+    }
+    _forEach(cb) {
+        return this.value.forEach(cb)
     }
 
     toString() {
@@ -92,9 +126,34 @@ class FList {
 }
 export const list = arr => new FList(arr)
 
+export class FTable extends ASTNode {
+    constructor(obj) {
+        super()
+        this.log("making using data",obj.data)
+        this.type = 'table'
+        this.schema = obj.data.schema
+        this.value = obj.data.items
+    }
+    evalFilament() {
+        return this
+    }
+    _get_length() {
+        return this.value.length
+    }
+    _map(cb) {
+        return this.value.map(cb)
+    }
+    _forEach(cb) {
+        return this.value.forEach(cb)
+    }
+    _get_field_from(field, datum, index) {
+        return pack(this.value[index][unpack(field)])
+    }
+}
+
 class FCall {
     log() {
-        console.log("## FCall ## ",this.name,...arguments)
+        // console.log("## FCall ## ",this.name,...arguments)
     }
     constructor(name,args) {
         // console.log("#### making call",name,args)
@@ -196,13 +255,6 @@ class FNamedArg {
 }
 export const named   = (n,v) => new FNamedArg(n,v)
 
-class ASTNode {
-    constructor() {
-    }
-    log() {
-        console.log(`## AST Node ${this.type} ## `,...arguments)
-    }
-}
 
 class Pipeline extends ASTNode {
     constructor(dir,first,next) {

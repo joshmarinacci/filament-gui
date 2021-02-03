@@ -1,7 +1,7 @@
 import {parse as parseDate} from 'date-fns'
 import {cached_json_fetch} from './util.js'
 import {FilamentFunction, REQUIRED} from './parser.js'
-import {list} from './ast.js'
+import {FTable} from './ast.js'
 
 let AV_API_KEY= '1S4KT3P0F4XXIVRL'
 export const dataset = new FilamentFunction('dataset', {
@@ -11,7 +11,7 @@ export const dataset = new FilamentFunction('dataset', {
         let url = `https://api.silly.io/api/list/${name.value}`
         this.log("loading",url)
         return await cached_json_fetch(url).then(json => {
-            return list(json.data.items)
+            return new FTable(json)
         })
     }
 )

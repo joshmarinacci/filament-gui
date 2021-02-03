@@ -50,7 +50,6 @@ export class Parser {
             _terminal: function() {  return this.sourceString;  },
             unitnumber:(v,u) => scalar(v.ast(),u.ast()),
             number_whole:function(a) {
-                console.log("doing number whole")
                 return scalar(parseInt(strip_under(a.sourceString)))
             },
             number_hex:function(_,a) {
@@ -60,7 +59,6 @@ export class Parser {
                 return scalar(parseFloat(strip_under(a.sourceString + b.sourceString + c.sourceString)))
             },
             unit:function(u) {
-                console.log("unit",u.sourceString)
                 let name = u.sourceString
                 if(UNITS[name]) return UNITS[name]
                 throw new Error(`unknown unit type '${name}'`)
@@ -90,11 +88,9 @@ export class Parser {
             },
 
             Arg_named: function(a,b,c) {
-                console.log("named",a.ast(),b.ast(),c.ast())
                 return named(a.ast().name,c.ast())
             },
             Arg_indexed: function(a) {
-                // console.log("indexed",a.ast())
                 return indexed(a.ast())
             },
 

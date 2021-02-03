@@ -19,7 +19,7 @@ function ListResult({result}) {
     return <div className={'list-result'}>list: {res}</div>
 }
 
-const is_table = (result) => (result && result.data)?true:false
+const is_table = (result) => (result && result.type === 'table')?true:false
 
 function TableRow({item, schema}) {
     let cells = Object.keys(schema.properties).map(key => {
@@ -29,14 +29,14 @@ function TableRow({item, schema}) {
 }
 
 function TableView({result}) {
-    let header = Object.keys(result.data.schema.properties).map(key => {
-        let sch = result.data.schema.properties[key]
+    let header = Object.keys(result.schema.properties).map(key => {
+        let sch = result.schema.properties[key]
         let title = key
         // if(sch.title) title = sch.title
         return <th key={key}>{title}</th>
     })
-    let items = result.data.items.map((it,n) => {
-        return <TableRow key={n} item={it} schema={result.data.schema}/>
+    let items = result._map((it,n) => {
+        return <TableRow key={n} item={it} schema={result.schema}/>
     })
     return <table className={'table-result'}>
         <thead>

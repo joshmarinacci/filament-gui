@@ -2,6 +2,7 @@ import {CanvasResult} from '../canvas.js'
 import {compareAsc, compareDesc, parse as parseDate, eachYearOfInterval, differenceInYears, format as formatDate} from 'date-fns'
 import {FilamentFunction, REQUIRED} from './parser.js'
 import {string} from './ast.js'
+import {is_string} from './base.js'
 
 
 function draw_legend(ctx, canvas, data, x_label, y_label) {
@@ -91,20 +92,21 @@ function draw_border(ctx, canvas) {
 function draw_bars(ctx, canvas, data, x_label, y) {
     let edge_gap = 25
     let bar_gap = 10
-    const bar_width = (canvas.width - edge_gap*2)/data.value.length
+    const bar_width = (canvas.width - edge_gap*2)/data._get_length()
     let get_y = (datum) => datum
     if(typeof y === 'function') get_y = y
-    if(typeof y === 'string') get_y = (d) => d[y]
+    if(is_string(y)) get_y = (d,i) => data._get_field_from(y,d,i)
     console.log("data is",data)
-    let values = data.value.map(get_y)
+    let values = data._map(get_y)
+    console.log("values are",values)
 
     let max_val = max(values)
     // console.log("max is",max_val)
     let scale = (canvas.height-edge_gap*2)/max_val
     // console.log("scale is",scale)
 
-    data.value.forEach((datu,i)=>{
-        let value = get_y(datu)
+    data._forEach((datu,i)=>{
+        let value = get_y(datu,i)
         let label = i+""
         if(x_label !== 'index') label = datu[x_label]
 

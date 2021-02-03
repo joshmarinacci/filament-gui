@@ -37,7 +37,7 @@ export const length = new FilamentFunction('length', {
     },
     function(data) {
         this.log(data)
-        return scalar(data.value.length)
+        return scalar(data._get_length())
     }
 )
 
