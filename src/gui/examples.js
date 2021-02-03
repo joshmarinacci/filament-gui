@@ -85,7 +85,10 @@ take(range(min:0, max:100,step:10), -5)
     },
     {
         title:"planets radius vs orbit radius",
-        code: `dataset('planets') >> chart(type:'scatter', x:'orbital_radius',y:'mean_radius')`
+        code: `
+dataset('planets') >> chart(type:'scatter', 
+                               x:'orbital_radius',
+                               y:'mean_radius')`
     },
     {
         title:'5 tallest buildings. name vs height',
