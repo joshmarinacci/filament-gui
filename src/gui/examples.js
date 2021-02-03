@@ -93,12 +93,12 @@ take(range(min:0, max:100,step:10), -5)
     },
     {
         title:'most populous countries',
-        code: `let countries = take(await dataset('countries'), 10)
+        code: `countries << take(dataset('countries'), 10)
 chart(countries, x_label:'name', y:(y)=>parseInt(y.population), y_label:'population')`
     },
     {
         title:'histogram of states first letters',
-        code: `let states = await dataset('states')
+        code: `states << dataset('states')
 const first_letter = (s) => take(s.name, 1)
 states = map(states, first_letter)
 histogram(states)`
@@ -109,6 +109,6 @@ histogram(states)`
     },
     {
         title:'history of apple stock last 5 years',
-        code: `chart(stockhistory('AAPL'), y:'close')`
+        code: `stockhistory('AAPL') >> chart(y:'close')`
     }
 ]

@@ -149,6 +149,9 @@ export class FTable extends ASTNode {
     _get_field_from(field, datum, index) {
         return pack(this.value[index][unpack(field)])
     }
+    _slice(a,b) {
+        return new FTable({data:{schema:this.schema, items:this.value.slice(a,b)}})
+    }
 }
 
 class FCall {

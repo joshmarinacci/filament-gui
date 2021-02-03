@@ -1,5 +1,5 @@
 import {FilamentFunction, REQUIRED} from './parser.js'
-import {list, scalar} from './ast.js'
+import {list, scalar, unpack} from './ast.js'
 
 function gen_range(min,max,step) {
     let list = []
@@ -55,9 +55,9 @@ export const take = new FilamentFunction('take',
     },function(data,count) {
         this.log("taking from data",data,'with count',count)
         if(count < 0) {
-            return list(data.value.slice(data.value.length+count.value,data.value.length))
+            return data._slice(data._get_length()+unpack(count),data._get_length())
         } else {
-            return list(data.value.slice(0, count.value))
+            return data._slice(0, unpack(count))
         }
     })
 
