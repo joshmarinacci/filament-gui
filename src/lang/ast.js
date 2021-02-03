@@ -84,7 +84,8 @@ export const boolean = v => new FBoolean(v)
 
 export function pack(val) {
     if(typeof val === 'number') return scalar(val)
-    console.log("can't unpack value",val)
+    if(typeof val === 'string') return string(val)
+    console.log("can't pack value",val, typeof val)
     return val
 }
 export function unpack(v) {
@@ -129,8 +130,8 @@ export const list = arr => new FList(arr)
 export class FTable extends ASTNode {
     constructor(obj) {
         super()
-        this.log("making using data",obj.data)
         this.type = 'table'
+        this.log("making using data",obj.data)
         this.schema = obj.data.schema
         this.value = obj.data.items
     }

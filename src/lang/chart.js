@@ -158,23 +158,24 @@ export function histogram(data) {
 
 }
 
-export function timeline(data, opts) {
-    let date = opts.date
+export const timeline = new FilamentFunction('timeline',
+    {
+        data:REQUIRED,
+        date:REQUIRED,
+        name:REQUIRED,
+    },
+    function(data, date, name) {
     let get_date = (datum) => datum
-    if(typeof date === 'function') get_date = date
-    if(typeof date === 'string') get_date = (d) => {
-        let dt = d[date]
-        if(typeof dt === 'string') {
-            let dt2 = parseDate(dt,'MMMM dd, yyyy', new Date())
-            return dt2
-        }
+    if(is_string(date)) get_date = (d,i) => {
+        let dt = data._get_field_from(date,d,i)
+        if(is_string(dt)) return parseDate(unpack(dt),'MMMM dd, yyyy', new Date())
         return dt
     }
 
-    let min = data.data.items.map(get_date)
-    min.sort((a,b)=>compareAsc(a,b))
-    min = min[0]
-    let max = data.data.items.map(get_date)
+    let date_values = data._map(get_date)
+    date_values.sort((a,b)=>compareAsc(a,b))
+    let min = date_values[0]
+    let max = data._map(get_date)
     max.sort((a,b)=> compareDesc(a,b))
     max = max[0]
     let interval = {
@@ -187,10 +188,10 @@ export function timeline(data, opts) {
         clear(ctx,canvas)
         let width = canvas.width
         let height = canvas.height
-        let pairs = data.data.items.map(datum => {
+        let pairs = data._map((datum,i) => {
             return {
-                name:datum.name,
-                date:get_date(datum)
+                name:data._get_field_from(name,datum,i),
+                date:get_date(datum,i)
             }
         })
 
@@ -209,3 +210,4 @@ export function timeline(data, opts) {
         ctx.restore()
     })
 }
+)

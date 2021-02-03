@@ -16,6 +16,7 @@ scope.install(reverse)
 scope.install(length)
 scope.install(chart)
 scope.install(dataset)
+scope.install(timeline)
 
 export async function real_eval2(code) {
     // console.log("really evaluating",code)
