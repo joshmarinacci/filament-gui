@@ -114,6 +114,9 @@ class FList {
     _forEach(cb) {
         return this.value.forEach(cb)
     }
+    _slice(a,b) {
+        return new FList(this.value.slice(a,b))
+    }
 
     toString() {
         return `[${this.value.join(",")}]`
