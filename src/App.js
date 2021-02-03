@@ -12,6 +12,7 @@ import {EXAMPLES} from './gui/examples.js'
 import {CodeEditor} from './gui/editor.js'
 
 
+let stash = ""
 function App() {
     const [code, setCode] = useState('5+6')
     const [result, setResult] = useState(null)
@@ -29,8 +30,8 @@ function App() {
                 >{ex.title}</button>)}
             </VBox>
             <VBox grow>
-                <CodeEditor value={code} onEval={(code)=>doEval(code)}/>
-                {/*<button onClick={() => doEval(editor.getValue())}>eval</button>*/}
+                <CodeEditor value={code} onEval={(code)=>doEval(code)} onChange={str => stash=str}/>
+                <button onClick={() => doEval(stash)}>eval</button>
                 <ResultArea result={result}/>
             </VBox>
             <VBox classes={{docs:true}}>

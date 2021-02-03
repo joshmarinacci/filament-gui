@@ -30,7 +30,7 @@ let editor = null
 //     })
 // }
 
-export function CodeEditor({value, onEval}) {
+export function CodeEditor({value, onEval, onChange}) {
     const ref = useRef()
     useEffect(() => {
         if (ref.current && editor === null) {
@@ -50,6 +50,7 @@ export function CodeEditor({value, onEval}) {
                 }
             })
             editor.setValue('value')
+            editor.on('changes',()=> onChange(editor.getValue()))
         }
     })
     useEffect(() => {
