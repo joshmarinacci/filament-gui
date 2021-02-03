@@ -30,7 +30,8 @@ import {
     Scope
 } from '../src/lang/ast.js'
 import {cached_json_fetch} from '../src/lang/util.js'
-import {range, take, join, reverse} from "../src/lang/lists.js"
+import {dataset} from '../src/lang/dataset.js'
+import {range, take, join, reverse, length} from "../src/lang/lists.js"
 
 
 
@@ -83,31 +84,6 @@ const is_scalar = (a) => a.type === 'scalar'
 const is_list = (b) => b.type === 'list'
 
 
-
-
-
-export const real_dataset = new FilamentFunction('dataset', {
-        name:REQUIRED,
-    },
-    async function (name) {
-        let url = `https://api.silly.io/api/list/${name.value}`
-        this.log("loading",url)
-        return await cached_json_fetch(url).then(json => {
-            return list(json.data.items)
-        })
-    }
-)
-
-export const real_length = new FilamentFunction('length', {
-        data:REQUIRED,
-    },
-    function(data) {
-        this.log(data)
-        return scalar(data.value.length)
-    }
-)
-
-
 function eval_ast(name, tests) {
     let scope = new Scope()
     scope.install(add)
@@ -115,8 +91,8 @@ function eval_ast(name, tests) {
     scope.install(take)
     scope.install(join)
     scope.install(reverse)
-    scope.install(real_dataset)
-    scope.install(real_length)
+    scope.install(dataset)
+    scope.install(length)
     // scope.install(add, subtract, multiply, divide)
     // scope.install(power, negate)
     // scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)

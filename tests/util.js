@@ -18,12 +18,12 @@ const SCOPE = {
 tp(test)
 
 
-let grammar_source = fs.readFileSync(new URL('../src/lang/grammar.ohm', import.meta.url)).toString();
+// let grammar_source = fs.readFileSync(new URL('../src/lang/grammar.ohm', import.meta.url)).toString();
 
 export function tests(msg,arr, opts) {
     let scope = SCOPE
     if(opts && opts.scope) scope = opts.scope
-    let parser = new Parser(scope, grammar_source)
+    let parser = new Parser(scope, null)
     test(msg, (t)=>{
         let proms = arr.map((tcase) => {
             let str = tcase[0];

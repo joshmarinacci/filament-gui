@@ -32,16 +32,16 @@ export const range = new FilamentFunction('range',
 
 
 // * __length__: returns the length of the list
-export const length = new FilamentFunction(    'length',
-    {
+export const length = new FilamentFunction('length', {
         data:REQUIRED,
     },
     function(data) {
         this.log(data)
-        // if(is_dataset(data)) return data.data.items.length
-        return data.value.length
+        return scalar(data.value.length)
     }
 )
+
+
 
 function is_dataset(list) {
     return list.data?true:false

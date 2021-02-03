@@ -15,15 +15,16 @@ scope.install(join)
 scope.install(reverse)
 scope.install(length)
 scope.install(chart)
+scope.install(dataset)
 
 export async function real_eval2(code) {
-    console.log("really evaluating",code)
-    console.log("src is",src)
+    // console.log("really evaluating",code)
+    // console.log("src is",src)
     return fetch(src).then(r => r.text()).then(txt => {
-        console.log("got the text",txt)
+        // console.log("got the text",txt)
         let parser = new Parser(scope,txt)
         let m = parser.parse(code)
-        console.log("match",m)
+        // console.log("match",m)
         if(m.failed()) throw new Error("match failed on: " + code);
         let ast = parser.ast(m)
         return Promise.resolve(ast.evalFilament(scope))
