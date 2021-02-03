@@ -1,7 +1,7 @@
 import {CanvasResult} from '../canvas.js'
 import {compareAsc, compareDesc, parse as parseDate, eachYearOfInterval, differenceInYears, format as formatDate} from 'date-fns'
 import {FilamentFunction, REQUIRED} from './parser.js'
-import {string} from './ast.js'
+import {string, unpack} from './ast.js'
 import {is_string} from './base.js'
 
 
@@ -17,20 +17,20 @@ function draw_legend(ctx, canvas, data, x_label, y_label) {
     ctx.fillText(legend,xx,yy)
 }
 
-const max = (data) => data.reduce((a,b)=> a>b?a:b)
+const max = (data) => data.reduce((a,b)=> unpack(a)>unpack(b)?a:b)
 
 
 function draw_scatter(ctx, canvas, data, x, y) {
-    let x_values = data.map(d => d[x])
-    let y_values = data.map(d => d[y])
+    let x_values = data._map((d,i) => data._get_field_from(x,d,i))
+    let y_values = data._map((d,i) => data._get_field_from(y,d,i))
     let max_x = max(x_values)
     let max_y = max(y_values)
     let x_scale = canvas.width/max_x
     let y_scale = canvas.height/max_y
 
-    data.forEach((datum,i) => {
-        let vx = datum[x]
-        let vy = datum[y]
+    data._forEach((datum,i) => {
+        let vx = x_values[i]
+        let vy = y_values[i]
         ctx.fillStyle = 'black'
         ctx.beginPath()
         ctx.arc(vx*x_scale,canvas.height-vy*y_scale,2, 0, Math.PI*2)

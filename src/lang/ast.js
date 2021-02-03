@@ -82,12 +82,12 @@ class FBoolean {
 }
 export const boolean = v => new FBoolean(v)
 
-function pack(val) {
+export function pack(val) {
     if(typeof val === 'number') return scalar(val)
     console.log("can't unpack value",val)
     return val
 }
-function unpack(v) {
+export function unpack(v) {
     if(v.type === 'scalar') return v.value
     if(v.type === 'string') return v.value
     console.log("can't unpack value",v)
