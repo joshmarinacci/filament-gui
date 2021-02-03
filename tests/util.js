@@ -1,45 +1,50 @@
 import fs from 'fs'
 import test from "tape"
 import tp from "tape-approximately"
-import {add, cos, divide, factorial, multiply, power, sin, subtract, tan} from '../src/lang/math.js'
+import {
+    add,
+    cos,
+    divide, equal,
+    factorial,
+    greaterthan, greaterthanorequal,
+    lessthan, lessthanorequal,
+    multiply,
+    negate, notequal,
+    power,
+    sin,
+    subtract,
+    tan
+} from '../src/lang/math.js'
 import {drop, join, length, map, range, reverse, select, sort, sum, take} from '../src/lang/lists.js'
 import {Parser} from '../src/lang/parser.js'
-
-// let source, grammar, semantics
-const SCOPE = {
-    add, subtract, multiply, divide, power,
-    // sin:sin,
-    // cos:cos,
-    // tan:tan,
-    drop, length, sum, range, join, take, reverse,
-}
-
+import {Scope} from '../src/lang/ast.js'
 
 tp(test)
 
-
-// let grammar_source = fs.readFileSync(new URL('../src/lang/grammar.ohm', import.meta.url)).toString();
+let grammar_source = fs.readFileSync(new URL('../src/lang/filament.ohm', import.meta.url)).toString();
 
 export function tests(msg,arr, opts) {
-    let scope = SCOPE
-    if(opts && opts.scope) scope = opts.scope
-    let parser = new Parser(scope, null)
+    let scope = new Scope()
+    scope.install(add, subtract, multiply, divide)
+    scope.install(power, negate)
+    scope.install(sum, length, range, join, take, reverse)
+    scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
+
+    let parser = new Parser(scope, grammar_source)
     test(msg, (t)=>{
         let proms = arr.map((tcase) => {
             let str = tcase[0];
             let ans = tcase[1];
             let m = parser.parse(str)
             if(m.failed()) throw new Error("match failed on: " + str);
-            // let sem = parser.semantics(m);
-            // return t.approximately(res.getValue(), ans, 0.001);
-            let val = parser.calc(m)
-            if(val.type === 'callsite')  val = val.apply()
-            return Promise.resolve(val).then(val => {
-                t.deepEqual(val,ans);
+            let val = parser.ast(m).evalJS(scope)
+            return Promise.resolve(val).then(v => {
+                if(v.evalJS) v = v.evalJS()
+                t.deepEqual(v,ans);
             })
         });
-        Promise.allSettled(proms).then(()=>{
-            t.end()
-        })
+        Promise.allSettled(proms)
+            .then(()=> t.end())
+            .catch(e =>console.log("error",e))
     });
 }

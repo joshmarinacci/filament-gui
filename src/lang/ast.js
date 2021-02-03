@@ -183,7 +183,7 @@ class FCall {
     evalJS_with_pipeline(scope,prepend) {
         if(!scope.lookup(this.name)) throw new Error(`function '${this.name}' not found`)
         let fun = scope.lookup(this.name)
-        console.log("eval with prepend args",prepend)
+        // console.log("eval with prepend args",prepend)
         let args = [prepend].concat(this.args)
         return fun.apply_function(args)
     }

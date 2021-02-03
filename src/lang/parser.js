@@ -169,8 +169,8 @@ export class FilamentFunction {
         return params
     }
     apply_function(args) {
-        this.log("applying args",args)
-        this.log("to the function",this.name)
+        // this.log("applying args",args)
+        // this.log("to the function",this.name)
         let params = this.match_args_to_params(args)
         return this.apply_with_parameters(params)
     }

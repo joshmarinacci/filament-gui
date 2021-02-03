@@ -18,7 +18,7 @@ export const range = new FilamentFunction('range',
         step:scalar(1)
     },
     function(max,min,step) {
-        this.log("making a range",max,min,step)
+        // this.log("making a range",max,min,step)
         function gen_range(min,max,step) {
             let list = []
             for(let i=min; i<max; i+=step) {
@@ -36,7 +36,7 @@ export const length = new FilamentFunction('length', {
         data:REQUIRED,
     },
     function(data) {
-        this.log(data)
+        // this.log(data)
         return scalar(data._get_length())
     }
 )
@@ -53,7 +53,7 @@ export const take = new FilamentFunction('take',
         data:REQUIRED,
         count:REQUIRED,
     },function(data,count) {
-        this.log("taking from data",data,'with count',count)
+        // this.log("taking from data",data,'with count',count)
         if(count < 0) {
             return data._slice(data._get_length()+unpack(count),data._get_length())
         } else {
@@ -86,7 +86,7 @@ export const join = new FilamentFunction('join',{
         more:REQUIRED,
     },
     function(data,more) {
-        this.log('params',data,more)
+        // this.log('params',data,more)
         return list(data.value.concat(more.value))
     }
 )
@@ -124,7 +124,7 @@ export const sort = new FilamentFunction( "sort",
 export const reverse = new FilamentFunction('reverse',{
     data:REQUIRED,
 },function(data) {
-    this.log("params",data)
+    // this.log("params",data)
     return list(data.value.reverse())
 })
 

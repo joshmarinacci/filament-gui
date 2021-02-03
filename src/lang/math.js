@@ -23,7 +23,7 @@ function unop(a,cb) {
 //     function(a,b) { return binop(a,b,(a,b)=>a+b) })
 export const add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
     function(a,b) {
-        this.log("adding",a,b)
+        // this.log("adding",a,b)
         if(is_scalar(a) && is_scalar(b)) return scalar(a.value + b.value)
         if(is_list(a) && is_list(b)) {
             let arr = a.value.map((aa,i)=>{
