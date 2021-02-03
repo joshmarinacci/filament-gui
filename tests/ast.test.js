@@ -1,6 +1,5 @@
 import test from "tape"
 import fs from 'fs'
-import ohm from 'ohm-js'
 
 import {
     add,
@@ -14,7 +13,7 @@ import {
     power,
     subtract
 } from "../src/lang/math.js"
-import {FilamentFunction, REQUIRED} from '../src/lang/parser.js'
+import {FilamentFunction, Parser, REQUIRED} from '../src/lang/parser.js'
 import {
     boolean,
     ident,
@@ -27,161 +26,28 @@ import {
     named,
     pipeline_left,
     pipeline_right,
-    fundef
-} from './ast.js'
+    fundef,
+    Scope
+} from '../src/lang/ast.js'
 import {cached_json_fetch} from '../src/lang/util.js'
+import {range, take, join, reverse} from "../src/lang/lists.js"
 
-const OPS = {
-    '+':'add',
-    '-':'subtract',
-    '*':'multiply',
-    '/':'divide',
-    '**':'power',
-    '<':'lessthan',
-    '>':'greaterthan',
-    '=':'equal',
-    '<>':'notequal',
-    '<=':'lessthanorequal',
-    '>=':'greaterthanorequal',
-    'as':'convertunit'
-}
-
-const UNITS = {
-    'meter':'meter',
-    'm':'meter',
-    'meters':'meter',
-    'foot':'foot',
-    'ft':'foot',
-    'feet':'foot',
-    '%':'percent',
-    'percent':'percent',
-    'in':'inch',
-    'mps':'meter/second',
-    'meter/second':'meter/second',
-    'mpss':'meter/second/second',
-    'meter/second/second':'meter/second/second',
-}
 
 
 const strip_under = s => s.replaceAll("_","")
 let g2_source = fs.readFileSync(new URL("../src/lang/filament.ohm", import.meta.url)).toString()
-let g2 = ohm.grammar(g2_source)
-let g2_semantics = g2.createSemantics()
-
-function parseBoolean(sourceString) {
-    if(sourceString.toLowerCase()==='true') return true
-    if(sourceString.toLowerCase()==='false') return false
-    throw new Error(`invalid boolean '${sourceString}'`)
-}
-
-g2_semantics.addOperation('ast',{
-
-    _terminal: function() {  return this.sourceString;  },
-    unitnumber:(v,u) => scalar(v.ast(),u.ast()),
-    number_whole:function(a) {
-        return scalar(parseInt(strip_under(a.sourceString)))
-    },
-    number_hex:function(_,a) {
-        return scalar(parseInt(strip_under(a.sourceString),16))
-    },
-    number_fract:function(a,b,c) {
-        return scalar(parseFloat(strip_under(a.sourceString + b.sourceString + c.sourceString)))
-    },
-    unit:function(u) {
-        console.log("unit",u.sourceString)
-        let name = u.sourceString
-        if(UNITS[name]) return UNITS[name]
-        throw new Error(`unknown unit type '${name}'`)
-    },
-    bool: (a) => boolean(parseBoolean(a.sourceString)),
-
-    string: (_1,str,_2) => string(str.sourceString),
-
-    ident: function(i,i2) {
-        return ident(this.sourceString)
-    },
-
-    NonemptyListOf:function(a,b,c) {
-        return [a.ast()].concat(c.ast())
-    },
-    EmptyListOf:function() {
-        return []
-    },
-    List:function(a,b,c) {
-        return list(b.ast())
-    },
-
-
-
-    BinExp:function(a,b,c) {
-        let op = b.ast()
-        // console.log("operation",op)
-        if(OPS[op]) return call(OPS[op],[indexed(a.ast()),indexed(c.ast())])
-        throw new Error(`Unknown operator: ${op}`)
-    },
-
-    Arg_named: function(a,b,c) {
-        console.log("named",a.ast(),b.ast(),c.ast())
-        return named(a.ast().name,c.ast())
-    },
-    Arg_indexed: function(a) {
-        // console.log("indexed",a.ast())
-        return indexed(a.ast())
-    },
-
-    FuncallExp:function(ident,_1,args,_2) {
-        let name = ident.ast()
-        // console.log('args',args.ast())
-        let list = args.ast()
-        return call(name.name,list)
-    },
-
-    Pipeline_right:function(first,_,next) {
-        return pipeline_right(first.ast(),next.ast())
-    },
-    Pipeline_left:function(next,_,first) {
-        return pipeline_left(next.ast(),first.ast())
-    },
-
-    Block:function(_1,statements,_2) {
-        return block(statements.ast())
-    },
-
-    DefArg:function(a,_,c) {
-        return [a.ast().name,c.ast()]
-    },
-    FundefExp:function(def,name,_1,args,_2,block) {
-        return fundef(name.ast().name, args.ast(),block.ast())
-    },
-
-})
-
-
-
-class Scope {
-    constructor() {
-        this.funs= {}
-    }
-    lookup(name) {
-        // console.log("SCOPE: lookup",name)
-        return this.funs[name]
-    }
-    install(...funs) {
-        funs.forEach(fun => {
-            this.funs[fun.name] = fun
-        })
-    }
-    set_var(name,value) {
-        this.funs[name] = value
-        // console.log("SCOPE: set var",name)
-        return value
-    }
-}
+// let g2 = ohm.grammar(g2_source)
+// let g2_semantics = g2.createSemantics()
 
 const func = new FilamentFunction("func",{data:null},(data)=>data)
 const funk = new FilamentFunction("funk",{data:null},(data)=>data)
 const convertunit = new FilamentFunction('convertunit',{a:REQUIRED,b:REQUIRED},
     (a,b) => a.value)
+
+function unpack(res) {
+    if(res.type === 'scalar') return res.value
+    return res
+}
 
 function verify_ast(name, tests) {
     let scope = new Scope()
@@ -190,18 +56,24 @@ function verify_ast(name, tests) {
     scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
     scope.install(func,funk)
     scope.install(convertunit)
+    let parser = new Parser(scope,g2_source)
     test(name, (t)=>{
         Promise.allSettled(tests.map((tcase) => {
-            // console.log("tcase",tcase)
+            console.log("tcase",tcase)
             let [code,obj,str,val] = tcase
-            let match = g2.match(code)
-            let ast = g2_semantics(match).ast()
-            // console.log("ast",ast)
+            let match = parser.parse(code)
+            let ast = parser.ast(match)
+            console.log("ast",ast)
             t.deepLooseEqual(ast,obj)
-            // console.log("to string",ast.toString())
+            console.log("to string",ast.toString())
             t.deepEqual(ast.toString(),str)
             let prom = ast.evalJS(scope)
-            return Promise.resolve(prom).then((res)=> t.deepEqual(res,val))
+            return Promise.resolve(prom)
+                .then(res => {
+                    console.log("final result",res)
+                    return unpack(res)
+                })
+                .then((res)=> t.deepEqual(res,val))
         })).then(()=>t.end())
     })
 }
@@ -212,67 +84,6 @@ const is_list = (b) => b.type === 'list'
 
 
 
-export const real_add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
-    function(a,b) {
-        this.log("adding",a,b)
-        if(is_scalar(a) && is_scalar(b)) return scalar(a.value + b.value)
-        if(is_list(a) && is_list(b)) {
-            let arr = a.value.map((aa,i)=>{
-                return scalar(aa.value + b.value[i].value)
-            })
-            return list(arr)
-        }
-        this.log("erroring")
-        throw new Error("can't add " + a.toString() + " " + b.toString())
-    })
-
-export const real_range = new FilamentFunction('range',
-    {
-        max:REQUIRED,
-        min:scalar(0),
-        step:scalar(1)
-    },
-    function(max,min,step) {
-        this.log("making a range",max,min,step)
-        function gen_range(min,max,step) {
-            let list = []
-            for(let i=min; i<max; i+=step) {
-                list.push(i)
-            }
-            return list
-        }
-        return list(gen_range(min.value,max.value,step.value).map(v => scalar(v)))
-    })
-
-export const real_take = new FilamentFunction('take',
-    {
-        data:REQUIRED,
-        count:REQUIRED,
-    },function(data,count) {
-    this.log("taking from data",data,'with count',count)
-        if(count < 0) {
-            return list(data.value.slice(data.value.length+count.value,data.value.length))
-        } else {
-            return list(data.value.slice(0, count.value))
-        }
-    })
-
-export const real_join = new FilamentFunction('join',{
-    data:REQUIRED,
-    more:REQUIRED,
-},
-function(data,more) {
-    this.log('params',data,more)
-    return list(data.value.concat(more.value))
-}
-)
-
-export const real_reverse = new FilamentFunction('reverse',{
-    data:REQUIRED,
-},function(data) {
-    this.log("params",data)
-    return list(data.value.reverse())
-})
 
 
 export const real_dataset = new FilamentFunction('dataset', {
@@ -299,11 +110,11 @@ export const real_length = new FilamentFunction('length', {
 
 function eval_ast(name, tests) {
     let scope = new Scope()
-    scope.install(real_add)
-    scope.install(real_range)
-    scope.install(real_take)
-    scope.install(real_join)
-    scope.install(real_reverse)
+    scope.install(add)
+    scope.install(range)
+    scope.install(take)
+    scope.install(join)
+    scope.install(reverse)
     scope.install(real_dataset)
     scope.install(real_length)
     // scope.install(add, subtract, multiply, divide)
@@ -311,12 +122,14 @@ function eval_ast(name, tests) {
     // scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
     // scope.install(func,funk)
     // scope.install(convertunit)
+    let parser = new Parser(scope,g2_source)
     test(name, t => {
         Promise.allSettled(tests.map(tcase => {
             console.log("eval ast test case",tcase)
             let [code,val] = tcase
-            let match = g2.match(code)
-            let ast = g2_semantics(match).ast()
+            let match = parser.parse(code)
+            if(match.failed()) t.error()
+            let ast = parser.ast(match)
             console.log("ast",ast)
             return Promise.resolve(ast.evalFilament(scope))
                 .then(r => t.deepEqual(r,val))
@@ -442,15 +255,16 @@ function test_function_calls() {
     verify_ast("function calls", [
         //'func' function returns data or first arg
         ['func()',call('func',[]),'func()',null],
-        ['func(42)',call('func',[indexed(scalar(42))]),'func(42)',_42],
+        ['func(42)',call('func',[indexed(scalar(42))]),'func' +
+        '(42)',42],
         ['func([42])',call('func',[indexed(list([scalar(42)]))]),'func([42])',list_42],
-        ['func(data:42)',call('func',[named('data',scalar(42))]),'func(data:42)',scalar(42)],
+        ['func(data:42)',call('func',[named('data',scalar(42))]),'func(data:42)',42],
         ['func(data:[42],count:42)',call('func',[named('data',list([scalar(42)])),named('count',scalar(42))]),'func(data:[42],count:42)',list_42],
         ['func(count:42, [42])',call('func',[named('count',scalar(42)),indexed(list([scalar(42)]))]),'func(count:42,[42])',list_42],
         // ['func(func(42))',call('func',[indexed(call('func',[indexed(scalar(42))]))]),'func(func(42))',_42],
         ['func(42,func(42))',
             call('func',[indexed(scalar(42)),indexed(call('func',[indexed(scalar(42))]))]),
-            'func(42,func(42))',_42],
+            'func(42,func(42))',42],
         // ['func(count:func,func(),func)',
         //     call('func',[
         //         named('count','func'),
@@ -481,7 +295,7 @@ function test_pipelines() {
                 call('func',[indexed(scalar(42))]),
                 call('func',[named('count',scalar(42))]),
             ),
-            'func(42)>>func(count:42)', _42 ],
+            'func(42)>>func(count:42)', 42 ],
         ['func(42) >> func(count:42) >> func(42)',
             pipeline_right(
                 call('func',[indexed(scalar(42))]),
@@ -490,7 +304,7 @@ function test_pipelines() {
                     call('func',[indexed(scalar(42))]),
                 ),
             ),
-            'func(42)>>func(count:42)>>func(42)', _42],
+            'func(42)>>func(count:42)>>func(42)', 42],
         // ['func(arg: _42, [4_2 ]) >> func(count:42) >> funk(42) >> answer',
         //     pipeline_right(
         //         call('func',[

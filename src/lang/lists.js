@@ -1,4 +1,5 @@
 import {FilamentFunction, REQUIRED} from './parser.js'
+import {list, scalar} from './ast.js'
 
 function gen_range(min,max,step) {
     let list = []
@@ -10,14 +11,23 @@ function gen_range(min,max,step) {
 
 // * __range__: generate a list of numbers: `(max), (min,max), (min,max,step)`
 
-export const range = new FilamentFunction('range', {
-    max:REQUIRED,
-    min:0,
-    step:1
-},
-    function(max,min,step){
-        return gen_range(min,max,step)
-})
+export const range = new FilamentFunction('range',
+    {
+        max:REQUIRED,
+        min:scalar(0),
+        step:scalar(1)
+    },
+    function(max,min,step) {
+        this.log("making a range",max,min,step)
+        function gen_range(min,max,step) {
+            let list = []
+            for(let i=min; i<max; i+=step) {
+                list.push(i)
+            }
+            return list
+        }
+        return list(gen_range(min.value,max.value,step.value).map(v => scalar(v)))
+    })
 
 
 
@@ -38,17 +48,16 @@ function is_dataset(list) {
 }
 
 // * __take__: take the first N elements from a list to make a new list `take([1,2,3], 2) = [1,2]`
-export const take =  new FilamentFunction(  "take",
+export const take = new FilamentFunction('take',
     {
         data:REQUIRED,
         count:REQUIRED,
-    },
-    function (data,count) {
-        // this.log(data,count)
+    },function(data,count) {
+        this.log("taking from data",data,'with count',count)
         if(count < 0) {
-            return data.slice(data.length+count,data.length)
+            return list(data.value.slice(data.value.length+count.value,data.value.length))
         } else {
-            return data.slice(0, count)
+            return list(data.value.slice(0, count.value))
         }
     })
 
@@ -72,16 +81,15 @@ export const drop =  new FilamentFunction(  "drop",
 
 
 // * __join__: concatentate two lists, returning a new list. is this needed?
-export const join =  new FilamentFunction(  "join",
-    {
+export const join = new FilamentFunction('join',{
         data:REQUIRED,
         more:REQUIRED,
     },
-    function (data,more) {
+    function(data,more) {
         this.log('params',data,more)
-        if(!Array.isArray(more)) more = [more]
-        return data.concat(more)
-    })
+        return list(data.value.concat(more.value))
+    }
+)
 
 
 // * __map__:  convert every element in a list using a lambda function: `(list, lam)`
@@ -113,16 +121,12 @@ export const sort = new FilamentFunction( "sort",
 )
 
 // * __reverse__: return a list with the order reversed  `reverse(data)`
-export const reverse = new FilamentFunction("reverse",
-    {
-        data:REQUIRED,
-    },
-    function(data) {
-        this.log("params",data)
-        return data.reverse()
-    }
-)
-
+export const reverse = new FilamentFunction('reverse',{
+    data:REQUIRED,
+},function(data) {
+    this.log("params",data)
+    return list(data.value.reverse())
+})
 
 // * __sum__: adds all data points together
 export const sum = new FilamentFunction("sum",

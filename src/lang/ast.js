@@ -1,3 +1,23 @@
+export class Scope {
+    constructor() {
+        this.funs= {}
+    }
+    lookup(name) {
+        // console.log("SCOPE: lookup",name)
+        return this.funs[name]
+    }
+    install(...funs) {
+        funs.forEach(fun => {
+            this.funs[fun.name] = fun
+        })
+    }
+    set_var(name,value) {
+        this.funs[name] = value
+        // console.log("SCOPE: set var",name)
+        return value
+    }
+}
+
 class FScalar {
     constructor(value,unit) {
         this.type = 'scalar'
@@ -72,16 +92,6 @@ class FList {
 }
 export const list = arr => new FList(arr)
 
-function is_number(ret) {
-    if(typeof ret === 'number') return true
-    return false
-}
-
-function is_array(ret) {
-    if(Array.isArray(ret)) return true
-    return false
-}
-
 class FCall {
     log() {
         console.log("## FCall ## ",...arguments)
@@ -99,7 +109,10 @@ class FCall {
         if(!scope.lookup(this.name)) throw new Error(`function '${this.name}' not found`)
         let fun = scope.lookup(this.name)
         // console.log('args',this.args)
-        return fun.apply_function(this.args)
+        return fun.apply_function(this.args).then(res => {
+            this.log("result of evalJS",res)
+            return res
+        })
     }
     evalJS_with_pipeline(scope,prepend) {
         if(!scope.lookup(this.name)) throw new Error(`function '${this.name}' not found`)

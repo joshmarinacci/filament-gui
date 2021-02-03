@@ -1,4 +1,6 @@
 import {FilamentFunction, REQUIRED} from './parser.js'
+import {list, scalar} from './ast.js'
+import {is_list, is_scalar} from './base.js'
 
 
 function gv (v) {
@@ -17,8 +19,22 @@ function unop(a,cb) {
     return cb(a)
 }
 
+// export const add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
+//     function(a,b) { return binop(a,b,(a,b)=>a+b) })
 export const add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
-    function(a,b) { return binop(a,b,(a,b)=>a+b) })
+    function(a,b) {
+        this.log("adding",a,b)
+        if(is_scalar(a) && is_scalar(b)) return scalar(a.value + b.value)
+        if(is_list(a) && is_list(b)) {
+            let arr = a.value.map((aa,i)=>{
+                return scalar(aa.value + b.value[i].value)
+            })
+            return list(arr)
+        }
+        this.log("erroring")
+        throw new Error("can't add " + a.toString() + " " + b.toString())
+    })
+
 export const subtract = new FilamentFunction('subtract',{a:REQUIRED, b:REQUIRED},
     function (a,b) { return binop(a,b,(a,b)=>a-b) })
 export const multiply = new FilamentFunction('multiply',{a:REQUIRED, b:REQUIRED},
