@@ -177,19 +177,32 @@ function test_units() {
             'convertunit(42 foot,inches)',42],
     ])
 }
-function test_variable_assignment() {
+
+function verify_var_assignment() {
     verify_ast("variables and identifiers", [
-        [`aprime<<13`,pipeline_left(scalar(13),'aprime'), `aprime<<13`,13],
-        [`a_prime << 13`,pipeline_left(scalar(13),'aprime'), `aprime<<13`,13],
-        [`APRIME << 13`,pipeline_left(scalar(13),'aprime'), `aprime<<13`,13],
-        [`13 >> aPrime`,pipeline_right(scalar(13),'aprime'), `13>>aprime`,13],
-        ['42 >> answer',pipeline_right(scalar(42),'answer'), '42>>answer',42],
-        ['answer << 42',pipeline_left(scalar(42),'answer'), 'answer<<42',42],
-        ['answer24 << 42',pipeline_left(scalar(42),'answer24'),'answer24<<42',42],
-        ['answ24er << 42',pipeline_left(scalar(42),'answ24er'),'answ24er<<42',42],
+        [`aprime<<13`,pipeline_left(ident('aprime'),scalar(13)), `aprime<<13`,13],
+        // [`a_prime << 13`,pipeline_left(ident('aprime'),scalar(13)), `aprime<<13`,13],
+        // [`APRIME << 13`,pipeline_left(scalar(13),'aprime'), `aprime<<13`,13],
+        [`13 >> aprime`,pipeline_right(scalar(13),ident('aprime')), `13>>aprime`,13],
+        ['42 >> answer',pipeline_right(scalar(42),ident('answer')), '42>>answer',42],
+        // ['answer << 42',pipeline_left(scalar(42),'answer'), 'answer<<42',42],
+        // ['answer24 << 42',pipeline_left(scalar(42),'answer24'),'answer24<<42',42],
+        // ['answ24er << 42',pipeline_left(scalar(42),'answ24er'),'answ24er<<42',42],
         // ['42 >> _a_n_sw24er',pipeline_right(scalar(42),'answ24er'),'42>>answ24er',42],
     ])
 }
+function eval_var_assignment() {
+    eval_ast('variables as arguments',[
+        [`{ 42 }`, scalar(42) ],
+        [`{ 42 24 }`, scalar(24) ],
+        [`{ 42 >> foo }`,scalar(42)],
+        [`{ 42 >> foo 43 }`,scalar(43)],
+        [`{ 42 >> foo 1+foo}`,scalar(43)],
+        [`{ 42 >> foo add(1,foo)}`,scalar(43)],
+        [`{ data << [1,2]  length(data)}`,scalar(2)],
+    ])
+}
+
 function verify_operators() {
     verify_ast("binary operators", [
         ['4+2',call('add',[indexed(scalar(4)),indexed(scalar(2))]),'add(4,2)',6],
@@ -436,8 +449,8 @@ function test_gui_examples() {
         [`dataset('planets') >> length()`,s(8)],
         // [ `dataset('planets') >> chart(type:'scatter', x:'orbital_radius',y:'mean_radius')`],
         // [ `dataset('tallest_buildings') >> take(count:5) >> chart(y:'height', x_label:'name')`],
-        // [ `let countries = take(await dataset('countries'), 10)
-        //    chart(countries, x_label:'name', y:(y)=>parseInt(y.population), y_label:'population')`],
+        [ `{countries = take(dataset('countries'), 10)
+           length(countries)}`,s(10)],
         // [ `let states = await dataset('states')
         //     const first_letter = (s) => take(s.name, 1)
         //     states = map(states, first_letter)
@@ -449,6 +462,7 @@ function test_gui_examples() {
 
 }
 
+
 function doAll() {
     test_gui_examples()
     test_literals()
@@ -457,13 +471,16 @@ function doAll() {
     test_pipelines()
     // test_comments()
     test_blocks()
-    // test_variable_assignment()
     // test_unicode_replacement()
     // test_conditionals()
     // test_function_definitions()
 
     verify_operators()
     eval_operators()
+
+    verify_var_assignment()
+    eval_var_assignment()
+
 }
 
 doAll()

@@ -290,13 +290,14 @@ class Pipeline extends ASTNode {
         }
     }
     evalJS(scope) {
-        return this.first.evalJS(scope).then(fval => {
+        this.log("first is",this.first)
+        return Promise.resolve(this.first.evalJS(scope)).then(fval => {
             return this.next.evalJS_with_pipeline(scope,indexed(fval))
         })
     }
     evalFilament(scope) {
         this.log(`evaluating ${this.direction} `, this.first, 'then',this.next)
-        return this.first.evalFilament(scope)
+        return Promise.resolve(this.first.evalFilament(scope))
             .then(val1 => {
                 // this.log("val1 is",val1)
                 // this.log("next is",this.next)
