@@ -63,18 +63,11 @@ export const tan = (a) => unop(a, a=>Math.tan(a))
 
 export const mod = make_binop('mod',(a,b)=>a%b)
 export const lessthan = make_binop('lessthan',(a,b)=>a<b)
-export const greaterthan = new FilamentFunction('greaterthan',{a:REQUIRED, b:REQUIRED},
-    (a,b) => binop(a,b,(a,b)=>a>b))
-export const equal = new FilamentFunction('equal',{a:REQUIRED, b:REQUIRED},
-    (a,b) => binop(a,b,(a,b)=>a===b))
-export const notequal = new FilamentFunction('notequal',{a:REQUIRED, b:REQUIRED},
-    (a,b) => binop(a,b,(a,b)=>a!==b))
-export const lessthanorequal = new FilamentFunction('lessthanorequal',{a:REQUIRED, b:REQUIRED},
-    (a,b) => binop(a,b,(a,b)=>a<=b))
-export const greaterthanorequal = new FilamentFunction('greaterthanorequal',{a:REQUIRED, b:REQUIRED},
-    (a,b) => binop(a,b,(a,b)=>a>=b))
-export const and = new FilamentFunction('and',{a:REQUIRED, b:REQUIRED},
-    (a,b) => binop(a,b,(a,b)=>a&&b))
-export const or = new FilamentFunction('or',{a:REQUIRED, b:REQUIRED},
-    (a,b) => binop(a,b,(a,b)=>a||b))
+export const greaterthan = make_binop('greaterthan',(a,b)=>a>b)
+export const equal = make_binop('equal',(a,b)=>a===b)
+export const notequal = make_binop('notequal',(a,b)=>a!==b)
+export const lessthanorequal = make_binop('lessthanorequal',(a,b)=>a<=b)
+export const greaterthanorequal = make_binop('greaterthanorequal',(a,b)=>a>=b)
+export const and = make_binop('and',(a,b)=>a&&b)
+export const or = make_binop('or',(a,b)=>a||b)
 
