@@ -167,7 +167,7 @@ export class FTable extends ASTNode {
     constructor(obj) {
         super()
         this.type = 'table'
-        this.log("making using data",obj.data)
+        // this.log("making using data",obj.data)
         this.schema = obj.data.schema
         this.value = obj.data.items
     }
@@ -289,7 +289,7 @@ export const fundef = (name,args,block) => new FunctionDefintion(name,args,block
 
 class FIndexedArg {
     log() {
-        console.log("## FIndexedArg ## ",...arguments)
+        // console.log("## FIndexedArg ## ",...arguments)
     }
     constructor(value) {
         this.type = 'indexed'
@@ -307,7 +307,7 @@ export const indexed = v => new FIndexedArg(v)
 
 class FNamedArg {
     log() {
-        console.log("## FNamedArg ## ",...arguments)
+        // console.log("## FNamedArg ## ",...arguments)
     }
     constructor(name,value) {
         this.type = 'named'
@@ -341,13 +341,13 @@ class Pipeline extends ASTNode {
         }
     }
     evalJS(scope) {
-        this.log("first is",this.first)
+        // this.log("first is",this.first)
         return Promise.resolve(this.first.evalJS(scope)).then(fval => {
             return this.next.evalJS_with_pipeline(scope,indexed(fval))
         })
     }
     evalFilament(scope) {
-        this.log(`evaluating ${this.direction} `, this.first, 'then',this.next)
+        // this.log(`evaluating ${this.direction} `, this.first, 'then',this.next)
         return Promise.resolve(this.first.evalFilament(scope))
             .then(val1 => {
                 // this.log("val1 is",val1)
@@ -403,12 +403,11 @@ class FBlock extends ASTNode{
 
         this.statements.forEach(statement =>
             p = p.then(() => {
-                this.log("statement",statement)
+                // this.log("statement",statement)
                 return statement.evalFilament(scope2)
             })
         )
         return p.then(res => {
-            this.log("block is done. final value is",res)
             return res
         })
 

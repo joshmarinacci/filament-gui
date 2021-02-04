@@ -55,18 +55,18 @@ function verify_ast(name, tests) {
     let parser = new Parser(scope,g2_source)
     test(name, (t)=>{
         Promise.allSettled(tests.map((tcase) => {
-            console.log("tcase",tcase)
+            // console.log("tcase",tcase)
             let [code,obj,str,val] = tcase
             let match = parser.parse(code)
             let ast = parser.ast(match)
-            console.log("ast",ast)
+            // console.log("ast",ast)
             t.deepLooseEqual(ast,obj)
-            console.log("to string",ast.toString())
+            // console.log("to string",ast.toString())
             t.deepEqual(ast.toString(),str)
             let prom = ast.evalJS(scope)
             return Promise.resolve(prom)
                 .then(res => {
-                    console.log("final result",res)
+                    // console.log("final result",res)
                     return unpack(res)
                 })
                 .then((res)=> t.deepEqual(res,val))
@@ -79,7 +79,7 @@ const is_scalar = (a) => a.type === 'scalar'
 const is_list = (b) => b.type === 'list'
 
 const get_field = new FilamentFunction("get_field",{data:REQUIRED,field:REQUIRED},(data,field)=>{
-    console.log("getting the field",data,field)
+    // console.log("getting the field",data,field)
     return pack(data[unpack(field)])
 })
 
@@ -98,12 +98,12 @@ function eval_ast(name, tests) {
     let parser = new Parser(scope,g2_source)
     test(name, t => {
         Promise.allSettled(tests.map(tcase => {
-            console.log("eval ast test case",tcase)
+            // console.log("eval ast test case",tcase)
             let [code,val] = tcase
             let match = parser.parse(code)
             if(match.failed()) t.error()
             let ast = parser.ast(match)
-            console.log("ast",ast)
+            // console.log("ast",ast)
             return Promise.resolve(ast.evalFilament(scope))
                 .then(r => t.deepEqual(r,val))
                 .catch(e => {
