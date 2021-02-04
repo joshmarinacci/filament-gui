@@ -2,14 +2,14 @@ import fs from 'fs'
 import test from "tape"
 import tp from "tape-approximately"
 import {
-    add,
+    add, and,
     cos,
     divide, equal,
     factorial,
     greaterthan, greaterthanorequal,
-    lessthan, lessthanorequal,
+    lessthan, lessthanorequal, mod,
     multiply,
-    negate, notequal,
+    negate, notequal, or,
     power,
     sin,
     subtract,
@@ -25,10 +25,9 @@ let grammar_source = fs.readFileSync(new URL('../src/lang/filament.ohm', import.
 
 export function tests(msg,arr, opts) {
     let scope = new Scope()
-    scope.install(add, subtract, multiply, divide)
-    scope.install(power, negate)
+    scope.install(add, subtract, multiply, divide, power, negate, mod)
     scope.install(sum, length, range, join, take, reverse)
-    scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
+    scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal, and,or)
 
     let parser = new Parser(scope, grammar_source)
     test(msg, (t)=>{

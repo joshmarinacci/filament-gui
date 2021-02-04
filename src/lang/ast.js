@@ -7,8 +7,9 @@ class ASTNode {
 }
 
 export class Scope {
-    constructor() {
+    constructor(id) {
         this.funs= {}
+        this.id = id
     }
     lookup(name) {
         // console.log("SCOPE: lookup",name)
@@ -23,6 +24,9 @@ export class Scope {
         this.funs[name] = value
         // console.log("SCOPE: set var",name)
         return value
+    }
+    names() {
+        return Object.keys(this.funs)
     }
 }
 
@@ -77,6 +81,9 @@ class FBoolean {
         return (this.value === true)?"true":"false"
     }
     evalJS() {
+        return this.value
+    }
+    evalFilament() {
         return this.value
     }
 }
@@ -192,6 +199,7 @@ class FCall {
     evalFilament(scope, prepend) {
         this.log(`ff evaluating "${this.name}" with args`,this.args)
         let fun = scope.lookup(this.name)
+        // console.log(scope.id,scope.names())
         if(!fun) throw new Error(`function '${this.name}' not found`)
         this.log(`real function ${this.name}`)
         let args = this.args.slice()

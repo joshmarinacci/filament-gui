@@ -2,14 +2,14 @@ import test from "tape"
 import fs from 'fs'
 
 import {
-    add,
+    add, and,
     divide,
     equal,
     greaterthan, greaterthanorequal,
     lessthan,
-    lessthanorequal,
+    lessthanorequal, mod,
     multiply, negate,
-    notequal,
+    notequal, or,
     power,
     subtract
 } from "../src/lang/math.js"
@@ -31,7 +31,7 @@ import {
 } from '../src/lang/ast.js'
 import {cached_json_fetch} from '../src/lang/util.js'
 import {dataset} from '../src/lang/dataset.js'
-import {range, take, join, reverse, length} from "../src/lang/lists.js"
+import {range, take, join, reverse, length, drop} from "../src/lang/lists.js"
 
 
 
@@ -47,10 +47,9 @@ const convertunit = new FilamentFunction('convertunit',{a:REQUIRED,b:REQUIRED},
 
 
 function verify_ast(name, tests) {
-    let scope = new Scope()
-    scope.install(add, subtract, multiply, divide)
-    scope.install(power, negate)
-    scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
+    let scope = new Scope('verify_ast')
+    scope.install(add, subtract, multiply, divide, power, negate, mod)
+    scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal,or,and)
     scope.install(func,funk)
     scope.install(convertunit)
     let parser = new Parser(scope,g2_source)
@@ -81,15 +80,11 @@ const is_list = (b) => b.type === 'list'
 
 
 function eval_ast(name, tests) {
-    let scope = new Scope()
-    scope.install(add,subtract,multiply,divide, power)
-    scope.install(lessthan,lessthanorequal,equal,notequal,greaterthanorequal,greaterthan)
-    scope.install(range)
-    scope.install(take)
-    scope.install(join)
-    scope.install(reverse)
+    let scope = new Scope('eval_ast')
+    scope.install(add,subtract,multiply,divide, power,mod)
+    scope.install(lessthan,lessthanorequal,equal,notequal,greaterthanorequal,greaterthan,and,or)
+    scope.install(range,length,take,drop,join,reverse)
     scope.install(dataset)
-    scope.install(length)
     // scope.install(add, subtract, multiply, divide)
     // scope.install(power, negate)
     // scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
@@ -202,7 +197,7 @@ function verify_operators() {
         ['4*2',call('multiply',[indexed(scalar(4)),indexed(scalar(2))]),'multiply(4,2)',8],
         ['4/2',call('divide',[indexed(scalar(4)),indexed(scalar(2))]),'divide(4,2)',2],
         ['4**2',call('power',[indexed(scalar(4)),indexed(scalar(2))]),'power(4,2)',16],
-        // ['4 mod 2',call('mod',[indexed(scalar(4)),indexed(scalar(2))]),'mod(4,2)',0],
+        ['4 mod 2',call('mod',[indexed(scalar(4)),indexed(scalar(2))]),'mod(4,2)',0],
     ])
     verify_ast('boolean operators',[
         ['4 < 2',call('lessthan',[indexed(scalar(4)),indexed(scalar(2))]),'lessthan(4,2)',false],
@@ -230,7 +225,7 @@ function eval_operators() {
         ['4*2',scalar(8)],
         ['4/2',scalar(2)],
         ['4**2',scalar(16)],
-        // ['4 mod 2',call('mod',[indexed(scalar(4)),indexed(scalar(2))]),'mod(4,2)',0],
+        ['4 mod 2',scalar(0)],
     ])
     eval_ast('boolean operators',[
         ['4 < 2',boolean(false)],
@@ -239,8 +234,8 @@ function eval_operators() {
         ['4 <> 2',boolean(true)],
         ['4 <= 2',boolean(false)],
         ['4 >= 2',boolean(true)],
-        // ['true and false',call('and',[indexed(scalar(4)),indexed(scalar(2))]), 'and(true,false)',false],
-        // ['true or false',call('or',[indexed(scalar(4)),indexed(scalar(2))]), 'or(true,false)',true],
+        // ['true and false',boolean(false)],
+        // ['true or false',boolean(true)],
     ])
 
     // verify_ast('unary operators',[

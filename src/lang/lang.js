@@ -1,4 +1,4 @@
-import {add, cos, divide, multiply, power, sin, subtract, tan} from './math.js'
+import {add, and, cos, divide, mod, multiply, negate, or, power, sin, subtract, tan} from './math.js'
 import {drop, join, map, reverse, select, sort, sum, take, range, length} from './lists.js'
 import {chart, histogram, timeline} from './chart.js'
 import {dataset, stockhistory} from './dataset.js'
@@ -7,8 +7,9 @@ import {default as src} from "./filament.ohm"
 import {Parser} from './parser.js'
 import {Scope} from './ast.js'
 
-let scope = new Scope()
-scope.install(add,subtract,multiply,divide, power)
+let scope = new Scope("lang")
+scope.install(add,subtract,multiply,divide, power, mod, negate)
+scope.install(and,or)
 scope.install(range)
 scope.install(take)
 scope.install(join)

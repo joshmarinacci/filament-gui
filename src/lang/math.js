@@ -1,6 +1,6 @@
 import {FilamentFunction, REQUIRED} from './parser.js'
 import {boolean, list, pack, scalar, unpack} from './ast.js'
-import {is_list, is_scalar} from './base.js'
+import {is_boolean, is_list, is_scalar} from './base.js'
 
 
 function gv (v) {
@@ -11,14 +11,15 @@ function gv (v) {
 function binop(a,b,cb) {
     console.log("binop-ing",a,b)
     if(is_scalar(a) && is_scalar(b)) return pack(cb(unpack(a),unpack(b)))
+    if(is_boolean(a) && is_boolean(b)) return pack(cb(unpack(a),unpack(b)))
     if(is_list(a) && is_list(b)) {
         let arr = a.value.map((aa,i)=>{
             return pack(aa.value + b.value[i].value)
         })
         return list(arr)
     }
-    this.log("erroring")
-    throw new Error("can't add " + a.toString() + " " + b.toString())
+    console.log("erroring",a,b,cb)
+    throw new Error("can't binop " + a.toString() + " " + b.toString())
 }
 
 // if((!Array.isArray(a)) && (Array.isArray(b))) return b.map(v => cb(a,v))
@@ -51,7 +52,9 @@ export const factorial = new FilamentFunction('factorial', {a:REQUIRED}, (a) => 
     for(let i=1; i<=a; i++) sum *= i
     return sum
 }))
-export const mod = (a,b) => binop(a,b,(a,b)=> a % b)
+export const mod = new FilamentFunction('mod',{a:REQUIRED, b:REQUIRED},
+    (a,b) => binop(a,b,(a,b)=> (a%b)))
+
 export const sin = (a) => unop(a, a=>Math.sin(a))
 export const cos = (a) => unop(a, a=>Math.cos(a))
 export const tan = (a) => unop(a, a=>Math.tan(a))
@@ -68,3 +71,8 @@ export const lessthanorequal = new FilamentFunction('lessthanorequal',{a:REQUIRE
     (a,b) => binop(a,b,(a,b)=>a<=b))
 export const greaterthanorequal = new FilamentFunction('greaterthanorequal',{a:REQUIRED, b:REQUIRED},
     (a,b) => binop(a,b,(a,b)=>a>=b))
+export const and = new FilamentFunction('and',{a:REQUIRED, b:REQUIRED},
+    (a,b) => binop(a,b,(a,b)=>a&&b))
+export const or = new FilamentFunction('or',{a:REQUIRED, b:REQUIRED},
+    (a,b) => binop(a,b,(a,b)=>a||b))
+

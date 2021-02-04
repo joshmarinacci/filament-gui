@@ -209,7 +209,10 @@ const OPS = {
     '<>':'notequal',
     '<=':'lessthanorequal',
     '>=':'greaterthanorequal',
-    'as':'convertunit'
+    'as':'convertunit',
+    'and':'and',
+    'or':'or',
+    'mod':'mod',
 }
 
 const UNITS = {
