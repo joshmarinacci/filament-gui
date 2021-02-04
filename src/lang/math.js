@@ -52,15 +52,17 @@ export const factorial = new FilamentFunction('factorial', {a:REQUIRED}, (a) => 
     for(let i=1; i<=a; i++) sum *= i
     return sum
 }))
-export const mod = new FilamentFunction('mod',{a:REQUIRED, b:REQUIRED},
-    (a,b) => binop(a,b,(a,b)=> (a%b)))
+
+function make_binop(name, cb) {
+    return new FilamentFunction(name,{a:REQUIRED, b:REQUIRED}, (a,b) => binop(a,b,cb))
+}
 
 export const sin = (a) => unop(a, a=>Math.sin(a))
 export const cos = (a) => unop(a, a=>Math.cos(a))
 export const tan = (a) => unop(a, a=>Math.tan(a))
 
-export const lessthan = new FilamentFunction('lessthan',{a:REQUIRED, b:REQUIRED},
-    (a,b) => binop(a,b,(a,b)=>a<b))
+export const mod = make_binop('mod',(a,b)=>a%b)
+export const lessthan = make_binop('lessthan',(a,b)=>a<b)
 export const greaterthan = new FilamentFunction('greaterthan',{a:REQUIRED, b:REQUIRED},
     (a,b) => binop(a,b,(a,b)=>a>b))
 export const equal = new FilamentFunction('equal',{a:REQUIRED, b:REQUIRED},
