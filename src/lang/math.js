@@ -9,7 +9,7 @@ function gv (v) {
 }
 
 function binop(a,b,cb) {
-    console.log("binop-ing",a,b)
+    // console.log("binop-ing",a,b)
     if(is_scalar(a) && is_scalar(b)) return pack(cb(unpack(a),unpack(b)))
     if(is_boolean(a) && is_boolean(b)) return pack(cb(unpack(a),unpack(b)))
     if(is_list(a) && is_list(b)) {

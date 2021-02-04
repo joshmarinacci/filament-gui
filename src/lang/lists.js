@@ -93,12 +93,20 @@ export const join = new FilamentFunction('join',{
 
 
 // * __map__:  convert every element in a list using a lambda function: `(list, lam)`
-export function map(list,cb) {
-    if(is_dataset(list)) {
-        return map(list.data.items,cb)
-    }
-    return list.map(cb)
-}
+export const map = new FilamentFunction('map',{
+    data:REQUIRED,
+    with:REQUIRED,
+},function(data,cb) {
+    let proms = data._map((el)=>{
+        let ret = cb.fun.apply(cb,[el])
+        return Promise.resolve(ret).then((ret => {
+            return ret
+        }))
+    })
+    return Promise.all(proms).then(vals => {
+        return list(vals)
+    })
+})
 
 
 // * __for__:  loops over every element in a list with a lambda, but returns the original list: `(list, lam)`

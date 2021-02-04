@@ -27,11 +27,11 @@ import {
     pipeline_left,
     pipeline_right,
     fundef,
-    Scope, unpack
+    Scope, unpack, pack
 } from '../src/lang/ast.js'
 import {cached_json_fetch} from '../src/lang/util.js'
 import {dataset} from '../src/lang/dataset.js'
-import {range, take, join, reverse, length, drop} from "../src/lang/lists.js"
+import {range, take, join, reverse, length, drop, map} from "../src/lang/lists.js"
 
 
 
@@ -55,18 +55,18 @@ function verify_ast(name, tests) {
     let parser = new Parser(scope,g2_source)
     test(name, (t)=>{
         Promise.allSettled(tests.map((tcase) => {
-            console.log("tcase",tcase)
+            // console.log("tcase",tcase)
             let [code,obj,str,val] = tcase
             let match = parser.parse(code)
             let ast = parser.ast(match)
-            console.log("ast",ast)
+            // console.log("ast",ast)
             t.deepLooseEqual(ast,obj)
-            console.log("to string",ast.toString())
+            // console.log("to string",ast.toString())
             t.deepEqual(ast.toString(),str)
             let prom = ast.evalJS(scope)
             return Promise.resolve(prom)
                 .then(res => {
-                    console.log("final result",res)
+                    // console.log("final result",res)
                     return unpack(res)
                 })
                 .then((res)=> t.deepEqual(res,val))
@@ -78,13 +78,18 @@ const is_scalar = (a) => a.type === 'scalar'
 
 const is_list = (b) => b.type === 'list'
 
+const get_field = new FilamentFunction("get_field",{data:REQUIRED,field:REQUIRED},(data,field)=>{
+    // console.log("getting the field",data,field)
+    return pack(data[unpack(field)])
+})
 
 function eval_ast(name, tests) {
     let scope = new Scope('eval_ast')
     scope.install(add,subtract,multiply,divide, power,mod, negate, factorial)
     scope.install(lessthan,lessthanorequal,equal,notequal,greaterthanorequal,greaterthan,and,or,not)
-    scope.install(range,length,take,drop,join,reverse)
+    scope.install(range,length,take,drop,join,reverse,map)
     scope.install(dataset)
+    scope.install(get_field)
     // scope.install(add, subtract, multiply, divide)
     // scope.install(power, negate)
     // scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
@@ -93,19 +98,21 @@ function eval_ast(name, tests) {
     let parser = new Parser(scope,g2_source)
     test(name, t => {
         Promise.allSettled(tests.map(tcase => {
-            console.log("eval ast test case",tcase)
+            // console.log("eval ast test case",tcase)
             let [code,val] = tcase
             let match = parser.parse(code)
             if(match.failed()) t.error()
             let ast = parser.ast(match)
-            console.log("ast",ast)
+            // console.log("ast",ast)
             return Promise.resolve(ast.evalFilament(scope))
                 .then(r => t.deepEqual(r,val))
                 .catch(e => {
                     console.log("error here",e)
+                    t.fail()
                 })
         })).then(() => t.end())
             .catch(e => {
+                console.log("error after")
                 console.error(e)
             })
     })
@@ -404,21 +411,20 @@ function test_conditionals() {
         [`if true {func() 42} func()`,'if(true,{func()\n42},{})\nfunc()'],
    ])
 }
-function test_function_definitions() {
-    verify_ast('function definitions',[
-        [
-            `def chart(data:?,x:"index",y:"value") {
-              42 
-              }`,
-            fundef("chart",[
-                ['data','?'],
-                ['x',string('index')],
-                ['y',string('value')],
-            ],block([scalar(42)])),
-            'def chart(data:?,x:"index",y:"value") {42}',
-            null
-        ],
-            // [`def get_attack(pokemon) { pokemon.attack }`,"def get_attack(pokemon=?) {\npokemon.attack\n}\n"],
+function eval_function_definitions() {
+    let s42 = scalar(42)
+    let s24 = scalar(24)
+    const s = (v) => scalar(v)
+
+    eval_ast('function definitions',[
+        ['{def foo() { 42 } foo()}',s42],
+        ['{def foo(x:24) { x } foo(42)}',s42],
+        ['{def foo(x:24) { x } foo()}',s24],
+        ['{def foo(data:?) { take(data,1) } foo([42,24,24])}',list([s42])],
+        ['{def double(x:?) { x*2} map([1,2,3],with:double)}',list([s(2),s(4),s(6)])],
+        ['{def first_letter(v:?) { take(v,1)} map(["foo","bar"],with:first_letter)}',list([string("f"),string("b")])],
+        //TODO: ['range(100, step:10) as jesse',list([string('ten'),string('4D'),'ten twenty thirty 4D fifty 6D 7D AD 9D'])]
+          // [`def get_attack(pokemon) { pokemon.attack }`,"def get_attack(pokemon=?) {\npokemon.attack\n}\n"],
     ])
 }
 
@@ -449,13 +455,16 @@ function test_gui_examples() {
         [`dataset('planets') >> length()`,s(8)],
         // [ `dataset('planets') >> chart(type:'scatter', x:'orbital_radius',y:'mean_radius')`],
         // [ `dataset('tallest_buildings') >> take(count:5) >> chart(y:'height', x_label:'name')`],
-        [ `{countries = take(dataset('countries'), 10)
+        [ `{countries << take(dataset('countries'), 10)
            length(countries)}`,s(10)],
-        // [ `let states = await dataset('states')
-        //     const first_letter = (s) => take(s.name, 1)
-        //     states = map(states, first_letter)
-        //     histogram(states)`],
-        // [ `dataset('states') >> timeline(date:'statehood_date', name:'name')`],
+        [ `{states << dataset('states')
+    def first_letter (state:?) {
+       take(get_field(state,'name'), 1)
+    }
+    states << map(states, first_letter)
+    take(states,1)
+    }`,list([string('A')])],
+    // [ `dataset('states') >> timeline(date:'statehood_date', name:'name')`],
         // [ `chart(stockhistory('AAPL'), y:'close')`],
     ])
 
@@ -469,18 +478,18 @@ function doAll() {
     test_units()
     test_function_calls()
     test_pipelines()
-    // test_comments()
     test_blocks()
-    // test_unicode_replacement()
-    // test_conditionals()
-    // test_function_definitions()
-
-
     verify_var_assignment()
     eval_var_assignment()
-
     verify_operators()
     eval_operators()
+    eval_function_definitions()
+}
+function doTest() {
+    // test_comments()
+    // test_unicode_replacement()
+    // test_conditionals()
 }
 
 doAll()
+// doTest()
