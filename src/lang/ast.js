@@ -1,18 +1,35 @@
+import {FilamentFunction} from './parser.js'
+
 class ASTNode {
     constructor() {
     }
     log() {
         console.log(`## AST Node ${this.type} ## `,...arguments)
     }
+    evalFilament() {
+        throw new Error(`ASTNode ${this.type}  hasn't implemented evalFilament`)
+    }
 }
 
 export class Scope {
-    constructor(id) {
+    constructor(id,parent) {
         this.funs= {}
         this.id = id
+        this.parent = parent
+    }
+    clone(id) {
+        return new Scope(id,this)
     }
     lookup(name) {
         // console.log("SCOPE: lookup",name)
+        if(!this.funs[name]) {
+            if(this.parent) {
+                return this.parent.lookup(name)
+            } else {
+                throw new Error(`no such identifier ${name}`)
+            }
+        }
+
         return this.funs[name]
     }
     install(...funs) {
@@ -27,6 +44,10 @@ export class Scope {
     }
     names() {
         return Object.keys(this.funs)
+    }
+    dump() {
+        console.log(`##### SCOPE == ${this.id} == `,this.names().join(", "))
+        if(this.parent)this.parent.dump()
     }
 }
 
@@ -59,6 +80,9 @@ class FString {
     constructor(value) {
         this.type = 'string'
         this.value = value
+    }
+    _slice(a,b) {
+        return string(this.value.slice(a,b))
     }
     toString() {
         return `"${this.value}"`
@@ -212,26 +236,53 @@ class FCall {
             this.log("evaluating argument",a)
             return a.evalFilament(scope)
         })
-        this.log("real final params",params2)
         return Promise.all(params2).then(params2 => {
+            this.log(`real final params for ${this.name}:`,params2)
             let ret = fun.fun.apply(fun,params2)
-            this.log("ret is",ret)
+            this.log(`return value`,ret)
             return Promise.resolve(ret)
         })
     }
 }
 export const call = (name,args) => new FCall(name,args)
 
-class FunctionDefintion {
-    constructor(name, args, blocks) {
+class FunctionDefintion extends ASTNode {
+    constructor(name, args, block) {
+        super()
         this.type = 'function_definition'
         this.name = name
         this.args = args
-        this.blocks = blocks
+        this.block = block
     }
     toString() {
         let args = this.args.map(a => a[0].toString()+":"+a[1].toString())
-        return `def ${this.name}(${args.join(",")}) {${this.blocks.toString()}}`
+        return `def ${this.name}(${args.join(",")}) {${this.block.toString()}}`
+    }
+    evalFilament(scope) {
+        // this.log("fun def returning self")
+        // this.log("function def args",this.args)
+        let args = {}
+        this.args.forEach(arg => {
+            // console.log("arg",arg)
+            args[arg[0]] = arg[1]
+        })
+        // this.log("making function with args",args)
+        scope.install(new FilamentFunction(this.name,args,(...params)=>{
+            // this.log("inside the function", this.name,params)
+            let scope2 = scope.clone(this.name)
+            this.args.forEach((arg,i) => {
+                // this.log("arg defs",arg)
+                let name = arg[0]
+                let value = params[i]
+                // this.log("final vals",name,value)
+                scope2.set_var(name,value)
+            })
+            return Promise.resolve(this.block.evalFilament(scope2)).then(v => {
+                // this.log("value of block is",v)
+                return v
+            })
+        }))
+        return this
     }
 }
 export const fundef = (name,args,block) => new FunctionDefintion(name,args,block)
@@ -317,8 +368,9 @@ class Pipeline extends ASTNode {
 export const pipeline_right = (a,b) => new Pipeline('right',a,b)
 export const pipeline_left = (a,b) => new Pipeline('left',b,a)
 
-class Identifier {
+class Identifier extends ASTNode {
     constructor(name) {
+        super()
         this.type = 'identifier'
         this.name = name
     }
@@ -346,10 +398,14 @@ class FBlock extends ASTNode{
     }
     evalFilament(scope) {
         // this.log("running the block")
+        let  scope2 = scope.clone("block")
         let p = Promise.resolve(); // Q() in q
 
-        this.statements.forEach(file =>
-            p = p.then(() => file.evalFilament(scope))
+        this.statements.forEach(statement =>
+            p = p.then(() => {
+                this.log("statement",statement)
+                return statement.evalFilament(scope2)
+            })
         )
         return p.then(res => {
             this.log("block is done. final value is",res)
