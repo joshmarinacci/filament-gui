@@ -1,6 +1,6 @@
 Filament {
   Exp
-    = Pipeline | BinExp | FundefExp | FuncallExp | Block
+    = Pipeline |  UnExp | BinExp | FundefExp | FuncallExp | Block
     | List | bool | ident | unitnumber | number | string
 
   Pipeline
@@ -24,6 +24,9 @@ Filament {
   BinExp = Exp binop Exp
   binop = "mod" | "and" | "or" | "as" | "**" | "+" | "-" | "*" | "/"
   | "<=" | ">=" | "<>" | "<" | ">" | "="
+
+  UnExp = unop Exp
+  unop  = "not" | "-" | "!"
 
   under = "_"
   ident  (an identifier)

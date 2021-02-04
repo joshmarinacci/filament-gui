@@ -83,7 +83,13 @@ export class Parser {
 
             BinExp:function(a,b,c) {
                 let op = b.ast()
-                if(OPS[op]) return call(OPS[op],[indexed(a.ast()),indexed(c.ast())])
+                if(BINOPS[op]) return call(BINOPS[op],[indexed(a.ast()),indexed(c.ast())])
+                throw new Error(`Unknown operator: ${op}`)
+            },
+
+            UnExp:function(a,b) {
+                let op = a.ast()
+                if(UNOPS[op]) return call(UNOPS[op],[indexed(b.ast())])
                 throw new Error(`Unknown operator: ${op}`)
             },
 
@@ -197,7 +203,12 @@ function parseBoolean(sourceString) {
     throw new Error(`invalid boolean '${sourceString}'`)
 }
 
-const OPS = {
+const UNOPS = {
+    '-':'negate',
+    '!':'factorial',
+    'not':'not',
+}
+const BINOPS = {
     '+':'add',
     '-':'subtract',
     '*':'multiply',

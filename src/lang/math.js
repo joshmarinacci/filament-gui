@@ -33,7 +33,7 @@ function binop(a,b,cb) {
 // }
 function unop(a,cb) {
     if(Array.isArray(a)) return a.map(v => cb(v))
-    return cb(a)
+    return pack(cb(unpack(a)))
 }
 
 // export const add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
@@ -61,6 +61,10 @@ function make_binop(name, cb) {
     return new FilamentFunction(name,{a:REQUIRED, b:REQUIRED}, (a,b) => binop(a,b,cb))
 }
 
+function make_unop(name, cb) {
+    return new FilamentFunction(name,{a:REQUIRED}, (a) => unop(a,cb))
+}
+
 export const sin = (a) => unop(a, a=>Math.sin(a))
 export const cos = (a) => unop(a, a=>Math.cos(a))
 export const tan = (a) => unop(a, a=>Math.tan(a))
@@ -74,4 +78,5 @@ export const lessthanorequal = make_binop('lessthanorequal',(a,b)=>a<=b)
 export const greaterthanorequal = make_binop('greaterthanorequal',(a,b)=>a>=b)
 export const and = make_binop('and',(a,b)=>a&&b)
 export const or = make_binop('or',(a,b)=>a||b)
+export const not = make_unop('not',a => !a)
 

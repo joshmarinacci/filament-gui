@@ -4,12 +4,12 @@ import fs from 'fs'
 import {
     add, and,
     divide,
-    equal,
+    equal, factorial,
     greaterthan, greaterthanorequal,
     lessthan,
     lessthanorequal, mod,
     multiply, negate,
-    notequal, or,
+    notequal, or, not,
     power,
     subtract
 } from "../src/lang/math.js"
@@ -48,8 +48,8 @@ const convertunit = new FilamentFunction('convertunit',{a:REQUIRED,b:REQUIRED},
 
 function verify_ast(name, tests) {
     let scope = new Scope('verify_ast')
-    scope.install(add, subtract, multiply, divide, power, negate, mod)
-    scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal,or,and)
+    scope.install(add, subtract, multiply, divide, power, negate, mod, factorial)
+    scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal,or,and,not)
     scope.install(func,funk)
     scope.install(convertunit)
     let parser = new Parser(scope,g2_source)
@@ -81,8 +81,8 @@ const is_list = (b) => b.type === 'list'
 
 function eval_ast(name, tests) {
     let scope = new Scope('eval_ast')
-    scope.install(add,subtract,multiply,divide, power,mod)
-    scope.install(lessthan,lessthanorequal,equal,notequal,greaterthanorequal,greaterthan,and,or)
+    scope.install(add,subtract,multiply,divide, power,mod, negate, factorial)
+    scope.install(lessthan,lessthanorequal,equal,notequal,greaterthanorequal,greaterthan,and,or,not)
     scope.install(range,length,take,drop,join,reverse)
     scope.install(dataset)
     // scope.install(add, subtract, multiply, divide)
@@ -226,8 +226,8 @@ function verify_operators() {
     verify_ast('unary operators',[
         // ['-42',call('negate',[indexed(scalar(42))]),'negate(42)',-42],
         // ['-4/2',call('divide',[indexed(call('negate',[indexed(scalar(4))])),indexed(scalar(2))]),'divide(negate(4),2)',-2],
-        // ['4!',call('factorial',[indexed(scalar(4))]),'factorial(4)',1*2*3*4],
-        // ['not true',call('not',[indexed(boolean(true))]),'not(x)',false],
+        ['!4',call('factorial',[indexed(scalar(4))]),'factorial(4)',1*2*3*4],
+        ['not true',call('not',[indexed(boolean(true))]),'not(true)',false],
     ])
 }
 
@@ -257,12 +257,12 @@ function eval_operators() {
         // ['true or false',boolean(true)],
     ])
 
-    // verify_ast('unary operators',[
-    //     // ['-42',call('negate',[indexed(scalar(42))]),'negate(42)',-42],
+    eval_ast('unary operators',[
+        ['-42',scalar(-42)],
     //     // ['-4/2',call('divide',[indexed(call('negate',[indexed(scalar(4))])),indexed(scalar(2))]),'divide(negate(4),2)',-2],
-    //     // ['4!',call('factorial',[indexed(scalar(4))]),'factorial(4)',1*2*3*4],
-    //     // ['not true',call('not',[indexed(boolean(true))]),'not(x)',false],
-    // ])
+        ['!4',scalar(1*2*3*4)],
+        ['not true',boolean(false)],
+    ])
 }
 let _42 = scalar(42)
 let list_42 = list([scalar(42)])
@@ -475,13 +475,12 @@ function doAll() {
     // test_conditionals()
     // test_function_definitions()
 
-    verify_operators()
-    eval_operators()
 
     verify_var_assignment()
     eval_var_assignment()
 
+    verify_operators()
+    eval_operators()
 }
 
 doAll()
-
