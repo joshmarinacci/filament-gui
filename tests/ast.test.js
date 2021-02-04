@@ -27,7 +27,7 @@ import {
     pipeline_left,
     pipeline_right,
     fundef,
-    Scope
+    Scope, unpack
 } from '../src/lang/ast.js'
 import {cached_json_fetch} from '../src/lang/util.js'
 import {dataset} from '../src/lang/dataset.js'
@@ -45,10 +45,6 @@ const funk = new FilamentFunction("funk",{data:null},(data)=>data)
 const convertunit = new FilamentFunction('convertunit',{a:REQUIRED,b:REQUIRED},
     (a,b) => a.value)
 
-function unpack(res) {
-    if(res.type === 'scalar') return res.value
-    return res
-}
 
 function verify_ast(name, tests) {
     let scope = new Scope()
@@ -86,7 +82,8 @@ const is_list = (b) => b.type === 'list'
 
 function eval_ast(name, tests) {
     let scope = new Scope()
-    scope.install(add)
+    scope.install(add,subtract,multiply,divide, power)
+    scope.install(lessthan,lessthanorequal,equal,notequal,greaterthanorequal,greaterthan)
     scope.install(range)
     scope.install(take)
     scope.install(join)
@@ -198,7 +195,7 @@ function test_variable_assignment() {
         // ['42 >> _a_n_sw24er',pipeline_right(scalar(42),'answ24er'),'42>>answ24er',42],
     ])
 }
-function test_operators() {
+function verify_operators() {
     verify_ast("binary operators", [
         ['4+2',call('add',[indexed(scalar(4)),indexed(scalar(2))]),'add(4,2)',6],
         ['4-2',call('subtract',[indexed(scalar(4)),indexed(scalar(2))]),'subtract(4,2)',2],
@@ -224,6 +221,34 @@ function test_operators() {
         // ['4!',call('factorial',[indexed(scalar(4))]),'factorial(4)',1*2*3*4],
         // ['not true',call('not',[indexed(boolean(true))]),'not(x)',false],
     ])
+}
+
+function eval_operators() {
+    eval_ast("binary operators", [
+        ['4+2',scalar(6)],
+        ['4-2',scalar(2)],
+        ['4*2',scalar(8)],
+        ['4/2',scalar(2)],
+        ['4**2',scalar(16)],
+        // ['4 mod 2',call('mod',[indexed(scalar(4)),indexed(scalar(2))]),'mod(4,2)',0],
+    ])
+    eval_ast('boolean operators',[
+        ['4 < 2',boolean(false)],
+        ['4 > 2',boolean(true)],
+        ['4 = 2',boolean(false)],
+        ['4 <> 2',boolean(true)],
+        ['4 <= 2',boolean(false)],
+        ['4 >= 2',boolean(true)],
+        // ['true and false',call('and',[indexed(scalar(4)),indexed(scalar(2))]), 'and(true,false)',false],
+        // ['true or false',call('or',[indexed(scalar(4)),indexed(scalar(2))]), 'or(true,false)',true],
+    ])
+
+    // verify_ast('unary operators',[
+    //     // ['-42',call('negate',[indexed(scalar(42))]),'negate(42)',-42],
+    //     // ['-4/2',call('divide',[indexed(call('negate',[indexed(scalar(4))])),indexed(scalar(2))]),'divide(negate(4),2)',-2],
+    //     // ['4!',call('factorial',[indexed(scalar(4))]),'factorial(4)',1*2*3*4],
+    //     // ['not true',call('not',[indexed(boolean(true))]),'not(x)',false],
+    // ])
 }
 let _42 = scalar(42)
 let list_42 = list([scalar(42)])
@@ -426,7 +451,6 @@ function test_gui_examples() {
 function doAll() {
     test_gui_examples()
     test_literals()
-    test_operators()
     test_units()
     test_function_calls()
     test_pipelines()
@@ -436,6 +460,9 @@ function doAll() {
     // test_unicode_replacement()
     // test_conditionals()
     // test_function_definitions()
+
+    verify_operators()
+    eval_operators()
 }
 
 doAll()

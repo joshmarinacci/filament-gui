@@ -85,12 +85,14 @@ export const boolean = v => new FBoolean(v)
 export function pack(val) {
     if(typeof val === 'number') return scalar(val)
     if(typeof val === 'string') return string(val)
+    if(typeof val === 'boolean') return boolean(val)
     console.log("can't pack value",val, typeof val)
     return val
 }
 export function unpack(v) {
     if(v.type === 'scalar') return v.value
     if(v.type === 'string') return v.value
+    if(v.type === 'boolean') return v.value
     console.log("can't unpack value",v)
     return v
 }

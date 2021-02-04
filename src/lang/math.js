@@ -1,5 +1,5 @@
 import {FilamentFunction, REQUIRED} from './parser.js'
-import {list, scalar} from './ast.js'
+import {boolean, list, pack, scalar, unpack} from './ast.js'
 import {is_list, is_scalar} from './base.js'
 
 
@@ -9,11 +9,23 @@ function gv (v) {
 }
 
 function binop(a,b,cb) {
-    if((!Array.isArray(a)) && (Array.isArray(b))) return b.map(v => cb(a,v))
-    if((Array.isArray(a)) && (!Array.isArray(b))) return a.map(v => cb(v,b))
-    if((Array.isArray(a)) && (Array.isArray(b))) return a.map((v,i) => cb(v,b[i]))
-    return cb(gv(a),gv(b))
+    console.log("binop-ing",a,b)
+    if(is_scalar(a) && is_scalar(b)) return pack(cb(unpack(a),unpack(b)))
+    if(is_list(a) && is_list(b)) {
+        let arr = a.value.map((aa,i)=>{
+            return pack(aa.value + b.value[i].value)
+        })
+        return list(arr)
+    }
+    this.log("erroring")
+    throw new Error("can't add " + a.toString() + " " + b.toString())
 }
+
+// if((!Array.isArray(a)) && (Array.isArray(b))) return b.map(v => cb(a,v))
+    // if((Array.isArray(a)) && (!Array.isArray(b))) return a.map(v => cb(v,b))
+    // if((Array.isArray(a)) && (Array.isArray(b))) return a.map((v,i) => cb(v,b[i]))
+    // return cb(gv(a),gv(b))
+// }
 function unop(a,cb) {
     if(Array.isArray(a)) return a.map(v => cb(v))
     return cb(a)
@@ -22,19 +34,7 @@ function unop(a,cb) {
 // export const add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
 //     function(a,b) { return binop(a,b,(a,b)=>a+b) })
 export const add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
-    function(a,b) {
-        // this.log("adding",a,b)
-        if(is_scalar(a) && is_scalar(b)) return scalar(a.value + b.value)
-        if(is_list(a) && is_list(b)) {
-            let arr = a.value.map((aa,i)=>{
-                return scalar(aa.value + b.value[i].value)
-            })
-            return list(arr)
-        }
-        this.log("erroring")
-        throw new Error("can't add " + a.toString() + " " + b.toString())
-    })
-
+    function(a,b) { return binop(a,b, (a,b)=>a+b) })
 export const subtract = new FilamentFunction('subtract',{a:REQUIRED, b:REQUIRED},
     function (a,b) { return binop(a,b,(a,b)=>a-b) })
 export const multiply = new FilamentFunction('multiply',{a:REQUIRED, b:REQUIRED},
@@ -56,9 +56,15 @@ export const sin = (a) => unop(a, a=>Math.sin(a))
 export const cos = (a) => unop(a, a=>Math.cos(a))
 export const tan = (a) => unop(a, a=>Math.tan(a))
 
-export const lessthan = new FilamentFunction('lessthan',{a:REQUIRED, b:REQUIRED}, (a,b) => a < b)
-export const greaterthan = new FilamentFunction('greaterthan',{a:REQUIRED, b:REQUIRED}, (a,b) => a > b)
-export const equal = new FilamentFunction('equal',{a:REQUIRED, b:REQUIRED}, (a,b) => a === b)
-export const notequal = new FilamentFunction('notequal',{a:REQUIRED, b:REQUIRED}, (a,b) => a !== b)
-export const lessthanorequal = new FilamentFunction('lessthanorequal',{a:REQUIRED, b:REQUIRED}, (a,b) => a <= b)
-export const greaterthanorequal = new FilamentFunction('greaterthanorequal',{a:REQUIRED, b:REQUIRED}, (a,b) => a >= b)
+export const lessthan = new FilamentFunction('lessthan',{a:REQUIRED, b:REQUIRED},
+    (a,b) => binop(a,b,(a,b)=>a<b))
+export const greaterthan = new FilamentFunction('greaterthan',{a:REQUIRED, b:REQUIRED},
+    (a,b) => binop(a,b,(a,b)=>a>b))
+export const equal = new FilamentFunction('equal',{a:REQUIRED, b:REQUIRED},
+    (a,b) => binop(a,b,(a,b)=>a===b))
+export const notequal = new FilamentFunction('notequal',{a:REQUIRED, b:REQUIRED},
+    (a,b) => binop(a,b,(a,b)=>a!==b))
+export const lessthanorequal = new FilamentFunction('lessthanorequal',{a:REQUIRED, b:REQUIRED},
+    (a,b) => binop(a,b,(a,b)=>a<=b))
+export const greaterthanorequal = new FilamentFunction('greaterthanorequal',{a:REQUIRED, b:REQUIRED},
+    (a,b) => binop(a,b,(a,b)=>a>=b))

@@ -8,7 +8,7 @@ import {Parser} from './parser.js'
 import {Scope} from './ast.js'
 
 let scope = new Scope()
-scope.install(add)
+scope.install(add,subtract,multiply,divide, power)
 scope.install(range)
 scope.install(take)
 scope.install(join)
