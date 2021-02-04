@@ -227,6 +227,12 @@ function eval_operators() {
         ['4**2',scalar(16)],
         ['4 mod 2',scalar(0)],
     ])
+    eval_ast('binary ops on arrays',[
+        ['[1,2]+[3,4]',list([scalar(4),scalar(6)])],
+        ['[1,2]+[3,4]',list([scalar(4),scalar(6)])],
+        ['2*[1,2]',list([scalar(2),scalar(4)])],
+        ['[3,4]*2',list([scalar(6),scalar(8)])],
+    ])
     eval_ast('boolean operators',[
         ['4 < 2',boolean(false)],
         ['4 > 2',boolean(true)],
