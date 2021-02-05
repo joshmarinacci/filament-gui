@@ -3,7 +3,7 @@ import './App.css'
 
 import {HBox, VBox} from './gui/ui.js'
 import {ResultArea} from './gui/views.js'
-import {real_eval, real_eval2} from './lang/lang.js'
+import {real_eval2} from './lang/lang.js'
 
 import "codemirror/addon/hint/show-hint.css"
 import {EXAMPLES} from './gui/examples.js'
@@ -15,7 +15,10 @@ function App() {
     const [code, setCode] = useState('5+6')
     const [result, setResult] = useState(null)
 
-    const doEval = (code) => real_eval2(code).then(d => setResult(d))
+    const doEval = (code) => real_eval2(code).then(d => setResult(d)).catch(e => {
+        console.error("ERROR",e)
+        setResult(e)
+    })
 
     return (
         <HBox fill>

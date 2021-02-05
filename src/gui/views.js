@@ -1,11 +1,12 @@
 import {useEffect, useRef} from 'react'
 
 import {CanvasView, is_canvas_result} from '../canvas.js'
-import {is_error_result, is_list, is_scalar, is_string} from '../lang/base.js'
+import {is_boolean, is_error_result, is_list, is_scalar, is_string} from '../lang/base.js'
 
 const ErrorResult = ({result}) => <div>error!!! <b>{result.toString()}</b></div>
 const ScalarResult = ({result}) => <div><b>{result.toString()}</b></div>
 const StringResult = ({result}) => <div>String <b>{result.toString()}</b></div>
+const BooleanResult = ({result}) => <div><b>{result.toString()}</b></div>
 
 function ListResult({result}) {
     if(result.value.length > 100) {
@@ -51,6 +52,7 @@ function TableView({result}) {
 export function ResultArea({result}) {
     if (is_error_result(result)) return <ErrorResult result={result}/>
     if (is_scalar(result)) return <ScalarResult result={result}/>
+    if (is_boolean(result)) return <BooleanResult result={result}/>
     if (is_string(result)) return <StringResult result={result}/>
     if (is_list(result)) return <ListResult result={result}/>
     if (is_canvas_result(result)) return <CanvasView result={result}/>
