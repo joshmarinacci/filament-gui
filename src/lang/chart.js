@@ -122,7 +122,9 @@ function draw_bars(ctx, canvas, data, x_label, y) {
     })
 }
 
-export function histogram(data) {
+export const histogram = new FilamentFunction('histogram',{
+    data:REQUIRED
+}, function(data) {
     //count frequency of each item in the list
     //draw a barchart using frequency for height
     //use the key for the name
@@ -131,10 +133,10 @@ export function histogram(data) {
         ctx.save()
         clear(ctx,canvas)
         let freqs = {}
-        data.forEach(datum => {
-            // console.log("datum",datum)
-            if(!freqs[datum]) freqs[datum] = 0
-            freqs[datum] += 1
+        data._map(datum => {
+            let letter = unpack(datum)
+            if(!freqs[letter]) freqs[letter] = 0
+            freqs[letter] += 1
         })
         console.log(freqs)
         let entries = Object.entries(freqs)
@@ -155,8 +157,7 @@ export function histogram(data) {
         })
         ctx.restore()
     })
-
-}
+})
 
 export const timeline = new FilamentFunction('timeline',
     {
