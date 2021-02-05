@@ -1,20 +1,20 @@
 export const EXAMPLES = [
-    {
-        title:'list',
-        code:`[1,2,3]`
-    },
     // {
-    //     title:"average of list",
-    //     code:`let lis = [1,2,3]
-    //     sum(lis)/length(lis)`
+    //     title:'list',
+    //     code:`[1,2,3]`
     // },
+    {
+        title:"average of list",
+        code:`data << [1,2,3]
+sum(data)/length(data)`
+    },
     // {
     //     title:"double list",
     //     code:`map([1,2,3], x => x*2)`
     // },
     {
         title:"add lists",
-        code:`add([1,2,3], [4,5,6])`
+        code:`[1,2,3] + [4,5,6]`
     },
     {
         title:`list 0 to 20 by 5's`,

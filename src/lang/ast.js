@@ -144,6 +144,9 @@ class FList {
     _map(cb) {
         return this.value.map(cb)
     }
+    _reduce(cb) {
+        return this.value.reduce(cb)
+    }
     _forEach(cb) {
         return this.value.forEach(cb)
     }

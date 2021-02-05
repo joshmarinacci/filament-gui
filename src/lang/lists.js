@@ -142,7 +142,7 @@ export const sum = new FilamentFunction("sum",
         data:REQUIRED,
     },
     function(data) {
-        return data.reduce((a,b)=>a+b)
+        return Promise.resolve(scalar(data._reduce((a,b)=>unpack(a)+unpack(b))))
     }
 )
 
@@ -157,7 +157,7 @@ export const max = new FilamentFunction("max",
         data:REQUIRED,
     },
     function (data) {
-        return data.reduce((a,b)=> a>b?a:b)
+        return data._reduce((a,b)=> a>b?a:b)
     }
 )
 
