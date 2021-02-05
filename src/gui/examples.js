@@ -101,8 +101,8 @@ take(buildings,count:5) >> chart(y:'height', x_label:'name')
     {
         title:'most populous countries',
         code:
-`countries << take(dataset('countries'), 10)
-chart(countries, x_label:'name', y:(y)=>parseInt(y.population), y_label:'population')
+`top_countries << take(dataset('countries'), 10)
+chart(top_countries, x_label:'name', y:'population', y_label:'population')
 `
     },
     {

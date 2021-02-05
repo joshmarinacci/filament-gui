@@ -170,6 +170,16 @@ export class FTable extends ASTNode {
         // this.log("making using data",obj.data)
         this.schema = obj.data.schema
         this.value = obj.data.items
+        Object.entries(this.schema.properties).forEach(([key,val])=>{
+            // this.log("schema prop",key,val)
+            if(val.type === 'number') {
+                // this.log("validating numbers in data")
+                this.value.forEach(it => {
+                    if(typeof it[key] === 'string') it[key] = parseInt(it[key])
+                    // this.log(`converted to number ${it[key]}`)
+                })
+            }
+        })
     }
     evalFilament() {
         return this
