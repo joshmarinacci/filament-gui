@@ -4,8 +4,6 @@ import './App.css'
 import {HBox, VBox} from './gui/ui.js'
 import {ResultArea} from './gui/views.js'
 import {real_eval, real_eval2} from './lang/lang.js'
-import "codemirror/lib/codemirror.css"
-import "codemirror/theme/mdn-like.css"
 
 import "codemirror/addon/hint/show-hint.css"
 import {EXAMPLES} from './gui/examples.js'
