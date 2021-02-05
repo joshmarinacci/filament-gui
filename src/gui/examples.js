@@ -1,19 +1,19 @@
 export const EXAMPLES = [
-    // {
-    //     title:'list',
-    //     code:`[1,2,3]`
-    // },
     {
-        title:"average of list",
-        code:`data << [1,2,3]
+        title:"average of list of numbers",
+        code:`data << [1,2,3,4]
 sum(data)/length(data)`
+    },
+    {
+        title:'huge list',
+        code:`range(10000)`,
     },
     // {
     //     title:"double list",
     //     code:`map([1,2,3], x => x*2)`
     // },
     {
-        title:"add lists",
+        title:"list arithmetic",
         code:`[1,2,3] + [4,5,6]`
     },
     {
@@ -35,25 +35,13 @@ take(range(min:0, max:100,step:10), -5)
 // ]
 // sort(names,{by:'last'})`
 //     },
-    {
-        title:'join two lists',
-        code:`join([1,2,3], [4,5,6])`
-    },
     // {
     //     title:'select from list where multiple of 7',
     //     code:`select(range(0,100), {where:x=>x%7===0})`
     // },
     {
-        title:'count down from 10 to zero',
-        code:`reverse(range(11))`
-    },
-    {
-        title:'huge list',
-        code:`range(10000)`,
-    },
-    {
-        title:'simple chart ',
-        code:`chart(range(10))`,
+        title:'simple chart of 10 to zero ',
+        code:`chart(reverse(range(10)))`,
     },
     {
         title:'pipeline example',
@@ -106,7 +94,7 @@ chart(top_countries, x_label:'name', y:'population', y_label:'population')
 `
     },
     {
-        title:'histogram of states first letters',
+        title:'First Letters of US State Names',
         code:
 `states << dataset('states')
 def first_letter (state:?) {
@@ -116,11 +104,11 @@ states << map(states, first_letter)
 histogram(states)`
     },
     {
-        title:'timeline of states entering the union',
+        title:'Timeline of US States entering the Union',
         code: `dataset('states') >> timeline(date:'statehood_date', name:'name')`
     },
     {
-        title:'history of apple stock last 5 years',
+        title:'History of Apple stock closing price',
         code: `stockhistory('AAPL') >> chart(y:'close')`
     }
 ]
