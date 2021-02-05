@@ -18,8 +18,10 @@ export const dataset = new FilamentFunction('dataset', {
 
 
 
-export async function stockhistory(symbol) {
-    let url = `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${AV_API_KEY}`
+export const stockhistory  = new FilamentFunction('stockhistory', {
+    symbol:REQUIRED,
+},async function(symbol) {
+    let url = `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${symbol.value}&apikey=${AV_API_KEY}`
     return await cached_json_fetch(url).then(d => {
         let hash_data = d['Monthly Time Series']
         let data = Object.entries(hash_data).map(([name,obj]) => {
@@ -29,15 +31,13 @@ export async function stockhistory(symbol) {
             }
         })
         console.log("final data",data.length)
-        return {
+        return new FTable({
             data: {
-                schema:{
-                    properties:{
-
-                    }
+                schema: {
+                    properties: {}
                 },
-                items:data
+                items: data
             }
-        }
+        })
     })
-}
+})

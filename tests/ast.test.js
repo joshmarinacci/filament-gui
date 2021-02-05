@@ -31,7 +31,7 @@ import {
 } from '../src/lang/ast.js'
 import {cached_json_fetch} from '../src/lang/util.js'
 import {dataset} from '../src/lang/dataset.js'
-import {range, take, join, reverse, length, drop, map} from "../src/lang/lists.js"
+import {range, take, join, reverse, length, drop, map, get_field} from "../src/lang/lists.js"
 
 
 
@@ -78,18 +78,13 @@ const is_scalar = (a) => a.type === 'scalar'
 
 const is_list = (b) => b.type === 'list'
 
-const get_field = new FilamentFunction("get_field",{data:REQUIRED,field:REQUIRED},(data,field)=>{
-    // console.log("getting the field",data,field)
-    return pack(data[unpack(field)])
-})
 
 function eval_ast(name, tests) {
     let scope = new Scope('eval_ast')
     scope.install(add,subtract,multiply,divide, power,mod, negate, factorial)
     scope.install(lessthan,lessthanorequal,equal,notequal,greaterthanorequal,greaterthan,and,or,not)
-    scope.install(range,length,take,drop,join,reverse,map)
+    scope.install(range,length,take,drop,join,reverse,map, get_field)
     scope.install(dataset)
-    scope.install(get_field)
     // scope.install(add, subtract, multiply, divide)
     // scope.install(power, negate)
     // scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)

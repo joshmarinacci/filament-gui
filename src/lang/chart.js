@@ -96,9 +96,9 @@ function draw_bars(ctx, canvas, data, x_label, y) {
     let get_y = (datum) => datum
     if(typeof y === 'function') get_y = y
     if(is_string(y)) get_y = (d,i) => data._get_field_from(y,d,i)
-    console.log("data is",data)
+    // console.log("data is",data)
     let values = data._map(get_y)
-    console.log("values are",values)
+    // console.log("values are",values)
 
     let max_val = max(values)
     // console.log("max is",max_val)

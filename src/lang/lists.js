@@ -1,5 +1,5 @@
 import {FilamentFunction, REQUIRED} from './parser.js'
-import {list, scalar, unpack} from './ast.js'
+import {list, pack, scalar, unpack} from './ast.js'
 
 function gen_range(min,max,step) {
     let list = []
@@ -161,3 +161,8 @@ export const max = new FilamentFunction("max",
     }
 )
 
+
+export const get_field = new FilamentFunction("get_field",{data:REQUIRED,field:REQUIRED},(data,field)=>{
+    // console.log("getting the field",data,field)
+    return pack(data[unpack(field)])
+})

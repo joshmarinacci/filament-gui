@@ -85,25 +85,34 @@ take(range(min:0, max:100,step:10), -5)
     },
     {
         title:"planets radius vs orbit radius",
-        code: `{ planets << dataset('planets')
-   chart(planets, type:'scatter', 
-                               x:'orbital_radius',
-                               y:'mean_radius') }`
+        code:
+`planets << dataset('planets')
+chart(planets, type:'scatter', 
+                  x:'orbital_radius',
+                   y:'mean_radius')`
     },
     {
         title:'5 tallest buildings. name vs height',
-        code: `dataset('tallest_buildings') >> take(count:5) >> chart(y:'height', x_label:'name')`
+        code:
+`dataset('tallest_buildings') >> buildings
+take(buildings,count:5) >> chart(y:'height', x_label:'name')
+`
     },
     {
         title:'most populous countries',
-        code: `countries << take(dataset('countries'), 10)
-chart(countries, x_label:'name', y:(y)=>parseInt(y.population), y_label:'population')`
+        code:
+`countries << take(dataset('countries'), 10)
+chart(countries, x_label:'name', y:(y)=>parseInt(y.population), y_label:'population')
+`
     },
     {
         title:'histogram of states first letters',
-        code: `states << dataset('states')
-const first_letter = (s) => take(s.name, 1)
-states = map(states, first_letter)
+        code:
+`states << dataset('states')
+def first_letter (state:?) {
+   take(get_field(state,'name'), 1)
+}
+states << map(states, first_letter)
 histogram(states)`
     },
     {
