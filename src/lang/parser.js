@@ -145,7 +145,7 @@ export class Parser {
 
 export class FilamentFunction {
     constructor(name,params, fun) {
-        this.name = name
+        this.name = strip_under(name.toLowerCase())
         this.params = params
         this.fun = fun
     }

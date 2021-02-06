@@ -371,6 +371,19 @@ function eval_constants() {
     ])
 }
 
+function eval_case_under_conversion() {
+    eval_ast('case identifier tests',[
+        ['pi',s(Math.PI)],
+        ['Pi',s(Math.PI)],
+        ['pI',s(Math.PI)],
+        ['p_i',s(Math.PI)],
+        ['P_I',s(Math.PI)],
+        ['PI_',s(Math.PI)],
+        // ['_PI_',s(Math.PI)],
+        // ['_PI',s(Math.PI)],
+    ])
+}
+
 function doAll() {
     test_gui_examples()
     test_literals()
@@ -384,6 +397,7 @@ function doAll() {
     eval_operators()
     eval_function_definitions()
     eval_constants()
+    eval_case_under_conversion()
 }
 function doTest() {
     // test_comments()

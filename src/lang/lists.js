@@ -70,7 +70,7 @@ export const drop =  new FilamentFunction(  "drop",
         count:REQUIRED,
     },
     function (data,count) {
-        this.log('params',data,count)
+        // this.log('params',data,count)
         if(count < 0) {
             return data._slice(0,data.value.length+unpack(count))
         } else {
@@ -87,7 +87,6 @@ export const join = new FilamentFunction('join',{
         more:REQUIRED,
     },
     function(data,more) {
-        this.log('params',data,more)
         if(is_list(data) && is_list(more))    return list(data.value.concat(unpack(more.value)))
         if((!is_list(data)) && is_list(more)) return list([data].concat(unpack(more.value)))
         if(is_list(data) && !is_list(more))   return list(data.value.concat([more]))

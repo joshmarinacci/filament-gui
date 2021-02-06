@@ -388,11 +388,12 @@ class Pipeline extends ASTNode {
 export const pipeline_right = (a,b) => new Pipeline('right',a,b)
 export const pipeline_left = (a,b) => new Pipeline('left',b,a)
 
+const strip_under = s => s.replaceAll("_","")
 class Identifier extends ASTNode {
     constructor(name) {
         super()
         this.type = 'identifier'
-        this.name = name
+        this.name = strip_under(name.toLowerCase())
     }
     toString() {
         return this.name
