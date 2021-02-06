@@ -156,6 +156,12 @@ function eval_operators() {
         ['!4',scalar(1*2*3*4)],
         ['not true',boolean(false)],
     ])
+
+    eval_ast('parenthesis expressions',[
+        ['(4+2)',scalar(6)],
+        ['((4*2)+42)',scalar((4*2)+42)],
+        ['(4*(2+42))',scalar(4*(2+42))],
+    ])
 }
 let _42 = scalar(42)
 let list_42 = list([scalar(42)])

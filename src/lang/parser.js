@@ -98,6 +98,10 @@ export class Parser {
                 return call(BINOPS['as'],[indexed(a.ast()),indexed(c.ast())])
             },
 
+            GroupExp: function(_1,e, _2){
+                return e.ast()
+            },
+
             Arg_named: function(a,b,c) {
                 return named(a.ast().name,c.ast())
             },
