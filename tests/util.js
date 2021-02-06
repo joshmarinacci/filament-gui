@@ -109,8 +109,8 @@ export function eval_ast(name, tests) {
                 .then(r => {
                     // console.log("testing",val,'vs',r)
                     if(is_scalar(val)) {
-                        t.approximately(val.value,r.value,0.1)
-                        t.equal(val.unit,r.unit)
+                        t.approximately(r.value,val.value,0.1)
+                        t.equal(r.unit,val.unit)
                         return
                     }
                     t.deepEqual(r,val)

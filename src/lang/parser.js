@@ -32,7 +32,7 @@ import {
     scalar,
     string
 } from './ast.js'
-import {UNITS} from './units.js'
+import {is_valid_unit, to_canonical_unit} from './units.js'
 
 export const REQUIRED = Symbol('REQUIRED')
 
@@ -61,7 +61,7 @@ export class Parser {
             },
             unit:function(u) {
                 let name = u.sourceString
-                if(UNITS[name]) return UNITS[name]
+                if(is_valid_unit(name)) return to_canonical_unit(name)
                 throw new Error(`unknown unit type '${name}'`)
             },
             bool: (a) => boolean(parseBoolean(a.sourceString)),
