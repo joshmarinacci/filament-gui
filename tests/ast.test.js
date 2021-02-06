@@ -1,19 +1,3 @@
-import test from "tape"
-import fs from 'fs'
-
-import {
-    add, and,
-    divide,
-    equal, factorial,
-    greaterthan, greaterthanorequal,
-    lessthan,
-    lessthanorequal, mod,
-    multiply, negate,
-    notequal, or, not,
-    power,
-    subtract
-} from "../src/lang/math.js"
-import {FilamentFunction, Parser, REQUIRED} from '../src/lang/parser.js'
 import {
     boolean,
     ident,
@@ -26,92 +10,8 @@ import {
     named,
     pipeline_left,
     pipeline_right,
-    fundef,
-    Scope, unpack, pack
 } from '../src/lang/ast.js'
-import {cached_json_fetch} from '../src/lang/util.js'
-import {dataset} from '../src/lang/dataset.js'
-import {range, take, join, reverse, length, drop, map, get_field} from "../src/lang/lists.js"
-
-
-
-const strip_under = s => s.replaceAll("_","")
-let g2_source = fs.readFileSync(new URL("../src/lang/filament.ohm", import.meta.url)).toString()
-// let g2 = ohm.grammar(g2_source)
-// let g2_semantics = g2.createSemantics()
-
-const func = new FilamentFunction("func",{data:null},(data)=>data)
-const funk = new FilamentFunction("funk",{data:null},(data)=>data)
-const convertunit = new FilamentFunction('convertunit',{a:REQUIRED,b:REQUIRED},
-    (a,b) => a.value)
-
-
-function verify_ast(name, tests) {
-    let scope = new Scope('verify_ast')
-    scope.install(add, subtract, multiply, divide, power, negate, mod, factorial)
-    scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal,or,and,not)
-    scope.install(func,funk)
-    scope.install(convertunit)
-    let parser = new Parser(scope,g2_source)
-    test(name, (t)=>{
-        Promise.allSettled(tests.map((tcase) => {
-            // console.log("tcase",tcase)
-            let [code,obj,str,val] = tcase
-            let match = parser.parse(code)
-            let ast = parser.ast(match)
-            // console.log("ast",ast)
-            t.deepLooseEqual(ast,obj)
-            // console.log("to string",ast.toString())
-            t.deepEqual(ast.toString(),str)
-            let prom = ast.evalJS(scope)
-            return Promise.resolve(prom)
-                .then(res => {
-                    // console.log("final result",res)
-                    return unpack(res)
-                })
-                .then((res)=> t.deepEqual(res,val))
-        })).then(()=>t.end())
-    })
-}
-
-const is_scalar = (a) => a.type === 'scalar'
-
-const is_list = (b) => b.type === 'list'
-
-
-function eval_ast(name, tests) {
-    let scope = new Scope('eval_ast')
-    scope.install(add,subtract,multiply,divide, power,mod, negate, factorial)
-    scope.install(lessthan,lessthanorequal,equal,notequal,greaterthanorequal,greaterthan,and,or,not)
-    scope.install(range,length,take,drop,join,reverse,map, get_field)
-    scope.install(dataset)
-    // scope.install(add, subtract, multiply, divide)
-    // scope.install(power, negate)
-    // scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal)
-    // scope.install(func,funk)
-    // scope.install(convertunit)
-    let parser = new Parser(scope,g2_source)
-    test(name, t => {
-        Promise.allSettled(tests.map(tcase => {
-            // console.log("eval ast test case",tcase)
-            let [code,val] = tcase
-            let match = parser.parse(code)
-            if(match.failed()) t.error()
-            let ast = parser.ast(match)
-            // console.log("ast",ast)
-            return Promise.resolve(ast.evalFilament(scope))
-                .then(r => t.deepEqual(r,val))
-                .catch(e => {
-                    console.log("error here",e)
-                    t.fail()
-                })
-        })).then(() => t.end())
-            .catch(e => {
-                console.log("error after")
-                console.error(e)
-            })
-    })
-}
+import {eval_ast, verify_ast} from './util.js'
 
 
 function test_literals() {
@@ -163,20 +63,11 @@ function test_comments() {
         ['//    text    ', null, "//    text    ", null],
     ])
 }
-function test_units() {
-    verify_ast("numbers with units", [
-        [`42m`,scalar(42,'meter'),"42 meter",42],
-        [`42ft`,scalar(42,'foot'),"42 foot",42],
-        [`42mps`,scalar(42,'meter/second'),"42 meter/second",42],
-        [`42mpss`,scalar(42,'meter/second/second'),"42 meter/second/second",42],
-        ['42%', scalar(42,'percent'),'42 percent',42],
-        // ['42 %',scalar(42,'percent'),'42 percent',42],
-        ['42ft as inch',
-            call('convertunit',[indexed(scalar(42,'foot')),indexed(ident("inch"))]),
-            'convertunit(42 foot,inch)',42],
-        ['42feet as inches',
-            call('convertunit',[indexed(scalar(42,'foot')),indexed(ident("inches"))]),
-            'convertunit(42 foot,inches)',42],
+function eval_simple_unit_conversion() {
+    eval_ast('numbers with units',[
+        ['42m',scalar(42,'meter')],
+        ['42m as feet',scalar(137.795,'foot')],
+        ['42ft',scalar(42,'foot')],
     ])
 }
 
@@ -470,10 +361,10 @@ function test_gui_examples() {
 function doAll() {
     test_gui_examples()
     test_literals()
-    test_units()
     test_function_calls()
     test_pipelines()
     test_blocks()
+    eval_simple_unit_conversion()
     verify_var_assignment()
     eval_var_assignment()
     verify_operators()

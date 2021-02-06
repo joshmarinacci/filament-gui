@@ -32,6 +32,7 @@ import {
     scalar,
     string
 } from './ast.js'
+import {UNITS} from './units.js'
 
 export const REQUIRED = Symbol('REQUIRED')
 
@@ -91,6 +92,10 @@ export class Parser {
                 let op = a.ast()
                 if(UNOPS[op]) return call(UNOPS[op],[indexed(b.ast())])
                 throw new Error(`Unknown operator: ${op}`)
+            },
+
+            ConvertExp:function(a,b,c) {
+                return call(BINOPS['as'],[indexed(a.ast()),indexed(c.ast())])
             },
 
             Arg_named: function(a,b,c) {
@@ -224,21 +229,5 @@ const BINOPS = {
     'and':'and',
     'or':'or',
     'mod':'mod',
-}
-
-const UNITS = {
-    'meter':'meter',
-    'm':'meter',
-    'meters':'meter',
-    'foot':'foot',
-    'ft':'foot',
-    'feet':'foot',
-    '%':'percent',
-    'percent':'percent',
-    'in':'inch',
-    'mps':'meter/second',
-    'meter/second':'meter/second',
-    'mpss':'meter/second/second',
-    'meter/second/second':'meter/second/second',
 }
 

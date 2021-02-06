@@ -22,12 +22,14 @@ import {dataset, stockhistory} from './dataset.js'
 import {default as src} from "./filament.ohm"
 import {Parser} from './parser.js'
 import {Scope} from './ast.js'
+import {convertunit} from './units.js'
 
 let scope = new Scope("lang")
 scope.install(add, subtract, multiply, divide, power, negate, mod, factorial)
 scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal,or,and,not)
 scope.install(range,length,take,drop,join,reverse,map, sort, sum, get_field)
 scope.install(dataset, stockhistory)
+scope.install(convertunit)
 scope.install(chart, timeline, histogram)
 
 export async function real_eval2(code) {

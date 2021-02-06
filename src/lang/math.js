@@ -1,6 +1,7 @@
 import {FilamentFunction, REQUIRED} from './parser.js'
 import {boolean, list, pack, scalar, unpack} from './ast.js'
 import {is_boolean, is_list, is_scalar} from './base.js'
+import {convert_unit, to_canonical_unit} from './units.js'
 
 
 function gv (v) {
@@ -80,3 +81,11 @@ export const and = make_binop('and',(a,b)=>a&&b)
 export const or = make_binop('or',(a,b)=>a||b)
 export const not = make_unop('not',a => !a)
 
+
+export const convertunit = new FilamentFunction('convertunit',
+    {a:REQUIRED,b:REQUIRED},
+    (a,b) => {
+        return scalar(
+            convert_unit(a.value,a.unit,to_canonical_unit(b)),
+            to_canonical_unit(b))
+    })

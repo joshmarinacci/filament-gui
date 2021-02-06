@@ -246,6 +246,7 @@ class FCall {
         this.log("parms are",params)
         let params2 = params.map(a => {
             if(a === null || typeof a === 'undefined') return a
+            if(typeof a === 'string') return a
             this.log("evaluating argument",a)
             return a.evalFilament(scope)
         })
