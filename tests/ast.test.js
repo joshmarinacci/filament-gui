@@ -365,6 +365,12 @@ function test_gui_examples() {
 }
 
 
+function eval_constants() {
+    eval_ast('constants',[
+        ['pi',s(Math.PI)]
+    ])
+}
+
 function doAll() {
     test_gui_examples()
     test_literals()
@@ -377,6 +383,7 @@ function doAll() {
     verify_operators()
     eval_operators()
     eval_function_definitions()
+    eval_constants()
 }
 function doTest() {
     // test_comments()

@@ -17,7 +17,7 @@ import {
 } from '../src/lang/math.js'
 import {drop, get_field, join, length, map, range, reverse, select, sort, sum, take} from '../src/lang/lists.js'
 import {FilamentFunction, Parser} from '../src/lang/parser.js'
-import {Scope, unpack} from '../src/lang/ast.js'
+import {scalar, Scope, unpack} from '../src/lang/ast.js'
 import {dataset} from '../src/lang/dataset.js'
 import {is_scalar} from '../src/lang/base.js'
 
@@ -92,6 +92,7 @@ export function eval_ast(name, tests) {
     scope.install(range,length,take,drop,join,reverse,map, get_field, select,sort,sum)
     scope.install(dataset)
     scope.install(convertunit)
+    scope.set_var('pi',scalar(Math.PI))
     let parser = new Parser(scope,g2_source)
     test(name, t => {
         Promise.allSettled(tests.map(tcase => {
