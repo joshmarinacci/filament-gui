@@ -379,16 +379,6 @@ function doAll() {
     eval_function_definitions()
 }
 function doTest() {
-    const t = boolean(true)
-    const f = boolean(false)
-    eval_ast("is_prime",[
-        ['is_prime(4)',boolean(false)],
-        ['is_prime(5)',boolean(true)],
-        ['is_prime(53)',boolean(true)],
-        ['range(10) >> map(with:is_prime)',list([f,f,t,t,f,t,f,t,f,f])],
-        ['range(10) >> select(where:is_prime)',list([s(2),s(3),
-            s(5),s(7)])],
-    ])
     // test_comments()
     // test_unicode_replacement()
     // test_conditionals()

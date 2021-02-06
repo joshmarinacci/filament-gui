@@ -1,5 +1,6 @@
 import {FilamentFunction, REQUIRED} from './parser.js'
 import {list, pack, scalar, unpack} from './ast.js'
+import {is_list, is_scalar} from './base.js'
 
 function gen_range(min,max,step) {
     let list = []
@@ -71,9 +72,9 @@ export const drop =  new FilamentFunction(  "drop",
     function (data,count) {
         this.log('params',data,count)
         if(count < 0) {
-            return data.slice(0,data.length+count)
+            return data._slice(0,data.value.length+unpack(count))
         } else {
-            return data.slice(count)
+            return data._slice(unpack(count))
         }
     })
 
@@ -86,8 +87,11 @@ export const join = new FilamentFunction('join',{
         more:REQUIRED,
     },
     function(data,more) {
-        // this.log('params',data,more)
-        return list(data.value.concat(more.value))
+        this.log('params',data,more)
+        if(is_list(data) && is_list(more))    return list(data.value.concat(unpack(more.value)))
+        if((!is_list(data)) && is_list(more)) return list([data].concat(unpack(more.value)))
+        if(is_list(data) && !is_list(more))   return list(data.value.concat([more]))
+        return list([data].concat([more]))
     }
 )
 
@@ -132,12 +136,18 @@ export const sort = new FilamentFunction( "sort",
         order:"ascending",
     },
     function(data,order) {
-        this.log("params",data,order)
-        data = data.slice().sort()
-        if(order === 'descending') {
-            return data.reverse()
+        // this.log("params",data,order)
+        let new_data = data._slice()._sort((a,b)=>{
+            let av = unpack(a)
+            let bv = unpack(b)
+            if(av < bv) return -1
+            if(av > bv) return 1
+            return 0
+        })
+        if(unpack(order) === 'descending') {
+            return new_data.reverse()
         } else {
-            return data
+            return new_data
         }
     }
 )

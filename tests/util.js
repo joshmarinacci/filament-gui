@@ -89,7 +89,7 @@ export function eval_ast(name, tests) {
     let scope = new Scope('eval_ast')
     scope.install(add,subtract,multiply,divide, power,mod, negate, factorial, is_prime)
     scope.install(lessthan,lessthanorequal,equal,notequal,greaterthanorequal,greaterthan,and,or,not)
-    scope.install(range,length,take,drop,join,reverse,map, get_field, select)
+    scope.install(range,length,take,drop,join,reverse,map, get_field, select,sort,sum)
     scope.install(dataset)
     scope.install(convertunit)
     let parser = new Parser(scope,g2_source)
