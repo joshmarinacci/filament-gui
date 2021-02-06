@@ -153,6 +153,9 @@ class FList {
     _slice(a,b) {
         return new FList(this.value.slice(a,b))
     }
+    _filter(cb) {
+        return this.value.filter(cb)
+    }
 
     toString() {
         return `[${this.value.join(",")}]`

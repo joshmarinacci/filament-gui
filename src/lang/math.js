@@ -89,3 +89,11 @@ export const convertunit = new FilamentFunction('convertunit',
             convert_unit(a.value,a.unit,to_canonical_unit(b)),
             to_canonical_unit(b))
     })
+
+
+export const is_prime = new FilamentFunction('is_prime', {n:REQUIRED},function(n) {
+    let num = unpack(n)
+    for(let i = 2; i < num; i++)
+        if(num % i === 0) return pack(false);
+    return pack(num > 1);
+})

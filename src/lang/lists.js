@@ -108,6 +108,20 @@ export const map = new FilamentFunction('map',{
     })
 })
 
+export const select = new FilamentFunction('select',{
+    data:REQUIRED,
+    where:REQUIRED,
+},function(data,where) {
+    return list(data._filter((el)=>{
+        let ret = where.fun.apply(where,[el])
+        // console.log("ret is",unpack(ret))
+        return unpack(ret)
+        // return Promise.resolve(ret).then(ret => {
+        //     console.log("returned",unpack(ret))
+        //     return ret
+        // })
+    }))
+})
 
 // * __for__:  loops over every element in a list with a lambda, but returns the original list: `(list, lam)`
 
@@ -147,10 +161,7 @@ export const sum = new FilamentFunction("sum",
 )
 
 
-export function select(list, opts) {
-    let where = opts.where
-    return list.filter(where)
-}
+
 
 export const max = new FilamentFunction("max",
     {
