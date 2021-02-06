@@ -1,14 +1,41 @@
 Filament {
-  Exp
-    = Pipeline |  UnExp |  BinExp | GroupExp | ConvertExp | FundefExp | FuncallExp | Block
-    | List | bool | ident | unitnumber | number | string
+  Exp = Block |  LowOp
 
-  Pipeline
-    = Exp ">>" Term --right
-    | Term "<<" Exp --left
+  LowOp = AsExp
 
-  Term = UnExp | BinExp | GroupExp | ConvertExp | FundefExp | FuncallExp | Block | List | bool | ident | unitnumber | number | string
+  AsExp
+   = AsExp "as" unit --convert
+   | BoolExp
 
+  BoolExp
+   = BoolExp boolop AddExp --bool
+   | AddExp
+  boolop = "mod" | "and" | "or" | "<=" | ">=" | "<>" | "<" | ">" | "="
+
+  AddExp
+   = AddExp addop MulExp --add
+   | MulExp
+  addop = "+" | "-"
+
+  MulExp
+   = MulExp mulop PipeOp --mul
+   | PipeOp
+  mulop = "**" | "*" | "/"
+
+  PipeOp
+   = PipeOp ">>" HighOp -- right
+   | HighOp "<<" PipeOp -- left
+   | HighOp
+
+  HighOp
+    = GroupExp
+    | FundefExp
+    | FuncallExp
+    | UnExp
+    | List | bool | ident
+    | unitnumber
+    | number
+    | string
 
   Block = "{" Exp* "}"
 
@@ -22,15 +49,9 @@ Filament {
 
   List = "[" ListOf<Exp,","> "]"
 
-
-  BinExp = Exp binop Exp
-  binop = "mod" | "and" | "or" | "**" | "+" | "-" | "*" | "/"
-  | "<=" | ">=" | "<>" | "<" | ">" | "="
-
   UnExp = unop Exp
   unop  = "not" | "-" | "!"
 
-  ConvertExp = Exp "as" unit
 
   GroupExp = "(" Exp ")"
 

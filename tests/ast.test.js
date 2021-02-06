@@ -163,6 +163,11 @@ function eval_operators() {
         ['(4*(2+42))',scalar(4*(2+42))],
     ])
 
+    eval_ast('precedence',[
+        ['4+2*4',scalar(4+2*4)],
+        ['4*2+4',scalar(4*2+4)],
+    ])
+
 }
 let _42 = scalar(42)
 let list_42 = list([scalar(42)])

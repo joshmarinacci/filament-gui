@@ -82,7 +82,19 @@ export class Parser {
                 return list(b.ast())
             },
 
-            BinExp:function(a,b,c) {
+            BoolExp_bool:function(a,b,c) {
+                let op = b.ast()
+                if(BINOPS[op]) return call(BINOPS[op],[indexed(a.ast()),indexed(c.ast())])
+                throw new Error(`Unknown operator: ${op}`)
+            },
+
+
+            AddExp_add:function(a,b,c) {
+                let op = b.ast()
+                if(BINOPS[op]) return call(BINOPS[op],[indexed(a.ast()),indexed(c.ast())])
+                throw new Error(`Unknown operator: ${op}`)
+            },
+            MulExp_mul:function(a,b,c) {
                 let op = b.ast()
                 if(BINOPS[op]) return call(BINOPS[op],[indexed(a.ast()),indexed(c.ast())])
                 throw new Error(`Unknown operator: ${op}`)
@@ -94,7 +106,7 @@ export class Parser {
                 throw new Error(`Unknown operator: ${op}`)
             },
 
-            ConvertExp:function(a,b,c) {
+            AsExp_convert:function(a,b,c) {
                 return call(BINOPS['as'],[indexed(a.ast()),indexed(c.ast())])
             },
 
@@ -115,10 +127,10 @@ export class Parser {
                 return call(name.name,list)
             },
 
-            Pipeline_right:function(first,_,next) {
+            PipeOp_right:function(first,_,next) {
                 return pipeline_right(first.ast(),next.ast())
             },
-            Pipeline_left:function(next,_,first) {
+            PipeOp_left:function(next,_,first) {
                 return pipeline_left(next.ast(),first.ast())
             },
 
