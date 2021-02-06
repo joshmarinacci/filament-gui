@@ -4,8 +4,10 @@ Filament {
     | List | bool | ident | unitnumber | number | string
 
   Pipeline
-    = Exp ">>" Exp --right
-    | Exp "<<" Exp --left
+    = Exp ">>" Term --right
+    | Term "<<" Exp --left
+
+  Term = UnExp | BinExp | GroupExp | ConvertExp | FundefExp | FuncallExp | Block | List | bool | ident | unitnumber | number | string
 
 
   Block = "{" Exp* "}"

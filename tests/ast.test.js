@@ -191,7 +191,7 @@ function test_function_calls() {
         // ],
     ])
 }
-function test_pipelines() {
+function verify_pipeline() {
     verify_ast("pipelines", [
         ['func() >> funk()',
             pipeline_right(
@@ -213,11 +213,11 @@ function test_pipelines() {
             'func(42)>>func(count:42)', 42 ],
         ['func(42) >> func(count:42) >> func(42)',
             pipeline_right(
-                call('func',[indexed(scalar(42))]),
                 pipeline_right(
-                    call('func',[named('count',scalar(42))]),
                     call('func',[indexed(scalar(42))]),
+                    call('func',[named('count',scalar(42))]),
                 ),
+                call('func',[indexed(scalar(42))]),
             ),
             'func(42)>>func(count:42)>>func(42)', 42],
         // ['func(arg: _42, [4_2 ]) >> func(count:42) >> funk(42) >> answer',
@@ -388,7 +388,7 @@ function doAll() {
     test_gui_examples()
     test_literals()
     test_function_calls()
-    test_pipelines()
+    verify_pipeline()
     test_blocks()
     eval_simple_unit_conversion()
     verify_var_assignment()
