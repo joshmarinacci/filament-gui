@@ -83,6 +83,25 @@ export class Parser {
 
             Block: (_1, statements, _2) => block(statements.ast()),
         })
+        this.semantics.addOperation('unicode',{
+            _terminal() { return this.sourceString },
+            ident(i, i2) { return ident(this.sourceString)  },
+            number(v) {
+                v = v.ast()
+                return ""+v.value
+            },
+            MulExp_mul: (v1, op, v2) => {
+                op = op.ast()
+                if(op === '*') op = "×"
+                return `${v1.unicode()} ${op} ${v2.unicode()}`
+            },
+            BoolExp_bool: (v1, op, v2) => {
+                op = op.unicode()
+                if(op === '<>') op = "≠"
+                return `${v1.unicode()} ${op} ${v2.unicode()}`
+            },
+            PipeOp_right: (first, _, next) => `${first.unicode()} → ${next.unicode()}`
+        })
     }
 
     parse(code) {
@@ -92,6 +111,7 @@ export class Parser {
     ast(match) {
         return this.semantics(match).ast()
     }
+
 }
 
 export class FilamentFunction {
