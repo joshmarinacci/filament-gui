@@ -171,7 +171,7 @@ describe('mass',()=>{
 })
 describe("volume",()=>{
     test('us',async ()=>{
-        await all([
+        await all_close_scalar([
             ['5gal',s(5,'gallons')],
             ['5cups',s(5,'cups')],
             ['5cups as gal',s(5/16,'gal')],
@@ -195,7 +195,7 @@ describe("volume",()=>{
         ])
     })
     test('metric',async ()=>{
-        await all([
+        await all_close_scalar([
             ['3l',s(3,'liters')],
             ['3ml',s(3,'milliliters')],
             ['3ml as liters',s(0.003,'liters')],
