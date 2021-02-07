@@ -96,79 +96,7 @@ function eval_var_assignment() {
     ])
 }
 
-function verify_operators() {
-    verify_ast("binary operators", [
-        ['4+2',call('add',[indexed(scalar(4)),indexed(scalar(2))]),'add(4,2)',6],
-        ['4-2',call('subtract',[indexed(scalar(4)),indexed(scalar(2))]),'subtract(4,2)',2],
-        ['4*2',call('multiply',[indexed(scalar(4)),indexed(scalar(2))]),'multiply(4,2)',8],
-        ['4/2',call('divide',[indexed(scalar(4)),indexed(scalar(2))]),'divide(4,2)',2],
-        ['4**2',call('power',[indexed(scalar(4)),indexed(scalar(2))]),'power(4,2)',16],
-        ['4 mod 2',call('mod',[indexed(scalar(4)),indexed(scalar(2))]),'mod(4,2)',0],
-    ])
-    verify_ast('boolean operators',[
-        ['4 < 2',call('lessthan',[indexed(scalar(4)),indexed(scalar(2))]),'lessthan(4,2)',false],
-        ['4 > 2',call('greaterthan',[indexed(scalar(4)),indexed(scalar(2))]),'greaterthan(4,2)',true],
-        ['4 = 2',call('equal',[indexed(scalar(4)),indexed(scalar(2))]),'equal(4,2)',false],
-        ['4 <> 2',call('notequal',[indexed(scalar(4)),indexed(scalar(2))]),'notequal(4,2)',true],
-        ['4 <= 2',call('lessthanorequal',[indexed(scalar(4)),indexed(scalar(2))]), 'lessthanorequal(4,2)',false],
-        ['4 >= 2',call('greaterthanorequal',[indexed(scalar(4)),indexed(scalar(2))]), 'greaterthanorequal(4,2)',true],
-        // ['true and false',call('and',[indexed(scalar(4)),indexed(scalar(2))]), 'and(true,false)',false],
-        // ['true or false',call('or',[indexed(scalar(4)),indexed(scalar(2))]), 'or(true,false)',true],
-    ])
 
-    verify_ast('unary operators',[
-        // ['-42',call('negate',[indexed(scalar(42))]),'negate(42)',-42],
-        // ['-4/2',call('divide',[indexed(call('negate',[indexed(scalar(4))])),indexed(scalar(2))]),'divide(negate(4),2)',-2],
-        ['!4',call('factorial',[indexed(scalar(4))]),'factorial(4)',1*2*3*4],
-        ['not true',call('not',[indexed(boolean(true))]),'not(true)',false],
-    ])
-}
-
-function eval_operators() {
-    eval_ast("binary operators", [
-        ['4+2',scalar(6)],
-        ['4-2',scalar(2)],
-        ['4*2',scalar(8)],
-        ['4/2',scalar(2)],
-        ['4**2',scalar(16)],
-        ['4 mod 2',scalar(0)],
-    ])
-    eval_ast('binary ops on arrays',[
-        ['[1,2]+[3,4]',list([scalar(4),scalar(6)])],
-        ['[1,2]+[3,4]',list([scalar(4),scalar(6)])],
-        ['2*[1,2]',list([scalar(2),scalar(4)])],
-        ['[3,4]*2',list([scalar(6),scalar(8)])],
-    ])
-    eval_ast('boolean operators',[
-        ['4 < 2',boolean(false)],
-        ['4 > 2',boolean(true)],
-        ['4 = 2',boolean(false)],
-        ['4 <> 2',boolean(true)],
-        ['4 <= 2',boolean(false)],
-        ['4 >= 2',boolean(true)],
-        // ['true and false',boolean(false)],
-        // ['true or false',boolean(true)],
-    ])
-
-    eval_ast('unary operators',[
-        ['-42',scalar(-42)],
-    //     // ['-4/2',call('divide',[indexed(call('negate',[indexed(scalar(4))])),indexed(scalar(2))]),'divide(negate(4),2)',-2],
-        ['!4',scalar(1*2*3*4)],
-        ['not true',boolean(false)],
-    ])
-
-    eval_ast('parenthesis expressions',[
-        ['(4+2)',scalar(6)],
-        ['((4*2)+42)',scalar((4*2)+42)],
-        ['(4*(2+42))',scalar(4*(2+42))],
-    ])
-
-    eval_ast('precedence',[
-        ['4+2*4',scalar(4+2*4)],
-        ['4*2+4',scalar(4*2+4)],
-    ])
-
-}
 let _42 = scalar(42)
 let list_42 = list([scalar(42)])
 function test_function_calls() {
@@ -370,11 +298,6 @@ function test_gui_examples() {
 }
 
 
-function eval_constants() {
-    eval_ast('constants',[
-        ['pi',s(Math.PI)]
-    ])
-}
 
 function eval_case_under_conversion() {
     eval_ast('case identifier tests',[
@@ -398,10 +321,7 @@ function doAll() {
     eval_simple_unit_conversion()
     verify_var_assignment()
     eval_var_assignment()
-    verify_operators()
-    eval_operators()
     eval_function_definitions()
-    eval_constants()
     eval_case_under_conversion()
 }
 function doTest() {

@@ -1,11 +1,8 @@
-import {s, setup_parser, t} from './util.js'
+import {all, s, setup_parser, t} from './util.js'
 import {scalar} from '../ast.js'
 
 beforeAll(() => setup_parser())
 
-const all = async (tests) => {
-    await tests.map(tt => t(tt[0],tt[1]))
-}
 
 describe('length',() => {
     test('metric', async () => {

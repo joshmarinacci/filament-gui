@@ -1,4 +1,4 @@
-import {list, scalar, Scope} from '../ast.js'
+import {boolean, list, scalar, Scope} from '../ast.js'
 import fs from 'fs'
 import {
     add, and, convertunit,
@@ -19,7 +19,9 @@ import {Parser} from '../parser.js'
 
 export const t = async (s,a) => expect(eval_code(s)).resolves.toEqual(a)
 export const s = (v,u) => scalar(v,u)
+export const b = (v) => boolean(v)
 export const l = (...vals) => list(vals.map(v => scalar(v)))
+export const all = async (tests) => await tests.map(tt => t(tt[0],tt[1]))
 
 let parser
 let scope
