@@ -329,8 +329,8 @@ export function convert_unit(a_val,a_unit, b_unit) {
         //check bases
         let a_base = UNITS.lookupUnit(a_unit).base
         let b_base = UNITS.lookupUnit(b_unit).base
+        //convert between same bases
         if(a_base === b_base) {
-            // console.log("same base. simple conversion")
             //take a to the base
             //take b from the base
             let a_ratio = UNITS.lookupUnit(a_unit).ratio;
@@ -340,7 +340,23 @@ export function convert_unit(a_val,a_unit, b_unit) {
             return a_val
         }
 
-        throw new Error(`no conversion found for ${a_unit} to ${b_unit}`)
+        //if a unit != a base or b unit != b base, then recurse
+        if(a_unit !== a_base) {
+            // console.log("maybe we could reduce and try again?")
+            let a_ratio = UNITS.lookupUnit(a_unit).ratio;
+            a_val = a_val / a_ratio
+            // console.log("new value is",a_unit,a_ratio,a_val, a_base)
+            return convert_unit(a_val, a_base, b_unit)
+        }
+        if(b_unit != b_base) {
+            // console.log("reduce b and try again")
+            let b_ratio = UNITS.lookupUnit(b_unit).ratio;
+            a_val = a_val * b_ratio
+            // console.log("b_unit",b_unit, 'to', b_ratio, a_val)
+            return convert_unit(a_val, a_unit, b_base)
+        }
+
+        throw new Error(`no conversion found for ${a_unit} to ${b_unit}. bases ${a_base} <> ${b_base}`)
     }
 
     //            a._numers.push(new UnitPart(second.getName(), second.getDimension(), Math.pow(second.getRatio(), second.getDimension())));

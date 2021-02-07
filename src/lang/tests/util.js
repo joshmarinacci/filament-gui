@@ -17,11 +17,20 @@ import {drop, get_field, join, length, map, range, reverse, select, sort, sum, t
 import {dataset} from '../dataset.js'
 import {Parser} from '../parser.js'
 
+//objects should be same
 export const t = async (s,a) => expect(eval_code(s)).resolves.toEqual(a)
 export const s = (v,u) => scalar(v,u)
 export const b = (v) => boolean(v)
 export const l = (...vals) => list(vals.map(v => scalar(v)))
 export const all = async (tests) => await tests.map(tt => t(tt[0],tt[1]))
+export const all_close_scalar = async (tests) => await tests.map(tt => ta(tt[0],tt[1]))
+// objects should be close to the same
+export const ta = async (s,a) => {
+    return Promise.resolve(eval_code(s)).then(v=>{
+        expect(v.value).toBeCloseTo(a.value)
+        expect(v.unit).toEqual(v.unit)
+    })
+}
 
 let parser
 let scope
