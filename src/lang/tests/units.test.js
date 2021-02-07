@@ -158,7 +158,7 @@ describe('mass',()=>{
             ['50lb', s(50, 'pounds')],
             ['50oz', s(50, 'ounces')],
             ['50lb as grams', s(22679.6, 'grams')],
-            // ['50oz as grams', s(1417.475, 'grams')],
+            ['50oz as grams', s(1417.475, 'grams')],
             // ['50oz + 60oz', s(110, 'oz')],
             // ['1oz + 1lb', s(17 * 1 / 16.0, 'pounds')],
             // ['(1oz + 1lb) as grams', s(481.942, 'gram')],
@@ -187,11 +187,11 @@ describe("volume",()=>{
             ['48tsp as cups',s(1,'cup')],
             ['16tbsp as cups',s(1,'cup')],
             ['16cups as gal',s(1,'gal')],
-            // ['1tsp as gal',s(0.00130208,'gal')],
-            // ['1tsp as liter',s(0.00492892,'liter')],
-            // ['1tsp as ml',s(4.92892,'ml')],
-            // ['4ml as tsp',s(0.811537,'tsp')],
-            // ['4ml as tbsp',s(0.270512,'tbsp')],
+            ['1tsp as gal',s(0.00130208,'gal')],
+            ['1tsp as liter',s(0.00492892,'liter')],
+            ['1tsp as ml',s(4.92892,'ml')],
+            ['4ml as tsp',s(0.811537,'tsp')],
+            ['4ml as tbsp',s(0.270512,'tbsp')],
         ])
     })
     test('metric',async ()=>{
@@ -243,6 +243,9 @@ describe('area',()=>{
     test('us',async ()=> {
         await all([
             ['9sqft',s(9,'foot',2)],
+            ['8acres',s(8,'acre')],
+            ['1000ac',s(1000,'acres')],
+            // ['1000ac as sqm',s(1000*4046.8564224,'meters',2)],
         ])
     })
     test('metric',async ()=> {
@@ -266,13 +269,10 @@ describe('area',()=>{
             ['8m * 9ft',s(236.2204724,'foot',2)],
             ['3ft * 6ft',s(18,'foot',2)],
             //['(3ft * 6ft) as sq mi',s6.4566e-7,'miles',s2)],
-            ['1000ac',s(1000,'acres')],
-            //['1000ac as sq m',s1000*4046.8564224,'meters',s2)],
             //['40 acres as sq mi',s0.0625,'miles',s2)],
             //['25sqmi + 1000acres',s68796559.1808,'meters',s2)],
             ['10m^2',s(0,'meter',2)],
 
-            ['8 acres',s(8,'acre')],
             ['1m * 2m as acre',s(0.000494211,'acre')],
             ['1km * 2km as acre',s(494.211,'acre')],
             ['1m * 2m as square feet',s(21.5278,'feet',2)],
