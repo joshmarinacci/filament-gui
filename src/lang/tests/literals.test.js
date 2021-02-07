@@ -1,5 +1,5 @@
 import {list, string} from '../ast.js'
-import {setup_parser, s, t, l} from './util.js'
+import {setup_parser, s, t, l, b} from './util.js'
 
 beforeAll(() => setup_parser())
 
@@ -35,10 +35,10 @@ describe('literals',() => {
         await t(`["forty two",42]`,list([string('forty two'),s(42)]))
     })
 
-    // test('booleans',async () => {
-    //     await t("true",boolean(true))
-    //     await t("TRUE",boolean(true))
-    //     await t("false",boolean(false))
-    //     await t("FaLsE",boolean(false))
-    // })
+    test('booleans',async () => {
+        await t("true",b(true))
+        // await t("TRUE",b(true))
+        await t("false",b(false))
+        // await t("FaLsE",b(false))
+    })
 })

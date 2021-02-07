@@ -111,7 +111,7 @@ class FBoolean {
         return this.value
     }
     evalFilament() {
-        return this.value
+        return this
     }
 }
 export const boolean = v => new FBoolean(v)

@@ -14,48 +14,6 @@ import {
 import {eval_ast, verify_ast} from './util.js'
 
 
-function test_literals() {
-    verify_ast("literals", [
-        //integers
-        ['4', scalar(4), '4', 4],
-        ['42', scalar(42), '42', 42],
-        ['4_2', scalar(42), '42', 42],
-
-        //floating point
-        ['4.2',scalar(4.2), '4.2', 4.2],
-        ['04.2',scalar(4.2),'4.2',4.2],
-        ['4.20',scalar(4.2),'4.2',4.2],
-        ['4_._2',scalar(4.2),'4.2',4.2],
-
-        //hex
-        ['0x42', scalar(0x42), '66',0x42],
-
-        //lists
-        ['[4,2,42]', list([scalar(4),scalar(2),scalar(42)]), '[4,2,42]',[4,2,42]],
-        ['[4, 2, 42]', list([scalar(4),scalar(2),scalar(42)]), '[4,2,42]',[4,2,42]],
-        ['[4.2, 02.4, 4_2]', list([scalar(4.2),scalar(2.4),scalar(42)]), '[4.2,2.4,42]',[4.2,2.4,42]],
-
-        //underscores
-        ['[4_, _2, 4_2]',list([scalar(4),scalar(2),scalar(42)]), '[4,2,42]', [4,2,42]],
-
-        //strings
-        [`"fortytwo"`, string('fortytwo'), `"fortytwo"`,'fortytwo'],
-        [`"forty two"`, string('forty two'), `"forty two"`,'forty two'],
-        [`'forty two'`, string('forty two'),`"forty two"`,'forty two'],
-
-        [`["fortytwo", 42]`,
-            list([string("fortytwo"),scalar(42)]),
-            `["fortytwo",42]`,
-            ['fortytwo',42],
-        ],
-
-        //booleans
-        ['true',boolean(true),'true',true],
-        // ['TRUE',boolean(true),'true',true],
-        ['false', boolean(false), 'false',false],
-        // ['FalSE',boolean(false),'false',false],
-    ])
-}
 function test_comments() {
     verify_ast("comments", [
         ['//comment', null, "//comment", null],
@@ -314,7 +272,6 @@ function eval_case_under_conversion() {
 
 function doAll() {
     test_gui_examples()
-    test_literals()
     test_function_calls()
     verify_pipeline()
     test_blocks()
