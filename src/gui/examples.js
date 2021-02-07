@@ -17,14 +17,12 @@ sum(data)/length(data)`
         code:`[1,2,3] + [4,5,6]`
     },
     {
-        title:`list 0 to 20 by 5's`,
-        code:`range(min:0,max:20,step:5)`
+        title:'last 5 of 0 to 100 by 10s',
+        code:`take(range(100,step:10), -5)`
     },
     {
-        title:'last 5 in 0 to 100 by 10s',
-        code:`
-take(range(min:0, max:100,step:10), -5)
-`
+        title:'all primes under 100',
+        code:'range(100) >> select(where:is_prime)',
     },
 //     {
 //         title:'sort list of people by last name',
@@ -43,10 +41,6 @@ take(range(min:0, max:100,step:10), -5)
         title:'simple chart of 10 to zero ',
         code:`chart(reverse(range(10)))`,
     },
-    {
-        title:'pipeline example',
-        code:`range(10) >> chart()`
-    },
     // {
     //     title:'bars of x**2',
     //     code:`chart(map(range(0,10), x=>power(x,2)))`
@@ -60,11 +54,7 @@ take(range(min:0, max:100,step:10), -5)
         code: `dataset('alphabet')`
     },
     {
-        title:'length of data',
-        code:`dataset('alphabet') >> length()`
-    },
-    {
-        title:'syllables for each letter',
+        title:'how many syllables in each letter',
         code:`chart(dataset('alphabet'), x_label:'letter', y:'syllables')`
     },
     {
@@ -77,14 +67,13 @@ take(range(min:0, max:100,step:10), -5)
 `planets << dataset('planets')
 chart(planets, type:'scatter', 
                   x:'orbital_radius',
-                   y:'mean_radius')`
+                  y:'mean_radius')`
     },
     {
         title:'5 tallest buildings. name vs height',
-        code:
-`dataset('tallest_buildings') >> buildings
-take(buildings,count:5) >> chart(y:'height', x_label:'name')
-`
+        code:`dataset('tallest_buildings') 
+  >> take(count:5) 
+  >> chart(y:'height', x_label:'name')`
     },
     {
         title:'most populous countries',

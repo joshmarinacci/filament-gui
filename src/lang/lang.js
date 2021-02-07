@@ -1,10 +1,10 @@
 import {
     add,
-    and,
+    and, convertunit,
     cos,
     divide,
     equal, factorial,
-    greaterthan, greaterthanorequal, lessthan, lessthanorequal,
+    greaterthan, greaterthanorequal, is_prime, lessthan, lessthanorequal,
     mod,
     multiply,
     negate, not,
@@ -22,12 +22,11 @@ import {dataset, stockhistory} from './dataset.js'
 import {default as src} from "./filament.ohm"
 import {Parser} from './parser.js'
 import {Scope} from './ast.js'
-import {convertunit} from './units.js'
 
 let scope = new Scope("lang")
-scope.install(add, subtract, multiply, divide, power, negate, mod, factorial)
+scope.install(add, subtract, multiply, divide, power, negate, mod, factorial, is_prime)
 scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal,or,and,not)
-scope.install(range,length,take,drop,join,reverse,map, sort, sum, get_field)
+scope.install(range,length,take,drop,join,reverse,map, sort, sum, get_field, select)
 scope.install(dataset, stockhistory)
 scope.install(convertunit)
 scope.install(chart, timeline, histogram)
