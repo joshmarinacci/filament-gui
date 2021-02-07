@@ -1,4 +1,5 @@
 import {FilamentFunction} from './parser.js'
+import {to_canonical_unit} from './units.js'
 
 class ASTNode {
     constructor() {
@@ -62,6 +63,7 @@ class FScalar {
             if (unit.length === 0) this.unit = null
             if (unit.length === 1) this.unit = unit[0]
         }
+        this.unit = to_canonical_unit(this.unit)
     }
     toString() {
         if(this.unit) return (""+this.value+' '+this.unit)
