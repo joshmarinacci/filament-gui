@@ -53,10 +53,11 @@ export class Scope {
 }
 
 class FScalar {
-    constructor(value,unit) {
+    constructor(value,unit,dim=1) {
         this.type = 'scalar'
         this.value = value
         this.unit = unit
+        this.dim = dim
         if(value instanceof FScalar) this.value = this.value.value
         if(!unit) this.unit = null
         if(Array.isArray(unit)) {
@@ -76,7 +77,7 @@ class FScalar {
         return this
     }
 }
-export const scalar = (n,u) => new FScalar(n,u)
+export const scalar = (n,u,d) => new FScalar(n,u,d)
 
 class FString {
     constructor(value) {

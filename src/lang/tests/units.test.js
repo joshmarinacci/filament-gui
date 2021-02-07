@@ -44,20 +44,22 @@ describe('length',() => {
         ])
     })
 
-    test.skip('one unit math',async() => {
-        //     // ["50in * 5",s 50*5,'inches')],
-        //     // ["50 * 5in", 50*5,'inches')],
-        //     // ['2ft/2',1,"feet")],
-        //     // ['2/2ft',1,"feet")],
-        //     // ['2ft*2',4,"feet")],
-        //     // ['2*2ft',4,"feet")],
-        //     // ['4ft - 5ft',s( -1,'feet')],
-        //     // ['4ft * 5ft',s( 20,'feet',2)],
-        //     // ['4ft / 2ft',s(  2,'none')],
-        //     // ['1ft * 2ft * 3ft',s( 6,'feet',3)],
+    test('unit multiply and divide',async() => {
+        await all_close_scalar([
+            ["50in * 5",s( 50*5,'inch')],
+            ["50 * 5in", s(50*5,'inch')],
+            ['2ft/2',s(1,"feet")],
+            ['2/2ft',s(1,"feet")],
+            ['2ft*2',s(4,"feet")],
+            ['2*2ft',s(4,"feet")],
+            ['4ft * 5ft',s( 20,'feet',2)],
+            ['4ft / 2ft',s(  2)],
+            ['1ft * 2ft * 3ft',s( 6,'feet',3)],
+        ])
     })
 
-    test.skip('two unit math',async () => {
+    test.skip('unit add and subtract',async () => {
+        //     // ['4ft - 5ft',s( -1,'feet')],
         //     // ['3ft + 6ft as meters',2.7432,'meters')],
         //     // ['(3ft + 6ft) as feet',9,'feet')],
         //     // ["1km+500m", 1500,'meters')],

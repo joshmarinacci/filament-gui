@@ -28,7 +28,7 @@ export const all_close_scalar = async (tests) => await tests.map(tt => ta(tt[0],
 export const ta = async (s,a) => {
     return Promise.resolve(eval_code(s)).then(v=>{
         expect(v.value).toBeCloseTo(a.value)
-        expect(v.unit).toEqual(v.unit)
+        expect(v.unit).toEqual(a.unit)
     })
 }
 

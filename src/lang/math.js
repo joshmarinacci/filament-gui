@@ -42,10 +42,41 @@ export const add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
     function(a,b) { return binop(a,b, (a,b)=>a+b) })
 export const subtract = new FilamentFunction('subtract',{a:REQUIRED, b:REQUIRED},
     function (a,b) { return binop(a,b,(a,b)=>a-b) })
+
+function is_scalar_with_unit(a) {
+    if(is_scalar(a) && a.unit !== null) return true
+    return false
+}
+
+function is_scalar_without_unit(a) {
+    if(is_scalar(a) && a.unit === null) return true
+    return false
+}
+
 export const multiply = new FilamentFunction('multiply',{a:REQUIRED, b:REQUIRED},
-    function (a,b) { return binop(a,b,(a,b)=>a*b) })
+    function (a,b) {
+        //if one has a unit and one does
+        if(is_scalar_with_unit(a) && is_scalar_without_unit(b)) {
+            return scalar(a.value*b.value,a.unit)
+        }
+        if(is_scalar_with_unit(b) && is_scalar_without_unit(a)) {
+            return scalar(b.value*a.value,b.unit)
+        }
+        if(is_scalar_with_unit(a) && is_scalar_with_unit(b)) {
+            return scalar(a.value*b.value,a.unit,a.dim+b.dim)
+        }
+    return binop(a,b,(a,b)=>a*b)
+})
 export const divide = new FilamentFunction('divide',{a:REQUIRED, b:REQUIRED},
-    function (a,b) { return binop(a,b,(a,b)=>a/b) })
+    function (a,b) {
+        if(is_scalar_with_unit(a) && is_scalar_without_unit(b)) {
+            return scalar(a.value/b.value,a.unit)
+        }
+        if(is_scalar_with_unit(b) && is_scalar_without_unit(a)) {
+            return scalar(b.value/a.value,b.unit)
+        }
+    return binop(a,b,(a,b)=>a/b)
+})
 export const power = new FilamentFunction('power',{a:REQUIRED, b:REQUIRED},
     function (a,b) { return binop(a,b,(a,b)=>Math.pow(a,b)) })
 
