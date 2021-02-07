@@ -1,5 +1,6 @@
 
 import {all, l, s, b, setup_parser} from './util.js'
+import {list} from '../ast.js'
 
 beforeAll(() => setup_parser())
 
@@ -19,6 +20,7 @@ describe('math',() => {
             ['[1,2]+[3,4]',l(4,6)],
             ['2*[1,2]',l(2,4)],
             ['[3,4]*2',l(6,8)],
+            ['[4,5]<[8,9]',list([b(true),b(true)])],
         ])
     })
     test("boolean operators", async ()=>{

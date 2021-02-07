@@ -14,8 +14,7 @@ function binop(a,b,cb) {
     if(is_scalar(a) && is_scalar(b)) return pack(cb(unpack(a),unpack(b)))
     if(is_boolean(a) && is_boolean(b)) return pack(cb(unpack(a),unpack(b)))
     if(is_list(a) && is_list(b)) {
-        let arr = a.value.map((aa,i)=> pack(cb(unpack(a.value[i]),unpack(b.value[i]))))
-        return list(arr)
+        return list(a.value.map((aa,i)=> pack(cb(unpack(a.value[i]),unpack(b.value[i])))))
     }
     if(is_list(a) && is_scalar(b)) {
         return list(a.value.map((_,i)=> pack(cb(unpack(a.value[i]),unpack(b)))))
