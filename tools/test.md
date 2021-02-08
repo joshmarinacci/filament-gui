@@ -13,3 +13,9 @@ data << [42,43,44,45]
 chart(data)
 }
 ```
+
+lets mess with the alphabet
+
+```filament
+chart(dataset('alphabet'), x_label:'letter', y:'syllables')
+```

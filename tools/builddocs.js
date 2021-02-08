@@ -13,26 +13,13 @@
 
 
 import path from 'path'
-import {promises as fs} from 'fs'
+import {promises as fs, createWriteStream, mkdir as real_mkdir} from 'fs'
 import ohm from 'ohm-js'
 import {Parser} from '../src/lang/parser.js'
 import {is_canvas_result, Scope} from "../src/lang/ast.js"
-import {
-    add, and, convertunit,
-    divide, equal,
-    factorial,
-    greaterthan, greaterthanorequal,
-    is_prime,
-    lessthan, lessthanorequal,
-    mod,
-    multiply,
-    negate, not, notequal, or,
-    power,
-    subtract
-} from '../src/lang/math.js'
-import {drop, get_field, join, length, map, range, reverse, select, sort, sum, take} from '../src/lang/lists.js'
-import {dataset, stockhistory} from '../src/lang/dataset.js'
-import {chart, histogram, timeline} from '../src/lang/chart.js'
+import {default as PImage} from "pureimage"
+import {make_standard_scope} from '../src/lang/lang.js'
+
 
 // import {chart, histogram, timeline} from '../src/lang/chart.js'
 
@@ -104,13 +91,7 @@ async function eval_filament(doc) {
     // l("codeblocks",codeblocks)
     let filament_grammer = (await fs.readFile('src/lang/filament.ohm')).toString()
     let parser = new Parser(null,filament_grammer)
-    let scope = new Scope("standard")
-    scope.install(add, subtract, multiply, divide, power, negate, mod, factorial, is_prime)
-    scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal,or,and,not)
-    scope.install(range,length,take,drop,join,reverse,map, sort, sum, get_field, select)
-    scope.install(dataset, stockhistory)
-    scope.install(convertunit)
-    scope.install(chart, timeline, histogram)
+    let scope = make_standard_scope()
 
     return Promise.all(codeblocks.map(async (code) => {
         console.log(code)
@@ -124,25 +105,51 @@ async function eval_filament(doc) {
         code.result = res
         return res
     })).then(()=>{
-        console.log("all done")
+        // console.log("all done")
     })
 }
 
-async function generate_canvas_images(doc, dir) {
+async function mkdir(dir) {
+    return new Promise((res,rej)=>{
+        real_mkdir(dir,(err)=>{
+            console.log("done making")
+            if(err) {
+                // console.log(err)//return rej(err)
+            }
+            res()
+        })
+    })
+}
+
+async function generate_canvas_images(doc, basedir, subdir) {
+    await mkdir(path.join(basedir,subdir))
     // l("rendering all canvas images in doc",doc)
     Promise.all(doc
         .filter(block => block.type === 'CODE' && is_canvas_result(block.result))
-        .map(async(block) => {
-            console.log("canvas result is",block.result)
-            // let img = new PImage()
-            // block.result(img)
-            // let fname = 'filename.png'
-            // let pth =  path.join(dir,fname)
-            // block.src = pth
-            // await img.write_png_to_path(pth)
+        .map(async(block,i) => {
+            const img = PImage.make(1000,500);
+            block.result.cb(img)
+            let fname = `output.${i}.png`
+            block.src = path.join(subdir,fname)
+            await PImage.encodePNGToStream(img,createWriteStream(path.join(basedir,subdir,fname)))
         })).then(done => {
             console.log("fully done writing images")
         })
+}
+
+function render_code_output(block) {
+    let code =`<pre>
+  <code data-language="${block.language}">${block.content}</code>
+</pre>
+result
+`
+
+    if(block.src) {
+        code += `<img src="${block.src}" width="500" height="250">`
+    } else {
+        code += `<p><code>${block.src}</code></p>`
+    }
+    return code
 }
 
 function render_html(doc) {
@@ -153,15 +160,12 @@ function render_html(doc) {
         if(block.type === 'H1') return `<h1>${block.content}</h1>`
         if(block.type === 'H2') return `<h2>${block.content}</h2>`
         if(block.type === 'P') return `<p>${block.content}</p>`
-        if(block.type === 'CODE') return `<pre><code data-language="${block.language}">${block.content}</code></pre>
-result
-<p><code>${block.result}</code></p>
-`
+        if(block.type === 'CODE') return render_code_output(block)
         return "ERROR"
     }).join("\n")
     let template = `
-     <html><head>
-        <title>${title}</title></head>
+     <html>
+     <head><title>${title}</title></head>
         <body>
         ${content}
         </body>
@@ -170,16 +174,18 @@ result
 }
 
 async function convert_file(infile_path, outdir_path, outfile_name) {
+    await mkdir(outdir_path)
     let raw_markdown = (await fs.readFile(infile_path)).toString()
     let doc = await parse_markdown(raw_markdown+"\n")
     await eval_filament(doc)
-    await generate_canvas_images(doc,path.join(outdir_path,'images'))
+    await generate_canvas_images(doc,outdir_path,'images')
     let html = render_html(doc)
     console.log("final html is",html)
     await fs.writeFile(path.join(outdir_path,outfile_name),html)
 }
 
-
-convert_file('tools/test.md','output', 'output.html')
-    .then(()=>{console.log("done")})
-    .catch(e => console.error(e))
+const fnt = PImage.registerFont('node_modules/pureimage/tests/unit/fixtures/fonts/SourceSansPro-Regular.ttf','Source Sans Pro');
+fnt.load(()=>{
+    convert_file('tools/test.md','output', 'output.html')
+        .then(()=>{console.log("done")})
+        .catch(e => console.error(e))})

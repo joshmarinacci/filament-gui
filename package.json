@@ -11,6 +11,7 @@
     "date-fns": "^2.16.1",
     "node-fetch": "^2.6.1",
     "ohm-js": "^15.4.1",
+    "pureimage": "^0.2.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",

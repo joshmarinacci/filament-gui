@@ -115,7 +115,7 @@ function draw_bars(ctx, canvas, data, x_label, y) {
             bar_width-bar_gap,
             value*scale)
         ctx.fillStyle = 'black'
-        ctx.font = '10px sans-serif'
+        ctx.font = '30px sans-serif'
         ctx.fillText(label,edge_gap+bar_width*i, canvas.height-edge_gap + 15)
     })
 }
