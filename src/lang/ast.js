@@ -1,4 +1,4 @@
-import {FilamentFunction} from './parser.js'
+import {FilamentFunction, strip_under} from './parser.js'
 import {to_canonical_unit} from './units.js'
 
 class ASTNode {
@@ -424,7 +424,6 @@ class FBlock extends ASTNode{
 }
 export const block = (sts) => new FBlock(sts)
 
-export const strip_under = s => s.replaceAll("_","")
 export function pack(val) {
     if(typeof val === 'number') return scalar(val)
     if(typeof val === 'string') return string(val)
