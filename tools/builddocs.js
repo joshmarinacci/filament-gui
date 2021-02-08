@@ -16,7 +16,7 @@ import path from 'path'
 import {promises as fs} from 'fs'
 import ohm from 'ohm-js'
 import {Parser} from '../src/lang/parser.js'
-import {Scope} from "../src/lang/ast.js"
+import {is_canvas_result, Scope} from "../src/lang/ast.js"
 import {
     add, and, convertunit,
     divide, equal,
@@ -33,7 +33,7 @@ import {
 import {drop, get_field, join, length, map, range, reverse, select, sort, sum, take} from '../src/lang/lists.js'
 import {dataset, stockhistory} from '../src/lang/dataset.js'
 import {chart, histogram, timeline} from '../src/lang/chart.js'
-import {is_canvas_result} from '../src/lang/lang.js'
+
 // import {chart, histogram, timeline} from '../src/lang/chart.js'
 
 const H1    = (content) => ({type:'H1', content})

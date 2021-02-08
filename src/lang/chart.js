@@ -1,7 +1,6 @@
 import {compareAsc, compareDesc, parse as parseDate, eachYearOfInterval, differenceInYears, format as formatDate} from 'date-fns'
 import {FilamentFunction, REQUIRED} from './parser.js'
-import {is_string, string, unpack} from './ast.js'
-import {CanvasResult} from './lang.js'
+import {CanvasResult, is_string, string, unpack} from './ast.js'
 
 
 function draw_legend(ctx, canvas, data, x_label, y_label) {

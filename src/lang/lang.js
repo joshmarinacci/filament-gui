@@ -19,13 +19,6 @@ import {dataset, stockhistory} from './dataset.js'
 import {Parser} from './parser.js'
 import {Scope} from './ast.js'
 
-export class CanvasResult{
-    constructor(cb) {
-        this.type = 'canvas-result'
-        this.cb = cb
-    }
-}
-
 export function make_standard_scope() {
     let scope = new Scope("lang")
     scope.install(add, subtract, multiply, divide, power, negate, mod, factorial, is_prime)

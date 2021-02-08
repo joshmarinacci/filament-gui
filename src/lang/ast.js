@@ -424,6 +424,14 @@ class FBlock extends ASTNode{
 }
 export const block = (sts) => new FBlock(sts)
 
+
+export class CanvasResult{
+    constructor(cb) {
+        this.type = 'canvas-result'
+        this.cb = cb
+    }
+}
+
 export function pack(val) {
     if(typeof val === 'number') return scalar(val)
     if(typeof val === 'string') return string(val)
