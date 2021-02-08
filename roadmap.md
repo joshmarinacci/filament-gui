@@ -1,6 +1,17 @@
-# Roadmap
+# High Level Roadmap
+- [x] All functional language features work properly
+- [ ] conditionals (if, match, loops?)
+- [ ] Make 10 more cool examples. Blog about it.
+- [ ] Tool to evaluate markdown and generate html with pngs for tutorial doc
+- [ ] Plot, for trig, parametric, strange attractors
+- [ ] Image, loop to define and convert pixel values with color vectors
+- [ ] Experimental block editor
+- [ ] Basic features for GUI editor. Multiple blocks. Hide sidebars. Symbol inspector. Blog .
+- [ ] Reactive variables to auto revaluation
+- [ ] Drawing canvas for shapes and words
+                
 
-* fully post blogs about the development. at least once a week.
+# Sprints
 
 ## M1
 - [x] focus on impl instead of research
@@ -16,17 +27,18 @@
 - [x] render tables and lists as spreadsheet like view
 - [x] add 10 new examples to sidebar
 - [x] blog post on the editor
-- [ ] implement parser enough for all examples to work that don't use lambdas
-- [ ] Scalar() class with unit. 
-- [ ] List() class from list literals or datasets or other. Works with records too.
-- [ ] Callsite class represents a parsed function with args ready to apply
-- [ ] all functions work with new list and scalar classes
+- [x] implement parser enough for all examples to work that don't use lambdas
+- [x] Scalar() class with unit. 
+- [x] List() class from list literals or datasets or other. Works with records too.
+- [x] Callsite class represents a parsed function with args ready to apply
+- [x] all functions work with new list and scalar classes
 - [x] pipeline works to compose functions
-- [ ] spec named vs indexed arguments
-- [ ] implement named and indexed args for a few functions
-- [ ] switch editor to use HL language
+- [x] spec named vs indexed arguments
+- [x] implement named and indexed args for a few functions
+- [x] switch editor to use HL language
 - [x] implement the current syntax in an ohm parser
-- [ ] implement 10 examples using new syntax
+- [x] implement 10 examples using new syntax
+- [x] blog post
 
 ## M3
 - [ ] button to add new code block
@@ -41,14 +53,13 @@
 ## M4
 - [ ] design & impl full shape drawing system
 - [ ] design chart system to auto-detect formats and labels. lets you customize as needed for all current examples
-- [ ] scatter chart
+- [x] scatter chart
 - [x] bar chart
 - [ ] pie chart
 - [ ] circles and rects drawing
 - [ ] polygon and path drawing
 - [ ] turtle drawing
 - [ ] add 10 new examples which use graphics
-- [ ] blog post
 
 ## M5
 * blog post
@@ -69,37 +80,28 @@
 * weather api
 * dictionary api
 * more of the tutorial written
-
-
-* brainstorm 10 new examples
-    * website analytics. think about what i want to capture
-        * for each week, how many total, how many per route, top ten user agents per route, top ten langs per route, top ten countries per route. same top ten for the totals. 
-        * show the same for each day for the past 7 days
-    * simple raytracer
-        * draw three spheres, no reflections, two lights.
-    * mandlebrot renderer
-        * draw mandel given an input range and output resolution
-    * lindenmayer system tree
-        * draw a simple tree by mapping letters to functions. R R F, etc.
-    * logo impl for turtle graphics
-        * needs logo gfx output surface
-        * draw 4 classic logo programs using equivalent syntax
-        * draw them with abbreviated syntax R F R L U D, etc.
-    * recreate some circles demos from wolfram tutorial
-        * nested circles offset
-        * circles w/ different colors
-    * get 10 recent tweets on a hashtag into a list, include username and text and timestamp
-        * most recent tweets on #magic hashtag. re-evaluate to get new data. includes text, username, and timestap in a table.
-    * whats 99 to the 99th power
-    * how much is 20 thousand leagues
-    * how many teaspoons in a gallon
-    * koch triangle using logo rules using a rule map. needs matching/mapping and gfx.
-    * plot element number vs discovery date. needs built in elements data. 
-        * chart detects number vs date
-    * plot public stock history of apple over the last 12 months
-        * chart automatically detects time vs stock price
-    * timeline of states entering the union
-        * chart detects index, uses name as label. special timeline chart.
+* website analytics. think about what i want to capture
+    * for each week, how many total, how many per route, top ten user agents per route, top ten langs per route, top ten countries per route. same top ten for the totals. 
+    * show the same for each day for the past 7 days
+* simple raytracer
+    * draw three spheres, no reflections, two lights.
+* mandlebrot renderer
+    * draw mandel given an input range and output resolution
+* lindenmayer system tree
+    * draw a simple tree by mapping letters to functions. R R F, etc.
+* logo impl for turtle graphics
+    * needs logo gfx output surface
+    * draw 4 classic logo programs using equivalent syntax
+    * draw them with abbreviated syntax R F R L U D, etc.
+* recreate some circles demos from wolfram tutorial
+    * nested circles offset
+    * circles w/ different colors
+* get 10 recent tweets on a hashtag into a list, include username and text and timestamp
+    * most recent tweets on #magic hashtag. re-evaluate to get new data. includes text, username, and timestap in a table.
+* whats 99 to the 99th power
+* how much is 20 thousand leagues
+* how many teaspoons in a gallon
+* koch triangle using logo rules using a rule map. needs matching/mapping and gfx.
 
 # research and bibliography and open questions
 
