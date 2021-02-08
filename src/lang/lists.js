@@ -1,6 +1,5 @@
 import {FilamentFunction, REQUIRED} from './parser.js'
-import {list, pack, scalar, unpack} from './ast.js'
-import {is_list, is_scalar} from './base.js'
+import {is_list, list, pack, scalar, unpack} from './ast.js'
 
 function gen_range(min,max,step) {
     let list = []

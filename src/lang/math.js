@@ -1,6 +1,5 @@
 import {FilamentFunction, REQUIRED} from './parser.js'
-import {boolean, list, pack, scalar, unpack} from './ast.js'
-import {is_boolean, is_list, is_scalar} from './base.js'
+import {is_boolean, is_list, is_scalar, list, pack, scalar, unpack} from './ast.js'
 import {convert_unit, to_canonical_unit} from './units.js'
 
 

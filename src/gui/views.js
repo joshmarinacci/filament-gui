@@ -1,7 +1,7 @@
 import {useEffect, useRef} from 'react'
 
 import {CanvasView, is_canvas_result} from '../canvas.js'
-import {is_boolean, is_error_result, is_list, is_scalar, is_string} from '../lang/base.js'
+import {is_boolean, is_error_result, is_list, is_scalar, is_string} from '../lang/ast.js'
 
 const ErrorResult = ({result}) => <div>error!!! <b>{result.toString()}</b></div>
 const ScalarResult = ({result}) => <div><b>{result.toString()}</b></div>
