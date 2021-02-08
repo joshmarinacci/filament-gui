@@ -19,7 +19,7 @@ import {Parser} from '../parser.js'
 
 //objects should be same
 export const t = async (s,a) => expect(eval_code(s)).resolves.toEqual(a)
-export const s = (v,u) => scalar(v,u)
+export const s = (v,u,d) => scalar(v,u,d)
 export const b = (v) => boolean(v)
 export const l = (...vals) => list(vals.map(v => scalar(v)))
 export const all = async (tests) => await tests.map(tt => t(tt[0],tt[1]))
@@ -29,6 +29,13 @@ export const ta = async (s,a) => {
     return Promise.resolve(eval_code(s)).then(v=>{
         expect(v.value).toBeCloseTo(a.value)
         expect(v.unit).toEqual(a.unit)
+        expect(v.dim).toEqual(a.dim)
+        return true
+    }).catch(e => {
+        console.log("============ ",e)
+        console.error(e)
+        expect(false).toBeTruthy()
+        return false
     })
 }
 
@@ -53,6 +60,9 @@ async function eval_code(code) {
     let match = parser.parse(code)
     if(match.failed()) throw new Error("match failed")
     let ast = parser.ast(match)
-    return await ast.evalFilament(scope)
+    return Promise.resolve(ast.evalFilament(scope)).catch(e => {
+        console.error(e)
+        return false
+    })
 }
 

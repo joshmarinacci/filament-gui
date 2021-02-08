@@ -79,6 +79,19 @@ class FScalar {
 }
 export const scalar = (n,u,d) => new FScalar(n,u,d)
 
+class FUnit extends ASTNode {
+    constructor(u) {
+        super();
+        this.type = 'unit'
+        console.log("making a unit with",u)
+        this.unit = u
+    }
+    evalFilament() {
+        return this
+    }
+}
+export const unit = (u) => new FUnit(u)
+
 class FString {
     constructor(value) {
         this.type = 'string'

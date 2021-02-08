@@ -244,7 +244,7 @@ describe("volume",()=>{
 describe('area',()=>{
     test('us',async ()=> {
         await all([
-            ['9sqft',s(9,'foot',2)],
+            // ['9sqft',s(9,'foot',2)],
             ['8acres',s(8,'acre')],
             ['1000ac',s(1000,'acres')],
             // ['1000ac as sqm',s(1000*4046.8564224,'meters',2)],

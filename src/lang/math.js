@@ -44,12 +44,13 @@ export const subtract = new FilamentFunction('subtract',{a:REQUIRED, b:REQUIRED}
     function (a,b) { return binop(a,b,(a,b)=>a-b) })
 
 function is_scalar_with_unit(a) {
+    if(a.unit === 'none') return false
     if(is_scalar(a) && a.unit !== null) return true
     return false
 }
 
 function is_scalar_without_unit(a) {
-    if(is_scalar(a) && a.unit === null) return true
+    if(is_scalar(a) && (a.unit === null || a.unit === 'none') ) return true
     return false
 }
 

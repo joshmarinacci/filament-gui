@@ -358,11 +358,5 @@ export function convert_unit(a_val,a_unit, b_unit) {
 
         throw new Error(`no conversion found for ${a_unit} to ${b_unit}. bases ${a_base} <> ${b_base}`)
     }
-
-    //            a._numers.push(new UnitPart(second.getName(), second.getDimension(), Math.pow(second.getRatio(), second.getDimension())));
-    //             a._denoms.push(new UnitPart(first.getName(), first.getDimension(), Math.pow(first.getRatio(), first.getDimension())));
-    // if(a_unit === 'meter' && b_unit === 'foot') {
-    //     return a_val/FOOT_TO_METER
-    // }
     return a_val
 }

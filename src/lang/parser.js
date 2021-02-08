@@ -27,6 +27,8 @@ function do_un_op(op,val) {
     if (UNOPS[op]) return call(UNOPS[op], [indexed(val)])
     throw new Error(`Unknown operator: ${op}`)
 }
+
+
 export class Parser {
     constructor(scope, grammar_source) {
         this.scope = scope
