@@ -128,12 +128,20 @@ async function eval_filament(doc) {
     })
 }
 
-async function generate_canvas_images(doc, s) {
+async function generate_canvas_images(doc, dir) {
     // l("rendering all canvas images in doc",doc)
-    doc
+    Promise.all(doc
         .filter(block => block.type === 'CODE' && is_canvas_result(block.result))
-        .forEach(block => {
+        .map(async(block) => {
             console.log("canvas result is",block.result)
+            // let img = new PImage()
+            // block.result(img)
+            // let fname = 'filename.png'
+            // let pth =  path.join(dir,fname)
+            // block.src = pth
+            // await img.write_png_to_path(pth)
+        })).then(done => {
+            console.log("fully done writing images")
         })
 }
 
