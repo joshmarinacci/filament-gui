@@ -1,16 +1,7 @@
 import {FilamentFunction, REQUIRED} from './parser.js'
 import {is_list, list, pack, scalar, unpack} from './ast.js'
 
-function gen_range(min,max,step) {
-    let list = []
-    for(let i=min; i<max; i+=step) {
-        list.push(i)
-    }
-    return list
-}
-
 // * __range__: generate a list of numbers: `(max), (min,max), (min,max,step)`
-
 export const range = new FilamentFunction('range',
     {
         max:REQUIRED,
@@ -41,12 +32,6 @@ export const length = new FilamentFunction('length', {
     }
 )
 
-
-
-function is_dataset(list) {
-    return list.data?true:false
-}
-
 // * __take__: take the first N elements from a list to make a new list `take([1,2,3], 2) = [1,2]`
 export const take = new FilamentFunction('take',
     {
@@ -60,7 +45,6 @@ export const take = new FilamentFunction('take',
             return data._slice(0, unpack(count))
         }
     })
-
 
 // * __drop__: return list with the number of elements removed from the start. `drop([1,2,3],1) = [2,3]`
 export const drop =  new FilamentFunction(  "drop",
@@ -76,8 +60,6 @@ export const drop =  new FilamentFunction(  "drop",
             return data._slice(unpack(count))
         }
     })
-
-
 
 
 // * __join__: concatentate two lists, returning a new list. is this needed?
@@ -125,8 +107,6 @@ export const select = new FilamentFunction('select',{
     }))
 })
 
-// * __for__:  loops over every element in a list with a lambda, but returns the original list: `(list, lam)`
-
 // * __sort__: sort list returning a new list, by: property to use for sorting `sort(data by:"date")` (should we use `order` instead?)
 export const sort = new FilamentFunction( "sort",
     {
@@ -168,9 +148,7 @@ export const sum = new FilamentFunction("sum",
     }
 )
 
-
-
-
+// * __max__: returns the biggest element in the list
 export const max = new FilamentFunction("max",
     {
         data:REQUIRED,
@@ -181,7 +159,9 @@ export const max = new FilamentFunction("max",
 )
 
 
-export const get_field = new FilamentFunction("get_field",{data:REQUIRED,field:REQUIRED},(data,field)=>{
-    // console.log("getting the field",data,field)
+export const get_field = new FilamentFunction("get_field",{
+    data:REQUIRED,
+    field:REQUIRED
+},(data,field)=>{
     return pack(data[unpack(field)])
 })
