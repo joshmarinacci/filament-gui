@@ -1,15 +1,4 @@
 import {useEffect, useRef} from 'react'
-import {Primitive} from './lang/base.js'
-
-export class CanvasResult extends Primitive {
-    constructor(cb) {
-        super()
-        this.cb = cb
-    }
-}
-
-export const is_canvas_result = (val) => val instanceof CanvasResult
-
 
 export function CanvasView({result}) {
     let ref = useRef()

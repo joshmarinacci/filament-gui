@@ -8,6 +8,7 @@ import {real_eval2} from './lang/lang.js'
 import "codemirror/addon/hint/show-hint.css"
 import {EXAMPLES} from './gui/examples.js'
 import {CodeEditor} from './gui/editor.js'
+import {default as src} from "./lang/filament.ohm"
 
 
 let stash = ""
@@ -30,7 +31,7 @@ function App() {
     const [code, setCode] = useState('5+6')
     const [result, setResult] = useState(null)
 
-    const doEval = (code) => real_eval2(code).then(d => setResult(d)).catch(e => {
+    const doEval = (code) => real_eval2(code,src).then(d => setResult(d)).catch(e => {
         console.error("ERROR",e)
         setResult(e)
     })

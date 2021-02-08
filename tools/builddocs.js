@@ -17,7 +17,23 @@ import {promises as fs} from 'fs'
 import ohm from 'ohm-js'
 import {Parser} from '../src/lang/parser.js'
 import {Scope} from "../src/lang/ast.js"
-import {add, divide, factorial, is_prime, mod, multiply, negate, power, subtract} from '../src/lang/math.js'
+import {
+    add, and, convertunit,
+    divide, equal,
+    factorial,
+    greaterthan, greaterthanorequal,
+    is_prime,
+    lessthan, lessthanorequal,
+    mod,
+    multiply,
+    negate, not, notequal, or,
+    power,
+    subtract
+} from '../src/lang/math.js'
+import {drop, get_field, join, length, map, range, reverse, select, sort, sum, take} from '../src/lang/lists.js'
+import {dataset, stockhistory} from '../src/lang/dataset.js'
+import {chart, histogram, timeline} from '../src/lang/chart.js'
+// import {chart, histogram, timeline} from '../src/lang/chart.js'
 
 const H1    = (content) => ({type:'H1', content})
 const H2    = (content) => ({type:'H2',content})
@@ -87,8 +103,13 @@ async function eval_filament(doc) {
     l("codeblocks",codeblocks)
     let filament_grammer = (await fs.readFile('src/lang/filament.ohm')).toString()
     let parser = new Parser(null,filament_grammer)
-    let scope = new Scope('markdown')
+    let scope = new Scope("standard")
     scope.install(add, subtract, multiply, divide, power, negate, mod, factorial, is_prime)
+    scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal,or,and,not)
+    scope.install(range,length,take,drop,join,reverse,map, sort, sum, get_field, select)
+    scope.install(dataset, stockhistory)
+    scope.install(convertunit)
+    scope.install(chart, timeline, histogram)
 
     return Promise.all(codeblocks.map(async (code) => {
         console.log(code)

@@ -19,19 +19,29 @@ import {drop, join, map, reverse, select, sort, sum, take, range, length, get_fi
 import {chart, histogram, timeline} from './chart.js'
 import {dataset, stockhistory} from './dataset.js'
 
-import {default as src} from "./filament.ohm"
 import {Parser} from './parser.js'
 import {Scope} from './ast.js'
+import {Primitive} from './base.js'
 
-let scope = new Scope("lang")
-scope.install(add, subtract, multiply, divide, power, negate, mod, factorial, is_prime)
-scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal,or,and,not)
-scope.install(range,length,take,drop,join,reverse,map, sort, sum, get_field, select)
-scope.install(dataset, stockhistory)
-scope.install(convertunit)
-scope.install(chart, timeline, histogram)
+export class CanvasResult extends Primitive {
+    constructor(cb) {
+        super()
+        this.cb = cb
+    }
+}
 
-export async function real_eval2(code) {
+export const is_canvas_result = (val) => val instanceof CanvasResult
+
+
+export async function real_eval2(code,src) {
+    let scope = new Scope("lang")
+    scope.install(add, subtract, multiply, divide, power, negate, mod, factorial, is_prime)
+    scope.install(lessthan, greaterthan, equal, notequal, lessthanorequal, greaterthanorequal,or,and,not)
+    scope.install(range,length,take,drop,join,reverse,map, sort, sum, get_field, select)
+    scope.install(dataset, stockhistory)
+    scope.install(convertunit)
+    scope.install(chart, timeline, histogram)
+
     // console.log("really evaluating",code)
     // console.log("src is",src)
     return fetch(src).then(r => r.text()).then(txt => {
