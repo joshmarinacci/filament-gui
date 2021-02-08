@@ -5,14 +5,16 @@ beforeAll(() => setup_parser())
 
 describe('syntax',() => {
 
-    test("binary math operators", async () => {
+    test('case identifier tests', async () => {
         await all([
-            ['4+2', s(6)],
-            ['4-2', s(2)],
-            ['4*2', s(4 * 2)],
-            ['4/2', s(4 / 2)],
-            ['4**2', s(4 * 4)],
-            ['4 mod 2', s(0)],
+            ['pi',s(Math.PI)],
+            ['Pi',s(Math.PI)],
+            ['pI',s(Math.PI)],
+            ['p_i',s(Math.PI)],
+            ['P_I',s(Math.PI)],
+            ['PI_',s(Math.PI)],
+            // ['_PI_',s(Math.PI)],
+            // ['_PI',s(Math.PI)],
         ])
     })
 
@@ -56,8 +58,6 @@ describe('syntax',() => {
         ])
     })
 
-
-
     test.skip('comments', async () => {
         await all([
             ['//comment', null, "//comment", null],
@@ -66,17 +66,17 @@ describe('syntax',() => {
         ])
     })
 
-    test.skip('variables and identifiers', async () => {
+    test('variables and identifiers', async () => {
         await all([
-            [`aprime<<13`, pipeline_left(ident('aprime'), scalar(13)), `aprime<<13`, 13],
-            // [`a_prime << 13`,pipeline_left(ident('aprime'),scalar(13)), `aprime<<13`,13],
-            // [`APRIME << 13`,pipeline_left(scalar(13),'aprime'), `aprime<<13`,13],
-            [`13 >> aprime`, pipeline_right(scalar(13), ident('aprime')), `13>>aprime`, 13],
-            ['42 >> answer', pipeline_right(scalar(42), ident('answer')), '42>>answer', 42],
-            // ['answer << 42',pipeline_left(scalar(42),'answer'), 'answer<<42',42],
-            // ['answer24 << 42',pipeline_left(scalar(42),'answer24'),'answer24<<42',42],
-            // ['answ24er << 42',pipeline_left(scalar(42),'answ24er'),'answ24er<<42',42],
-            // ['42 >> _a_n_sw24er',pipeline_right(scalar(42),'answ24er'),'42>>answ24er',42],
+            [`aprime<<13`, s(13)],
+            [`a_prime << 13`,s(13)],
+            [`APRIME << 13`,s(13)],
+            [`13 >> aprime`,s(13)],
+            ['42 >> answer', s(42)],
+            ['answer << 42',s(42)],
+            ['answer24 << 42',s(42)],
+            ['answ24er << 42',s(42)],
+            // ['42 >> _a_n_sw24er',s(42)],
         ])
     })
 
@@ -95,14 +95,13 @@ describe('syntax',() => {
     test.skip('function calls', async () => {
         await all([
             //'func' function returns data or first arg
-            ['func()', call('func', []), 'func()', null],
-            ['func(42)', call('func', [indexed(scalar(42))]), 'func' +
-            '(42)', 42],
+            ['func()', null],
+            ['func(42)', s(42)],
             ['func([42])', call('func', [indexed(list([scalar(42)]))]), 'func([42])', list_42],
             ['func(data:42)', call('func', [named('data', scalar(42))]), 'func(data:42)', 42],
             ['func(data:[42],count:42)', call('func', [named('data', list([scalar(42)])), named('count', scalar(42))]), 'func(data:[42],count:42)', list_42],
             ['func(count:42, [42])', call('func', [named('count', scalar(42)), indexed(list([scalar(42)]))]), 'func(count:42,[42])', list_42],
-            // ['func(func(42))',call('func',[indexed(call('func',[indexed(scalar(42))]))]),'func(func(42))',_42],
+            ['func(func(42))',call('func',[indexed(call('func',[indexed(scalar(42))]))]),'func(func(42))',_42],
             ['func(42,func(42))',
                 call('func', [indexed(scalar(42)), indexed(call('func', [indexed(scalar(42))]))]),
                 'func(42,func(42))', 42],
@@ -138,50 +137,15 @@ describe('syntax',() => {
         ])
     })
 
-    test.skip("blocks", async () => {
+    test("blocks", async () => {
         await all([
-            [`{4
-          2}`,
-                block([scalar(4), scalar(2)]),
-                '4\n2',
-                2
-            ],
-            [`{4*2
-          2+4}`,
-                block([
-                    call('multiply', [indexed(scalar(4)), indexed(scalar(2))]),
-                    call('add', [indexed(scalar(2)), indexed(scalar(4))]),
-
-                ]),
-                'multiply(4,2)\nadd(2,4)',
-                6
-            ],
-            [`add(4,2)`,
-                call('add', [indexed(scalar(4)), indexed(scalar(2))]),
-                `add(4,2)`,
-                6
-            ],
+            [`{4  2}`,s(2)],
+            [`{4*2  2+4}`, s(6)],
+            [`add(4,2)`,  s(6)],
             // [`add([4,2,3])`,'add([4,2,3])'],
-            ['{ add(4,2) subtract(4,2) }',
-                block([
-                    call('add', [indexed(scalar(4)), indexed(scalar(2))]),
-                    call('subtract', [indexed(scalar(4)), indexed(scalar(2))]),
-                ]),
-                'add(4,2)\nsubtract(4,2)',
-                2
-            ],
+            ['{ add(4,2) subtract(4,2) }', s(2)],
             // [`{ func() << func(2)
-            // func(4_0) }`,
-            //     block([
-            //         pipeline_left(
-            //             call("func",[]),
-            //             call("func",[scalar(2)]),
-            //         ),
-            //         call('func',[indexed(scalar(40))])
-            //     ]),
-            //     "foo()<<2\nfunc(40)",
-            //     scalar(40)
-            // ],
+            // func(4_0) }`,  s(40)],
             // [`pokemons << dataset('pokemon')
             //   take(pokemon,5) >> chart(pokemon, y:"attack", xLabel:'name')
             // `,'dataset("pokemon")\ntake(pokemon,5) >> chart(pokemon, y:"attack", xlabel:"name")'],
