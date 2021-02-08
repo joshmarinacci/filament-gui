@@ -15,6 +15,9 @@
 import path from 'path'
 import {promises as fs} from 'fs'
 import ohm from 'ohm-js'
+import {Parser} from '../src/lang/parser.js'
+import {Scope} from "../src/lang/ast.js"
+import {add, divide, factorial, is_prime, mod, multiply, negate, power, subtract} from '../src/lang/math.js'
 
 const H1    = (content) => ({type:'H1', content})
 const H2    = (content) => ({type:'H2',content})
@@ -58,7 +61,7 @@ function l(...args) {
 }
 
 function parse_markdown_content(block) {
-    l("parsing content from block",block)
+    // l("parsing content from block",block)
     // let parser = {}
     // parser.grammar = ohm.grammar(`
     // `)
@@ -71,31 +74,55 @@ function parse_markdown_content(block) {
 }
 
 async function parse_markdown(raw_markdown) {
-    l('parsing raw markdown',raw_markdown)
+    // l('parsing raw markdown',raw_markdown)
     let blocks = parse_markdown_blocks(raw_markdown)
-    l("blocks are",blocks)
+    // l("blocks are",blocks)
     let doc = blocks.map(block => parse_markdown_content(block))
     return doc
 }
 
 async function eval_filament(doc) {
     l("evaluating all filament objects in",doc)
+    let codeblocks = doc.filter(block => block.type === 'CODE')
+    l("codeblocks",codeblocks)
+    let filament_grammer = (await fs.readFile('src/lang/filament.ohm')).toString()
+    let parser = new Parser(null,filament_grammer)
+    let scope = new Scope('markdown')
+    scope.install(add, subtract, multiply, divide, power, negate, mod, factorial, is_prime)
+
+    return Promise.all(codeblocks.map(async (code) => {
+        console.log(code)
+        let match = parser.parse(code.content)
+        // console.log('match',match.failed())
+        if(match.failed()) throw new Error("match failed on: " + code.content);
+        let ast = parser.ast(match)
+        // console.log("ast is",ast)
+        let res = await ast.evalFilament(scope)
+        console.log("final result is",res,'for code',code)
+        code.result = res
+        return res
+    })).then(()=>{
+        console.log("all done")
+    })
 }
 
 async function generate_canvas_images(doc, s) {
-    l("rendering all canvas images in doc",doc)
+    // l("rendering all canvas images in doc",doc)
 }
 
 function render_html(doc) {
-    l('rendering html from doc',doc)
+    // l('rendering html from doc',doc)
     const title = 'tutorial'
     const content = doc.map(block => {
-        l("block is",block)
+        // l("block is",block)
         if(block.type === 'H1') return `<h1>${block.content}</h1>`
         if(block.type === 'H2') return `<h2>${block.content}</h2>`
         if(block.type === 'P') return `<p>${block.content}</p>`
-        if(block.type === 'CODE') return `<pre><code data-language="${block.language}">${block.content}</code></pre>`
-        return "some block"
+        if(block.type === 'CODE') return `<pre><code data-language="${block.language}">${block.content}</code></pre>
+result
+<p><code>${block.result}</code></p>
+`
+        return "ERROR"
     }).join("\n")
     let template = `
      <html><head>
