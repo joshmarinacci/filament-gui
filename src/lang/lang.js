@@ -18,11 +18,10 @@ import {dataset, stockhistory} from './dataset.js'
 
 import {Parser} from './parser.js'
 import {Scope} from './ast.js'
-import {Primitive} from './base.js'
 
-export class CanvasResult extends Primitive {
+export class CanvasResult{
     constructor(cb) {
-        super()
+        this.type = 'canvas-result'
         this.cb = cb
     }
 }
@@ -40,7 +39,7 @@ export function make_standard_scope() {
 
 let scope = make_standard_scope()
 
-export async function real_eval2(code) {
+export async function real_eval2(code,src) {
     return fetch(src).then(r => r.text()).then(txt => {
         let parser = new Parser(scope,txt)
         let m = parser.parse('{'+code+'}')
