@@ -16,34 +16,38 @@ import path from 'path'
 import {promises as fs} from 'fs'
 import ohm from 'ohm-js'
 
+const H1    = (content) => ({type:'H1', content})
+const H2    = (content) => ({type:'H2',content})
+const P     = (content) => ({type:'P',content})
+const code  = (language,content) => ({type:'CODE', language, content})
+
 function parse_markdown_blocks(str) {
     let parser = {}
     parser.grammar = ohm.grammar(`
-        MarkdownOuter {
-            Doc = Block*
-            Block = Header | Blank
-            Header = "#" rest
-            Paragraph = nl nl any nl
-            Blank = nl
-            nl = "\\n"
-            rest = (~nl any)* nl
-        }
+MarkdownOuter {
+  Doc = Block*
+  Block = h2 | h1 | code | para | blank
+  h2 = "##" rest
+  h1 = "#" rest
+  para = line+  //paragraph is just multiple consecutive lines
+  code = q rest (~q any)* q //anything between the \`\`\` markers
+  
+  
+  q = "\`\`\`"   // start and end code blocks
+  nl = "\\n"   // new line
+  blank = nl  // blank line has only newline
+  line = (~nl any)+ nl  // line has at least one letter
+  rest = (~nl any)* nl  // everything to the end of the line
+}
     `)
     parser.semantics = parser.grammar.createSemantics()
     parser.semantics.addOperation('blocks',{
         _terminal() { return this.sourceString },
-        Header:function(a,b) {
-            // l("header",a.blocks(),'-',b.blocks())
-            return ['header',b.blocks()]
-        },
-        Block:function(a) {
-            l("block",a.blocks())
-            return a.blocks()
-        },
-        rest:function(a,b) {
-            // l("rest",a.blocks(),"foo",b.blocks())
-            return a.blocks().join("")
-        }
+        h1:(_,b) => H1(b.blocks()),
+        h2:(_,b) => H2(b.blocks()),
+        code:(_,name,cod,_2) => code(name.blocks(),cod.blocks().join("")),
+        para: a=> P(a.sourceString),
+        rest: (a,_) => a.blocks().join("")
     })
     let match = parser.grammar.match(str)
     return parser.semantics(match).blocks()
@@ -87,25 +91,30 @@ function render_html(doc) {
     const title = 'tutorial'
     const content = doc.map(block => {
         l("block is",block)
-        if(block[0] === 'header') return `<h1>${block[1]}</h1>`
+        if(block.type === 'H1') return `<h1>${block.content}</h1>`
+        if(block.type === 'H2') return `<h2>${block.content}</h2>`
+        if(block.type === 'P') return `<p>${block.content}</p>`
+        if(block.type === 'CODE') return `<pre><code data-language="${block.language}">${block.content}</code></pre>`
         return "some block"
     }).join("\n")
     let template = `
-    <html><header><title>${title}</title></header><body>
-    ${content}
-    </body></html>
-    `
+     <html><head>
+        <title>${title}</title></head>
+        <body>
+        ${content}
+        </body>
+        </html>`
     return template
 }
 
 async function convert_file(infile_path, outdir_path, outfile_name) {
     let raw_markdown = (await fs.readFile(infile_path)).toString()
-    let doc = await parse_markdown(raw_markdown)
+    let doc = await parse_markdown(raw_markdown+"\n")
     await eval_filament(doc)
     await generate_canvas_images(doc,path.join(outdir_path,'images'))
     let html = render_html(doc)
     console.log("final html is",html)
-    // await fs.writeFile(path.join(outdir_path,outfile_name),html)
+    await fs.writeFile(path.join(outdir_path,outfile_name),html)
 }
 
 
