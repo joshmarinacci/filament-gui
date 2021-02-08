@@ -1,4 +1,4 @@
-import {FilamentFunction} from './parser.js'
+import {FilamentFunction, strip_under} from './parser.js'
 import {to_canonical_unit} from './units.js'
 
 class ASTNode {
@@ -22,7 +22,6 @@ export class Scope {
         return new Scope(id,this)
     }
     lookup(name) {
-        // console.log("SCOPE: lookup",name)
         if(!this.funs[name]) {
             if(this.parent) {
                 return this.parent.lookup(name)
@@ -40,7 +39,6 @@ export class Scope {
     }
     set_var(name,value) {
         this.funs[name] = value
-        // console.log("SCOPE: set var",name)
         return value
     }
     names() {
@@ -52,8 +50,9 @@ export class Scope {
     }
 }
 
-class FScalar {
+class FScalar extends ASTNode {
     constructor(value,unit,dim=1) {
+        super()
         this.type = 'scalar'
         this.value = value
         this.unit = unit
@@ -83,7 +82,6 @@ class FUnit extends ASTNode {
     constructor(u) {
         super();
         this.type = 'unit'
-        console.log("making a unit with",u)
         this.unit = u
     }
     evalFilament() {
@@ -92,8 +90,9 @@ class FUnit extends ASTNode {
 }
 export const unit = (u) => new FUnit(u)
 
-class FString {
+class FString extends ASTNode {
     constructor(value) {
+        super()
         this.type = 'string'
         this.value = value
     }
@@ -112,8 +111,9 @@ class FString {
 }
 export const string = n => new FString(n)
 
-class FBoolean {
+class FBoolean extends ASTNode {
     constructor(value) {
+        super()
         this.type = 'boolean'
         this.value = value
     }
@@ -129,24 +129,9 @@ class FBoolean {
 }
 export const boolean = v => new FBoolean(v)
 
-export function pack(val) {
-    if(typeof val === 'number') return scalar(val)
-    if(typeof val === 'string') return string(val)
-    if(typeof val === 'boolean') return boolean(val)
-    console.log("can't pack value",val, typeof val)
-    return val
-}
-export function unpack(v) {
-    if(v.type === 'scalar') return v.value
-    if(v.type === 'string') return v.value
-    if(v.type === 'boolean') return v.value
-    console.log("can't unpack value",v)
-    return v
-}
-
-
-class FList {
+class FList extends ASTNode {
     constructor(arr) {
+        super()
         this.type = 'list'
         this.value = arr
     }
@@ -226,12 +211,9 @@ export class FTable extends ASTNode {
     }
 }
 
-class FCall {
-    log() {
-        // console.log("## FCall ## ",this.name,...arguments)
-    }
+class FCall extends ASTNode {
     constructor(name,args) {
-        // console.log("#### making call",name,args)
+        super()
         this.type = 'call'
         this.name = name
         this.args = args
@@ -242,40 +224,37 @@ class FCall {
     evalJS(scope) {
         if(!scope.lookup(this.name)) throw new Error(`function '${this.name}' not found`)
         let fun = scope.lookup(this.name)
-        // console.log('args',this.args)
         return fun.apply_function(this.args).then(res => {
-            this.log("result of evalJS",res)
+            // this.log("result of evalJS",res)
             return res
         })
     }
     evalJS_with_pipeline(scope,prepend) {
         if(!scope.lookup(this.name)) throw new Error(`function '${this.name}' not found`)
         let fun = scope.lookup(this.name)
-        // console.log("eval with prepend args",prepend)
         let args = [prepend].concat(this.args)
         return fun.apply_function(args)
     }
     evalFilament(scope, prepend) {
-        this.log(`ff evaluating "${this.name}" with args`,this.args)
+        // this.log(`ff evaluating "${this.name}" with args`,this.args)
         let fun = scope.lookup(this.name)
-        // console.log(scope.id,scope.names())
         if(!fun) throw new Error(`function '${this.name}' not found`)
-        this.log(`real function ${this.name}`)
+        // this.log(`real function ${this.name}`)
         let args = this.args.slice()
         if(prepend) args.unshift(prepend)
-        this.log("args to match are",args)
+        // this.log("args to match are",args)
         let params = fun.match_args_to_params(args)
-        this.log("parms are",params)
+        // this.log("parms are",params)
         let params2 = params.map(a => {
             if(a === null || typeof a === 'undefined') return a
             if(typeof a === 'string') return a
-            this.log("evaluating argument",a)
+            // this.log("evaluating argument",a)
             return a.evalFilament(scope)
         })
         return Promise.all(params2).then(params2 => {
-            this.log(`real final params for ${this.name}:`,params2)
+            // this.log(`real final params for ${this.name}:`,params2)
             let ret = fun.fun.apply(fun,params2)
-            this.log(`return value`,ret)
+            // this.log(`return value`,ret)
             return Promise.resolve(ret)
         })
     }
@@ -299,7 +278,6 @@ class FunctionDefintion extends ASTNode {
         // this.log("function def args",this.args)
         let args = {}
         this.args.forEach(arg => {
-            // console.log("arg",arg)
             args[arg[0]] = arg[1]
         })
         // this.log("making function with args",args)
@@ -323,11 +301,9 @@ class FunctionDefintion extends ASTNode {
 }
 export const fundef = (name,args,block) => new FunctionDefintion(name,args,block)
 
-class FIndexedArg {
-    log() {
-        // console.log("## FIndexedArg ## ",...arguments)
-    }
+class FIndexedArg extends ASTNode {
     constructor(value) {
+        super()
         this.type = 'indexed'
         this.value = value
     }
@@ -341,11 +317,9 @@ class FIndexedArg {
 }
 export const indexed = v => new FIndexedArg(v)
 
-class FNamedArg {
-    log() {
-        // console.log("## FNamedArg ## ",...arguments)
-    }
+class FNamedArg extends ASTNode {
     constructor(name,value) {
+        super()
         this.type = 'named'
         this.name = name
         this.value = value
@@ -358,7 +332,6 @@ class FNamedArg {
     }
 }
 export const named   = (n,v) => new FNamedArg(n,v)
-
 
 class Pipeline extends ASTNode {
     constructor(dir,first,next) {
@@ -404,7 +377,6 @@ class Pipeline extends ASTNode {
 export const pipeline_right = (a,b) => new Pipeline('right',a,b)
 export const pipeline_left = (a,b) => new Pipeline('left',b,a)
 
-const strip_under = s => s.replaceAll("_","")
 class Identifier extends ASTNode {
     constructor(name) {
         super()
@@ -451,3 +423,23 @@ class FBlock extends ASTNode{
     }
 }
 export const block = (sts) => new FBlock(sts)
+
+export function pack(val) {
+    if(typeof val === 'number') return scalar(val)
+    if(typeof val === 'string') return string(val)
+    if(typeof val === 'boolean') return boolean(val)
+    console.log("can't pack value",val, typeof val)
+    return val
+}
+export function unpack(v) {
+    if(v.type === 'scalar') return v.value
+    if(v.type === 'string') return v.value
+    if(v.type === 'boolean') return v.value
+    console.log("can't unpack value",v)
+    return v
+}
+export const is_error_result = (result) => result instanceof Error
+export const is_scalar = (a) => a&&a.type === 'scalar'
+export const is_boolean = (a) => a&&a.type === 'boolean'
+export const is_string = (a) => a&&a.type === 'string'
+export const is_list = (b) => b&&b.type === 'list'

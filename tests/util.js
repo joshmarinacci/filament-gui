@@ -19,7 +19,6 @@ import {drop, get_field, join, length, map, range, reverse, select, sort, sum, t
 import {FilamentFunction, Parser} from '../src/lang/parser.js'
 import {scalar, Scope, unpack} from '../src/lang/ast.js'
 import {dataset} from '../src/lang/dataset.js'
-import {is_scalar} from '../src/lang/base.js'
 
 tp(test)
 

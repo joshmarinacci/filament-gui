@@ -1,13 +1,6 @@
 import {FilamentFunction, REQUIRED} from './parser.js'
-import {boolean, list, pack, scalar, unpack} from './ast.js'
-import {is_boolean, is_list, is_scalar} from './base.js'
+import {is_boolean, is_list, is_scalar, list, pack, scalar, unpack} from './ast.js'
 import {convert_unit, to_canonical_unit} from './units.js'
-
-
-function gv (v) {
-    if(v.type === 'scalar') return v.value
-    return v
-}
 
 function binop(a,b,cb) {
     // console.log("binop-ing",a,b)
@@ -26,18 +19,11 @@ function binop(a,b,cb) {
     throw new Error("can't binop " + a.toString() + " " + b.toString())
 }
 
-// if((!Array.isArray(a)) && (Array.isArray(b))) return b.map(v => cb(a,v))
-    // if((Array.isArray(a)) && (!Array.isArray(b))) return a.map(v => cb(v,b))
-    // if((Array.isArray(a)) && (Array.isArray(b))) return a.map((v,i) => cb(v,b[i]))
-    // return cb(gv(a),gv(b))
-// }
 function unop(a,cb) {
     if(Array.isArray(a)) return a.map(v => cb(v))
     return pack(cb(unpack(a)))
 }
 
-// export const add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
-//     function(a,b) { return binop(a,b,(a,b)=>a+b) })
 export const add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
     function(a,b) { return binop(a,b, (a,b)=>a+b) })
 export const subtract = new FilamentFunction('subtract',{a:REQUIRED, b:REQUIRED},
@@ -80,7 +66,6 @@ export const divide = new FilamentFunction('divide',{a:REQUIRED, b:REQUIRED},
 })
 export const power = new FilamentFunction('power',{a:REQUIRED, b:REQUIRED},
     function (a,b) { return binop(a,b,(a,b)=>Math.pow(a,b)) })
-
 export const negate = new FilamentFunction('negate', {a:REQUIRED}, (a) =>unop(a,a=>-a))
 export const factorial = new FilamentFunction('factorial', {a:REQUIRED}, (a) => unop(a,(a)=>{
     if(a === 0 || a === 1) return 1
@@ -97,9 +82,9 @@ function make_unop(name, cb) {
     return new FilamentFunction(name,{a:REQUIRED}, (a) => unop(a,cb))
 }
 
-export const sin = (a) => unop(a, a=>Math.sin(a))
-export const cos = (a) => unop(a, a=>Math.cos(a))
-export const tan = (a) => unop(a, a=>Math.tan(a))
+// export const sin = (a) => unop(a, a=>Math.sin(a))
+// export const cos = (a) => unop(a, a=>Math.cos(a))
+// export const tan = (a) => unop(a, a=>Math.tan(a))
 
 export const mod = make_binop('mod',(a,b)=>a%b)
 export const lessthan = make_binop('lessthan',(a,b)=>a<b)

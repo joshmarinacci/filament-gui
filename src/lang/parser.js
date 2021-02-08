@@ -17,7 +17,7 @@ import {is_valid_unit, to_canonical_unit} from './units.js'
 
 export const REQUIRED = Symbol('REQUIRED')
 
-const strip_under = s => s.replaceAll("_", "")
+export const strip_under = s => s.replaceAll("_", "")
 
 function do_bin_op(op, a, c) {
     if (BINOPS[op]) return call(BINOPS[op], [indexed(a), indexed(c)])

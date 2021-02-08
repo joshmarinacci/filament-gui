@@ -15,7 +15,6 @@ import {
 import {drop, get_field, join, length, map, range, reverse, select, sort, sum, take} from '../src/lang/lists.js'
 import {dataset} from '../src/lang/dataset.js'
 import {Parser} from '../src/lang/parser.js'
-import {is_scalar} from '../src/lang/base.js'
 import fs from 'fs'
 
 let g2_source = fs.readFileSync(new URL("../src/lang/filament.ohm", import.meta.url)).toString()
