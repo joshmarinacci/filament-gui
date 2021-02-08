@@ -33,6 +33,7 @@ import {
 import {drop, get_field, join, length, map, range, reverse, select, sort, sum, take} from '../src/lang/lists.js'
 import {dataset, stockhistory} from '../src/lang/dataset.js'
 import {chart, histogram, timeline} from '../src/lang/chart.js'
+import {is_canvas_result} from '../src/lang/lang.js'
 // import {chart, histogram, timeline} from '../src/lang/chart.js'
 
 const H1    = (content) => ({type:'H1', content})
@@ -98,9 +99,9 @@ async function parse_markdown(raw_markdown) {
 }
 
 async function eval_filament(doc) {
-    l("evaluating all filament objects in",doc)
+    // l("evaluating all filament objects in",doc)
     let codeblocks = doc.filter(block => block.type === 'CODE')
-    l("codeblocks",codeblocks)
+    // l("codeblocks",codeblocks)
     let filament_grammer = (await fs.readFile('src/lang/filament.ohm')).toString()
     let parser = new Parser(null,filament_grammer)
     let scope = new Scope("standard")
@@ -119,7 +120,7 @@ async function eval_filament(doc) {
         let ast = parser.ast(match)
         // console.log("ast is",ast)
         let res = await ast.evalFilament(scope)
-        console.log("final result is",res,'for code',code)
+        // console.log("final result is",res,'for code',code)
         code.result = res
         return res
     })).then(()=>{
@@ -129,6 +130,11 @@ async function eval_filament(doc) {
 
 async function generate_canvas_images(doc, s) {
     // l("rendering all canvas images in doc",doc)
+    doc
+        .filter(block => block.type === 'CODE' && is_canvas_result(block.result))
+        .forEach(block => {
+            console.log("canvas result is",block.result)
+        })
 }
 
 function render_html(doc) {

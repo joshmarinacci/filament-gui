@@ -48,7 +48,7 @@ export const chart = new FilamentFunction('chart',
         type:string('bar'),
     },
     function (data, x, y, type) {
-    this.log("running the chart with data",data,'y is',y)
+    // this.log("running the chart with data",data,'y is',y)
     return new CanvasResult((canvas)=>{
         let ctx = canvas.getContext('2d')
         ctx.save()

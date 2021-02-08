@@ -8,5 +8,8 @@ is right here
 # header 3
 
 ```filament
-42+43
+{
+data << [42,43,44,45]
+chart(data)
+}
 ```
