@@ -58,18 +58,22 @@ describe('length',() => {
         ])
     })
 
-    test.skip('unit add and subtract',async () => {
-        //     // ['4ft - 5ft',s( -1,'feet')],
-        //     // ['3ft + 6ft as meters',2.7432,'meters')],
-        //     // ['(3ft + 6ft) as feet',9,'feet')],
-        //     // ["1km+500m", 1500,'meters')],
-        //     // ['4ft/2ft',s(2,'none')],
+    test('unit add and subtract',async () => {
+            await all_close_scalar([
+                // ['4ft + 5',s(9,'feet')],
+                ['4ft + 5ft',s( 9,'feet')],
+                ['4ft - 5ft',s( -1,'feet')],
+                ['3ft + 6ft as meters',s(2.7432,'meters')],
+                ['(3ft + 6ft) as feet',s(9,'feet')],
+                ["1km+500m", s(1500,'meters')],
+                // ['4m + 12ft as m',s(4 + 3.6576,'m')],
+                // ['4mm + 12ft as mm',s(4 + (3.6576/0.001),'mm')],
+                ['40mm + 40cm + 4m',s(4.440,'m')],
+               // ['4ft/2ft',s(2,'none')],
         //     // ['4ft/2m',s(0.6096,'none')],
         //     // //['4ft/2gal',s(3,'none')],//should error
-        //     // //['4ft - 2gal')],//should error
-        //     // ['4m + 12ft as m',s(4 + 3.6576,'m')],
-        //     // ['4mm + 12ft as mm',s(4 + (3.6576/0.001),'mm')],
-        //     // ['40mm + 40cm + 4m',s(4.440,'m')],
+        //     ['4ft - 2gal')],//should error
+        ])
     })
 
 })
