@@ -316,6 +316,21 @@ export function to_canonical_unit(b) {
     return UNITS.getCanonicalName(b)
 }
 
+export function find_conversion(a,b) {
+    let a_base = UNITS.lookupUnit(a.unit).base
+    let b_base = UNITS.lookupUnit(b.unit).base
+    console.log("finding a conversion from",a,'to',b)
+    if(a_base === b_base) {
+        console.log("same base")
+        return {
+            ratio: UNITS.lookupUnit(b.unit).ratio / UNITS.lookupUnit(a.unit).ratio,
+            name: b.unit
+        }
+    }
+    console.log("bases",a_base,b_base)
+    return null
+}
+
 
 export function convert_unit(a_val,a_unit, b_unit) {
     // console.log("converting",a_val, a_unit,'to',b_unit)

@@ -1,6 +1,6 @@
 import {FilamentFunction, REQUIRED} from './parser.js'
 import {is_boolean, is_list, is_scalar, list, pack, scalar, unpack} from './ast.js'
-import {convert_unit, to_canonical_unit} from './units.js'
+import {convert_unit, find_conversion, to_canonical_unit} from './units.js'
 
 function binop(a,b,cb) {
     // console.log("binop-ing",a,b)
@@ -28,9 +28,8 @@ export const add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
     function(a,b) {
     if(is_scalar_with_unit(a) && is_scalar_without_unit(b)) throw new Error(`cannot add incompatible units ${a.toString()} and ${b.toString()}`)
     if(is_scalar_with_unit(a) && is_scalar_with_unit(b)) {
-        if(a.unit === b.unit) {
-            return scalar(a.value + b.value, a.unit)
-        }
+        let conv = find_conversion(a,b)
+        if(conv) return scalar(a.value*conv.ratio + b.value, b.unit)
     }
 
     return binop(a,b, (a,b)=>a+b)
@@ -39,9 +38,8 @@ export const subtract = new FilamentFunction('subtract',{a:REQUIRED, b:REQUIRED}
     function (a,b) {
         if(is_scalar_with_unit(a) && is_scalar_without_unit(b)) throw new Error(`cannot subtract incompatible units ${a.toString()} and ${b.toString()}`)
         if(is_scalar_with_unit(a) && is_scalar_with_unit(b)) {
-            if(a.unit === b.unit) {
-                return scalar(a.value - b.value, a.unit)
-            }
+            let conv = find_conversion(a,b)
+            if(conv) return scalar(a.value*conv.ratio - b.value, b.unit)
         }
 
     return binop(a,b,(a,b)=>a-b)
