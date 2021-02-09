@@ -317,23 +317,23 @@ export function to_canonical_unit(b) {
 }
 
 export function find_conversion(a,b) {
-    console.log("finding a conversion from",a,'to',b)
+    // console.log("finding a conversion from",a,'to',b)
     let a_unit = UNITS.lookupUnit(a.unit)
     let b_unit = UNITS.lookupUnit(b.unit)
-    console.log("starting",a_unit, b_unit)
+    // console.log("starting",a_unit, b_unit)
     // let a_base = UNITS.lookupUnit(a.unit).base
     // let b_base = UNITS.lookupUnit(b.unit).base
     if(a_unit.base === b_unit.base) {
-        console.log("same base")
+        // console.log("same base")
         return {
             from: a.unit,
             ratio: a_unit.ratio / b_unit.ratio,
             to: b.unit
         }
     }
-    console.log("converting to their bases")
+    // console.log("converting to their bases")
     let conv = UNITS.findConversion(a_unit.base,b_unit.base)
-    console.log("conversion is",conv)
+    // console.log("conversion is",conv)
     return {
         from: a.unit,
         ratio: a_unit.ratio * conv.ratio / b_unit.ratio,

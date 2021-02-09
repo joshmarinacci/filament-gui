@@ -73,7 +73,7 @@ describe('length',() => {
                 ['4mm + 12ft',s(4/304.8 + 12,'ft')],
                 ['4mm + 12ft as mm',s(4 + 3657.6,'mm')],
                // ['4ft/2ft',s(2,'none')],
-        //     // ['4ft/2m',s(0.6096,'none')],
+            // ['4ft/2m',s(0.6096,'none')],
         //     // //['4ft/2gal',s(3,'none')],//should error
         //     ['4ft - 2gal')],//should error
         ])

@@ -27,6 +27,7 @@ export const all_close_scalar = async (tests) => await tests.map(tt => ta(tt[0],
 // objects should be close to the same
 export const ta = async (s,a) => {
     return Promise.resolve(eval_code(s)).then(v=>{
+        // console.log("testing",s ,'equals',a,'really is',v)
         expect(v.value).toBeCloseTo(a.value)
         expect(v.unit).toEqual(a.unit)
         expect(v.dim).toEqual(a.dim)

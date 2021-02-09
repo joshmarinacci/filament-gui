@@ -29,7 +29,7 @@ export const add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
     if(is_scalar_with_unit(a) && is_scalar_without_unit(b)) throw new Error(`cannot add incompatible units ${a.toString()} and ${b.toString()}`)
     if(is_scalar_with_unit(a) && is_scalar_with_unit(b)) {
         let conv = find_conversion(a,b)
-        console.log('final conversion is',conv)
+        // console.log('final conversion is',conv)
         if(conv) return scalar(a.value/conv.ratio + b.value, conv.to)
     }
 
