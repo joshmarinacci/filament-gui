@@ -66,10 +66,12 @@ describe('length',() => {
                 ['3ft + 6ft as meters',s(2.7432,'meters')],
                 ['(3ft + 6ft) as feet',s(9,'feet')],
                 ["1km+500m", s(1500,'meters')],
+                ["500m+1km", s(1.500,'kilometers')],
                 ['4m + 12ft',s(13.1234 + 12,'ft')],
                 ['4m + 12ft as m',s(4 + 3.6576,'m')],
                 ['40mm + 40cm + 4m',s(4.440,'m')],
-                // ['4mm + 12ft as mm',s(4 + (3.6576/0.001),'mm')],
+                ['4mm + 12ft',s(4/304.8 + 12,'ft')],
+                ['4mm + 12ft as mm',s(4 + 3657.6,'mm')],
                // ['4ft/2ft',s(2,'none')],
         //     // ['4ft/2m',s(0.6096,'none')],
         //     // //['4ft/2gal',s(3,'none')],//should error
