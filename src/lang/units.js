@@ -321,14 +321,17 @@ export function find_conversion(a,b) {
     let b_base = UNITS.lookupUnit(b.unit).base
     console.log("finding a conversion from",a,'to',b)
     if(a_base === b_base) {
-        console.log("same base")
+        // console.log("same base")
         return {
-            ratio: UNITS.lookupUnit(b.unit).ratio / UNITS.lookupUnit(a.unit).ratio,
-            name: b.unit
+            from: a.unit,
+            ratio: UNITS.lookupUnit(a.unit).ratio / UNITS.lookupUnit(b.unit).ratio,
+            to: b.unit
         }
     }
-    console.log("bases",a_base,b_base)
-    return null
+    // console.log("bases",a_base,b_base)
+    let conv = UNITS.findConversion(a.unit,b.unit)
+    // console.log("conversion is",conv)
+    return conv
 }
 
 
