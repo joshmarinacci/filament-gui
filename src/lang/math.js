@@ -25,9 +25,27 @@ function unop(a,cb) {
 }
 
 export const add = new FilamentFunction('add',{a:REQUIRED, b:REQUIRED},
-    function(a,b) { return binop(a,b, (a,b)=>a+b) })
+    function(a,b) {
+    if(is_scalar_with_unit(a) && is_scalar_without_unit(b)) throw new Error(`cannot add incompatible units ${a.toString()} and ${b.toString()}`)
+    if(is_scalar_with_unit(a) && is_scalar_with_unit(b)) {
+        if(a.unit === b.unit) {
+            return scalar(a.value + b.value, a.unit)
+        }
+    }
+
+    return binop(a,b, (a,b)=>a+b)
+})
 export const subtract = new FilamentFunction('subtract',{a:REQUIRED, b:REQUIRED},
-    function (a,b) { return binop(a,b,(a,b)=>a-b) })
+    function (a,b) {
+        if(is_scalar_with_unit(a) && is_scalar_without_unit(b)) throw new Error(`cannot subtract incompatible units ${a.toString()} and ${b.toString()}`)
+        if(is_scalar_with_unit(a) && is_scalar_with_unit(b)) {
+            if(a.unit === b.unit) {
+                return scalar(a.value - b.value, a.unit)
+            }
+        }
+
+    return binop(a,b,(a,b)=>a-b)
+})
 
 function is_scalar_with_unit(a) {
     if(a.unit === 'none') return false
