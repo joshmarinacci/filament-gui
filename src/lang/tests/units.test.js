@@ -146,13 +146,12 @@ describe('duration',()=>{
             ['12hr as days', s(0.5,'day')],
             ['90days as months', s(3,'month')],
             ['730days as years', s(2,'year')],
+            ['3hr + 30min as seconds',s(3.5*60*60,'seconds')],
+            ['3hr + 30min as minutes',s(3*60+30,'minutes')],
         ])
     })
 
         /*
-            // compareUnit(t,'100000s as days',100000/(60*60*24),'days')],
-            compareUnit(t,'3hr + 30min as seconds',3.5*60*60,'seconds')],
-            compareUnit(t,'3hr + 30min as minutes',3*60+30,'minutes')],
             //compareUnit(t,"date('august 31st, 1975')", moment([1975,8-1,31]),'date','date')],
             //compareUnit(t,"date(year:1975)",moment('1975','YYYY'),'date','date')],
             //compareUnit(t,"date('1975-08-31',format:'YYYY MM DD')",moment([1975,8-1,31]),'date','date')],
@@ -168,8 +167,8 @@ describe('mass',()=>{
             ['50oz', s(50, 'ounces')],
             ['50lb as grams', s(22679.6, 'grams')],
             ['50oz as grams', s(1417.475, 'grams')],
-            // ['50oz + 60oz', s(110, 'oz')],
-            // ['1oz + 1lb', s(17 * 1 / 16.0, 'pounds')],
+            ['50oz + 60oz', s(110, 'oz')],
+            ['1oz + 1lb', s(17 * 1 / 16.0, 'pounds')],
             // ['(1oz + 1lb) as grams', s(481.942, 'gram')],
             // ['50g * 2', s(100, 'grams')],
             // ['50 * 2g', s(100, 'grams')],
