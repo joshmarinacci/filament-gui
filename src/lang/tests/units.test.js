@@ -150,17 +150,10 @@ describe('duration',()=>{
             ['3hr + 30min as minutes',s(3*60+30,'minutes')],
         ])
     })
-
-        /*
-            //compareUnit(t,"date('august 31st, 1975')", moment([1975,8-1,31]),'date','date')],
-            //compareUnit(t,"date(year:1975)",moment('1975','YYYY'),'date','date')],
-            //compareUnit(t,"date('1975-08-31',format:'YYYY MM DD')",moment([1975,8-1,31]),'date','date')],
-        ])],
-         */
 })
 describe('mass',()=>{
     test('standard',async ()=> {
-        await all([
+        await all_close_scalar([
             ["50g", s(50, 'gram')],
             ["50kg", s(50, 'kilograms')],
             ['50lb', s(50, 'pounds')],
@@ -169,11 +162,11 @@ describe('mass',()=>{
             ['50oz as grams', s(1417.475, 'grams')],
             ['50oz + 60oz', s(110, 'oz')],
             ['1oz + 1lb', s(17 * 1 / 16.0, 'pounds')],
-            // ['(1oz + 1lb) as grams', s(481.942, 'gram')],
-            // ['50g * 2', s(100, 'grams')],
-            // ['50 * 2g', s(100, 'grams')],
-            // ["5lbs + 4oz", s(84, "ounces")],
-            // ["(5lbs + 4g) as kilograms", s(2.26796, "kilograms")],
+            ['(1oz + 1lb) as grams', s(481.942, 'gram')],
+            ['50g * 2', s(100, 'grams')],
+            ['50 * 2g', s(100, 'grams')],
+            ["5lbs + 4oz", s(84, "ounces")],
+            ["(5lbs + 4g) as kilograms", s(2.26796, "kilograms")],
         ])
     })
 })
@@ -200,6 +193,18 @@ describe("volume",()=>{
             ['1tsp as ml',s(4.92892,'ml')],
             ['4ml as tsp',s(0.811537,'tsp')],
             ['4ml as tbsp',s(0.270512,'tbsp')],
+            ['1l as gal',s(0.264172,'gal')],
+            ['4l + 3gal',s(3+1.05669,'gal')],
+            ['1l + 15l as ml',s(16*1000,'ml')],
+            ['(4l + 3gal) as ml',s((4+3*3.78541)*1000,'milliliter')],
+            ['3cups + 1cup',s(4,'cups')],
+            ['3cups - 1cups',s(2,'cups')],
+            ['3ft * 3ft * 3ft',s(27,'foot',3)],
+            ['1ft * 2ft * 3ft', s(6,'feet',3)],
+            //['21 cuft',22,'foot',3)],
+            // ['1ft^3',1,'foot',3)],
+            //['1/2 cups',0.5,'cups')],
+            //['3 cups + (1/2cups)',3.5,'cups')],
         ])
     })
     test('metric',async ()=>{
@@ -209,42 +214,24 @@ describe("volume",()=>{
             ['3ml as liters',s(0.003,'liters')],
             ['4l',s(4,'liter')],
             ['4ml',s(4,'ml')],
+            // ['3 cm^3',3,'cm',3)],
+            // ['1000000 cm^3 as m^3',1,'m',3)],
+            // [' 1m^3 as cm^3',1000000,'cm',3)],
+            // ['3 cm^3 as ml',3,'milliliter')],
         ])
     })
-    test('other',async ()=>{
+    test('conversions',async ()=>{
         await all([
+            // ['1ft * 2ft * 3ft as liter', s(169.901,'liter')],
+            // ['(3ft * 3ft * 3ft) as gallon',s(201.974,'gallon')],
+            //['4 cuft as gal', 29.9221,'gal',1)],
+            //['4 cuft', 4,'feet',3)],
+            //['4 cu ft', 4,'feet',3)],
+            // ['1m * 2m * 3m as liter', s(6000,'liter')],
+            // ['4ft * 5ft * 6ft as gallon',s(897.659,'gallon')],
+            // ['4 cubic feet', s(4,'feet',3)],
+            // ['4 ft^3', s(4,'feet',3)],
         ])
-            /*
-            test("volume units", function(t) {
-                //['21 cuft',22,'foot',3)],
-                ['3 cm^3',3,'cm',3)],
-                ['1000000 cm^3 as m^3',1,'m',3)],
-                [' 1m^3 as cm^3',1000000,'cm',3)],
-                ['3 cm^3 as ml',3,'milliliter')],
-                ['3ft * 3ft * 3ft',27,'foot',3)],
-                ['(3ft * 3ft * 3ft) as gallon',201.974,'gallon')],
-                ['1ft^3',1,'foot',3)],
-                ['1l as gal',0.264172,'gal')],
-                ['4l + 3gal',3+1.05669,'gal')],
-                ['1l + 15l as ml',16*1000,'ml')],
-                ['(4l + 3gal) as ml',(4+3*3.78541)*1000,'milliliter')],
-                ['3 cups + 1 cups',4,'cups')],
-                ['3 cups - 1 cups',2,'cups')],
-                //['1/2 cups',0.5,'cups')],
-                //['3 cups + (1/2cups)',3.5,'cups')],
-                ['1ft * 2ft * 3ft', 6,'feet',3)],
-                ['1ft * 2ft * 3ft as liter', 169.901,'liter')],
-                ['1m * 2m * 3m as liter', 6000,'liter')],
-                ['4ft * 5ft * 6ft as gallon',897.659,'gallon')],
-                //['4 cuft', 4,'feet',3)],
-                //['4 cu ft', 4,'feet',3)],
-                ['4 cubic feet', 4,'feet',3)],
-                ['4 ft^3', 4,'feet',3)],
-                //['4 cuft as gal', 29.9221,'gal',1)],
-                t.end()],
-            })],
-             */
-
     })
 })
 describe('area',()=>{
