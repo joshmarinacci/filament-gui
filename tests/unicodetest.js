@@ -1,4 +1,4 @@
-import {scalar, Scope} from '../src/lang/ast.js'
+import {scalar, Scope} from '../../filament-lang/src/ast.js'
 import {
     add, and, convertunit,
     divide, equal,
@@ -11,10 +11,10 @@ import {
     negate, not, notequal, or,
     power,
     subtract
-} from '../src/lang/math.js'
-import {drop, get_field, join, length, map, range, reverse, select, sort, sum, take} from '../src/lang/lists.js'
-import {dataset} from '../src/lang/dataset.js'
-import {Parser} from '../src/lang/parser.js'
+} from '../../filament-lang/src/math.js'
+import {drop, get_field, join, length, map, range, reverse, select, sort, sum, take} from '../../filament-lang/src/lists.js'
+import {dataset} from '../../filament-lang/src/dataset.js'
+import {Parser} from '../../filament-lang/src/parser.js'
 import fs from 'fs'
 
 let g2_source = fs.readFileSync(new URL("../src/lang/filament.ohm", import.meta.url)).toString()

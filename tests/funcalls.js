@@ -1,6 +1,6 @@
 import {tests} from './util.js'
-import {drop, length, max, reverse, sort, sum, take} from '../src/lang/lists.js'
-import {dataset} from '../src/lang/dataset.js'
+import {drop, length, max, reverse, sort, sum, take} from '../../filament-lang/src/lists.js'
+import {dataset} from '../../filament-lang/src/dataset.js'
 
 
 let scope = {drop, length, max, reverse, sort, sum, take, dataset}

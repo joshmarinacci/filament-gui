@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/filament.iml" filepath="$PROJECT_DIR$/.idea/filament.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../filament-lang/.idea/filament-lang.iml" filepath="$PROJECT_DIR$/../filament-lang/.idea/filament-lang.iml" />
     </modules>
   </component>
 </project>

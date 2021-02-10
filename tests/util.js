@@ -14,11 +14,11 @@ import {
     sin,
     subtract,
     tan
-} from '../src/lang/math.js'
-import {drop, get_field, join, length, map, range, reverse, select, sort, sum, take} from '../src/lang/lists.js'
-import {FilamentFunction, Parser} from '../src/lang/parser.js'
-import {scalar, Scope, unpack} from '../src/lang/ast.js'
-import {dataset} from '../src/lang/dataset.js'
+} from '../../filament-lang/src/math.js'
+import {drop, get_field, join, length, map, range, reverse, select, sort, sum, take} from '../../filament-lang/src/lists.js'
+import {FilamentFunction, Parser} from '../../filament-lang/src/parser.js'
+import {scalar, Scope, unpack} from '../../filament-lang/src/ast.js'
+import {dataset} from '../../filament-lang/src/dataset.js'
 
 tp(test)
 

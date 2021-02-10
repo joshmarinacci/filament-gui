@@ -15,10 +15,10 @@
 import path from 'path'
 import {promises as fs, createWriteStream, mkdir as real_mkdir} from 'fs'
 import ohm from 'ohm-js'
-import {Parser} from '../src/lang/parser.js'
-import {is_canvas_result, Scope} from "../src/lang/ast.js"
+import {Parser} from '../../filament-lang/src/parser.js'
+import {is_canvas_result, Scope} from "../../filament-lang/src/ast.js"
 import {default as PImage} from "pureimage"
-import {make_standard_scope} from '../src/lang/lang.js'
+import {make_standard_scope} from '../../filament-lang/src/lang.js'
 
 
 // import {chart, histogram, timeline} from '../src/lang/chart.js'

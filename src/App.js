@@ -3,12 +3,12 @@ import './App.css'
 
 import {HBox, VBox} from './gui/ui.js'
 import {ResultArea} from './gui/views.js'
-import {real_eval2} from './lang/lang.js'
+import {real_eval2} from '../../filament-lang/src/lang.js'
 
 import "codemirror/addon/hint/show-hint.css"
 import {EXAMPLES} from './gui/examples.js'
 import {CodeEditor} from './gui/editor.js'
-import {default as src} from "./lang/filament.ohm"
+import {default as src} from "../../filament-lang/src/filament.ohm"
 
 
 let stash = ""
