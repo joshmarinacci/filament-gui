@@ -35,6 +35,7 @@ function App() {
         let grammar = await fetch(grammar_url).then(r => r.text())
         console.log("got the grammar",grammar)
         setup_parser(grammar)
+        code = "{" + code + "}"
         let d = await eval_code(code)
         console.log("result is ", d)
         setResult(d)
