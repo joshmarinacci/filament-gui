@@ -3,7 +3,7 @@ import './App.css'
 
 import {HBox, VBox} from './gui/ui.js'
 import {ResultArea} from './gui/views.js'
-import {eval_code, real_eval2, setup_parser} from 'filament-lang'
+import {eval_code, setup_parser} from 'filament-lang'
 
 import "codemirror/addon/hint/show-hint.css"
 import {EXAMPLES} from './gui/examples.js'
@@ -34,7 +34,7 @@ function App() {
     const doEval = async (code) => {
         let grammar = await fetch(grammar_url).then(r => r.text())
         console.log("got the grammar",grammar)
-        setup_parser(grammar)
+        await setup_parser(grammar)
         code = "{" + code + "}"
         let d = await eval_code(code)
         console.log("result is ", d)
