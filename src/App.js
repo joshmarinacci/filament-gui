@@ -3,12 +3,12 @@ import './App.css'
 
 import {HBox, VBox} from './gui/ui.js'
 import {ResultArea} from './gui/views.js'
-import {real_eval2} from '../../filament-lang/src/lang.js'
+import {eval_code, real_eval2, setup_parser} from 'filament-lang'
 
 import "codemirror/addon/hint/show-hint.css"
 import {EXAMPLES} from './gui/examples.js'
 import {CodeEditor} from './gui/editor.js'
-import {default as src} from "../../filament-lang/src/filament.ohm"
+import {default as grammar_url} from "filament-lang/src/filament.ohm"
 
 
 let stash = ""
@@ -31,10 +31,19 @@ function App() {
     const [code, setCode] = useState('5+6')
     const [result, setResult] = useState(null)
 
-    const doEval = (code) => real_eval2(code,src).then(d => setResult(d)).catch(e => {
-        console.error("ERROR",e)
-        setResult(e)
-    })
+    const doEval = async (code) => {
+        let grammar = await fetch(grammar_url).then(r => r.text())
+        console.log("got the grammar",grammar)
+        setup_parser(grammar)
+        let d = await eval_code(code)
+        console.log("result is ", d)
+        setResult(d)
+        console.log("done")
+            // .catch(e => {
+            //     console.error("ERROR", e)
+            //     setResult(e)
+            // })
+    }
 
     return (
         <HBox fill>

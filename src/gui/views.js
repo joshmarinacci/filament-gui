@@ -1,7 +1,8 @@
 import {useEffect, useRef} from 'react'
 
 import {CanvasView} from '../canvas.js'
-import {is_boolean, is_canvas_result, is_error_result, is_list, is_scalar, is_string} from '../../../filament-lang/src/ast.js'
+import {is_boolean, is_scalar, is_canvas_result, is_error_result, is_list} from 'filament-lang'
+import {is_string} from 'filament-lang'
 
 const ErrorResult = ({result}) => <div>error!!! <b>{result.toString()}</b></div>
 const ScalarResult = ({result}) => <div><b>{result.toString()}</b></div>
