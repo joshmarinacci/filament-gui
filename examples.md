@@ -1,6 +1,7 @@
 # examples
 
-* What's the shortest possible raytracer using vector math. 
+* What's the shortest possibl
+  e raytracer using vector math. 
     * Loop over every pixel
     * generate primary ray
     * intersect with list of objects

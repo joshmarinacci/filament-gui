@@ -32,14 +32,19 @@ function App() {
     const [result, setResult] = useState(null)
 
     const doEval = async (code) => {
-        let grammar = await fetch(grammar_url).then(r => r.text())
-        console.log("got the grammar",grammar)
-        await setup_parser(grammar)
-        code = "{" + code + "}"
-        let d = await eval_code(code)
-        console.log("result is ", d)
-        setResult(d)
-        console.log("done")
+        try {
+            let grammar = await fetch(grammar_url).then(r => r.text())
+            console.log("got the grammar", grammar)
+            await setup_parser(grammar)
+            code = "{" + code + "}"
+            let d = await eval_code(code)
+            console.log("result is ", d)
+            setResult(d)
+            console.log("done")
+        } catch (e) {
+            console.log("an error happened",e)
+            setResult(e)
+        }
             // .catch(e => {
             //     console.error("ERROR", e)
             //     setResult(e)

@@ -41,10 +41,16 @@ sum(data)/length(data)`
         title:'simple chart of 10 to zero ',
         code:`chart(reverse(range(10)))`,
     },
-    // {
-    //     title:'bars of x**2',
-    //     code:`chart(map(range(0,10), x=>power(x,2)))`
-    // },
+    {
+        title:'quadratic equation',
+        code:`
+def quad(x:?) {
+    x**2 - 3*x - 4
+}
+
+plot(y:quad)
+`
+    },
     // {
     //     title:'bars of sin() 0->10',
     //     code:`chart(map(divide(range(0,100),10), x=>cos(x)))`
