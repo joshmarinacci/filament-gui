@@ -49,3 +49,28 @@ canvas {
 .table-result td, .table-result th {
   border: 1px solid #333333;
 }
+
+.CodeMirror {
+  border: 1px solid green;
+  height: auto !important;
+}
+article {
+  border: 1px solid red;
+}
+
+.grow {
+  flex: 1.0;
+}
+
+.hbox {
+
+}
+
+.vbox {
+}
+.hbox {
+
+}
+
+.vbox {
+}
