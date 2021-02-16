@@ -51,11 +51,11 @@ canvas {
 }
 
 .CodeMirror {
-  border: 1px solid green;
+  border: 1px solid #eee;
   height: auto !important;
 }
 article {
-  border: 1px solid red;
+  /*border: 1px solid red;*/
 }
 
 .grow {

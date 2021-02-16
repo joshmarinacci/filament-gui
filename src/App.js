@@ -71,9 +71,9 @@ function IOView({entry, onChange}) {
                 value: 'some cool text',
                 lineNumbers: true,
                 viewportMargin: Infinity,
-                mode: 'javascript',
+                // mode: 'javascript',
                 // mode:'filament',
-                // mode: 'simplemode',
+                mode: 'simplemode',
                 // hintOptions: {hint: synonyms, completeSingle: false},
                 // lineWrapping: true,
                 theme: 'elegant',
@@ -85,7 +85,6 @@ function IOView({entry, onChange}) {
                 }
             })
             setEditor(ed)
-            // console.log(entry.input)
             ed.setValue(entry.input)
             ed.on('changes', () => onChange(ed.getValue()))
         }
@@ -97,9 +96,11 @@ function IOView({entry, onChange}) {
 
 
     return <article>
-        <h3>block</h3>
+        {/*<h3>block</h3>*/}
         <textarea ref={ref}/>
+        <div>
         <button onClick={() => onEval(editor.getValue())}>eval</button>
+        </div>
         <ResultArea result={result}/>
     </article>
 }
