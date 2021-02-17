@@ -8,6 +8,40 @@ import "codemirror/addon/hint/show-hint.css"
 import {ResultArea} from './gui/views.js'
 import {make_standard_scope} from 'filament-lang/src/lang.js'
 
+codemirror.defineSimpleMode("filament", {
+    // The start state contains the rules that are initially used
+    start: [
+        // The regex matches the token, the token property contains the type
+        {regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: "string"},
+        {regex: /'(?:[^\\]|\\.)*?(?:'|$)/, token: "string"},
+        // You can match multiple tokens at once. Note that the captured
+        // groups must span the whole string in this case
+        {regex: /(def)(\s+)([a-z$][\w$]*)/,
+            token: ["keyword", null, "variable-2"]},
+        // Rules are matched in the order in which they appear, so there is
+        // no ambiguity between this one and the one above
+        {regex: /(?:function|def|var|return|if|for|while|else|do|this)\b/,
+            token: "keyword"},
+        {regex: /true|false|null|undefined/, token: "atom"},
+        {regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i,
+            token: "number"},
+        {regex: /\/(?:[^\\]|\\.)*?\//, token: "variable-3"},
+        {regex: /[-+\/*=<>!]+/, token: "operator"},
+        // indent and dedent properties guide autoindentation
+        {regex: /[\{\[\(]/, indent: true},
+        {regex: /[\}\]\)]/, dedent: true},
+        {regex: /[a-z$][\w$]*/, token: "variable"},
+    ],
+    // The meta property contains global information about the mode. It
+    // can contain properties like lineComment, which are supported by
+    // all modes, and also directives like dontIndentStates, which are
+    // specific to simple modes.
+    meta: {
+        // dontIndentStates: ["comment"],
+        // lineComment: "//"
+    }
+});
+
 function synonyms(cm, option) {
     console.log("syonmyms")
     return new Promise(function (accept) {
@@ -60,21 +94,16 @@ export function IOView({entry, onChange}) {
         }
     }
     useEffect(() => {
-        console.log("entry changed", entry)
         if (ref.current && editor === null) {
             let scope = make_standard_scope()
             setScope(scope)
-            console.log("making", ref.current)
             let ed = codemirror.fromTextArea(ref.current, {
                 value: 'some cool text',
                 lineNumbers: true,
                 viewportMargin: Infinity,
-                // mode: 'javascript',
-                // mode:'filament',
-                mode: 'simplemode',
+                mode:'filament',
                 hintOptions: {hint: synonyms, completeSingle: false, scope:scope},
                 lineWrapping: true,
-                theme: 'elegant',
                 matchBrackets: true,
                 autoCloseBrackets: true,
                 extraKeys: {
