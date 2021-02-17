@@ -88,9 +88,9 @@ main {
 header {
   grid-row: 1/2;
   grid-column: 1/4;
-  font-size: 2rem;
+  /*font-size: 2rem;*/
   margin: 0 20px;
-  font-weight: bold;
+  /*font-weight: bold;*/
 }
 .collapse {
   border: 0px solid blue;
@@ -102,4 +102,19 @@ header {
   border: 0px solid green;
   grid-row: 2/4;
   overflow: scroll;
+}
+
+header a {
+  padding: 0 1rem;
+}
+
+.examples {
+  display: flex;
+  flex-direction: column;
+}
+.examples button {
+  border: 0px solid red;
+  background-color: #eeeeee;
+  margin: 0.25em;
+  border-radius: 0.5em;
 }

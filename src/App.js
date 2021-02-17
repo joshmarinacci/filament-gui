@@ -1,13 +1,10 @@
 import {useState} from 'react'
 import './App.css'
 
-import {VBox} from './gui/ui.js'
-
-import {EXAMPLES} from './gui/examples.js'
-
 import "codemirror/addon/hint/show-hint.css"
 import "codemirror/lib/codemirror.css"
 import {IOView} from './IOView.js'
+import {ExamplesPanel} from './ExamplesPanel.js'
 
 
 const CollapsablePanel = ({children, direction}) => {
@@ -55,18 +52,15 @@ function App() {
         setDoc(new_doc)
     }
     return <main>
-        <header>Filament</header>
+        <header>
+            Filament:
+            <a href="https://apps.josh.earth/filament/tutorial.html" target="_blank">tutorial</a>
+            <a href="https://apps.josh.earth/filament/intro.html" target="_blank">intro</a>
+            <a href="https://apps.josh.earth/filament/spec.html" target="_blank">spec</a>
+            <a href="https://apps.josh.earth/filament/api.html" target="_blank">api</a>
+        </header>
         <CollapsablePanel direction={'left'}>
-            <h3>Examples</h3>
-            {EXAMPLES.map(ex => <button
-                onClick={() => setDoc([{
-                    type:'filament',
-                    input:ex.code.trim().split("\n")
-                        .filter(t => t.length > 0)
-                        .join("\n"),
-                    output:null
-                }])}
-            >{ex.title}</button>)}
+            <ExamplesPanel onSetDoc={(d)=>setDoc(d)}/>
         </CollapsablePanel>
         <div className={'entries'} >{entries}
         <button onClick={add_entry}>add</button>
