@@ -74,3 +74,32 @@ article {
 
 .vbox {
 }
+
+
+
+main {
+  border: 0px solid red;
+  display: grid;
+  grid-template-columns: 15rem 1fr 15rem;
+  grid-gap: 2rem;
+  grid-template-rows: 2rem 1fr 2rem;
+  max-height: 99vh;
+}
+header {
+  grid-row: 1/2;
+  grid-column: 1/4;
+  font-size: 2rem;
+  margin: 0 20px;
+  font-weight: bold;
+}
+.collapse {
+  border: 0px solid blue;
+  margin: 0 20px;
+  grid-row: 2/4;
+  overflow: scroll;
+}
+.entries {
+  border: 0px solid green;
+  grid-row: 2/4;
+  overflow: scroll;
+}
