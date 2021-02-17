@@ -4,6 +4,8 @@ import "codemirror/addon/hint/show-hint.css"
 import "codemirror/lib/codemirror.css"
 import {IOView} from './IOView.js'
 import {ExamplesPanel} from './ExamplesPanel.js'
+import {make_standard_scope} from 'filament-lang/src/lang.js'
+import {SymbolsPanel} from './SymbolsPanel.js'
 
 
 const CollapsablePanel = ({children, direction}) => {
@@ -37,10 +39,11 @@ const realdoc = [
 function update_doc(doc, entry, code) {
     console.log("updating",doc,entry,code)
 }
+let scope = make_standard_scope()
 
 function App() {
     const [doc, setDoc] = useState(realdoc)
-    let entries = doc.map((entry,i) => <IOView key={i} entry={entry} onChange={(code)=>update_doc(doc,entry,code)}/>)
+    let entries = doc.map((entry,i) => <IOView key={i} entry={entry} onChange={(code)=>update_doc(doc,entry,code)} scope={scope}/>)
     const add_entry = () => {
         let new_doc = doc.slice()
         new_doc.push({
@@ -65,7 +68,7 @@ function App() {
         <button onClick={add_entry}>add</button>
         </div>
         <CollapsablePanel direction={'right'}>
-            <h3>Docs</h3>
+            <SymbolsPanel scope={scope}/>
         </CollapsablePanel>
     </main>
 }

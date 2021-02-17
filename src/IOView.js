@@ -6,7 +6,6 @@ import "codemirror/addon/mode/simple.js"
 import "codemirror/addon/hint/show-hint.js"
 import "codemirror/addon/hint/show-hint.css"
 import {ResultArea} from './gui/views.js'
-import {make_standard_scope} from 'filament-lang/src/lang.js'
 
 codemirror.defineSimpleMode("filament", {
     // The start state contains the rules that are initially used
@@ -73,11 +72,10 @@ function synonyms(cm, option) {
     })
 }
 
-export function IOView({entry, onChange}) {
+export function IOView({entry, onChange, scope}) {
     const ref = useRef()
     const [editor, setEditor] = useState(null)
     const [result, setResult] = useState(null)
-    const [scope, setScope] = useState(null)
     const onEval = async (code) => {
         try {
             let grammar = await fetch(grammar_url).then(r => r.text())
@@ -95,8 +93,6 @@ export function IOView({entry, onChange}) {
     }
     useEffect(() => {
         if (ref.current && editor === null) {
-            let scope = make_standard_scope()
-            setScope(scope)
             let ed = codemirror.fromTextArea(ref.current, {
                 value: 'some cool text',
                 lineNumbers: true,
