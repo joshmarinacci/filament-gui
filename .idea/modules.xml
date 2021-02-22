@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/filament.iml" filepath="$PROJECT_DIR$/.idea/filament.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/filament-gui.iml" filepath="$PROJECT_DIR$/.idea/filament-gui.iml" />
     </modules>
   </component>
 </project>

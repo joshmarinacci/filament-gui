@@ -6,21 +6,9 @@ import {IOView} from './IOView.js'
 import {ExamplesPanel} from './ExamplesPanel.js'
 import {make_standard_scope} from 'filament-lang/src/lang.js'
 import {SymbolsPanel} from './SymbolsPanel.js'
+import {CollapsablePanel} from './gui/common.js'
 
 
-const CollapsablePanel = ({children, direction}) => {
-    const [open, set_open] = useState(true)
-    const toggle = () => set_open(!open)
-    const label = () => {
-        if(direction === 'left') return open?"<":">"
-        if(direction === 'right') return open?">":"<"
-        return "|"
-    }
-    return <div className={'collapse '+direction}>
-        <button onClick={toggle}>{label()}</button>
-        {open?children:""}
-    </div>
-}
 
 const realdoc = [
     {
