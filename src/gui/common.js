@@ -26,16 +26,16 @@ export const HBox = ({children, grow=false, fill = false}) => {
     return <div className={clssstr} style={style}>{children}</div>
 }
 
-export const CollapsablePanel = ({children, direction}) => {
-    const [open, set_open] = useState(true)
-    const toggle = () => set_open(!open)
+export const CollapsablePanel = ({children, direction, onToggle, open}) => {
+    // const [open, set_open] = useState(true)
+    // const toggle = () => set_open(!open)
     const label = () => {
         if(direction === 'left') return open?"<":">"
         if(direction === 'right') return open?">":"<"
         return "|"
     }
     return <div className={'collapse '+direction}>
-        <button onClick={toggle}>{label()}</button>
+        <button onClick={onToggle}>{label()}</button>
         {open?children:""}
     </div>
 }

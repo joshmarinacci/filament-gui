@@ -29,6 +29,27 @@ function update_doc(doc, entry, code) {
 }
 let scope = make_standard_scope()
 
+function MainView({children, setDoc}) {
+    const [left_open,set_left_open] = useState(true)
+    const [right_open,set_right_open] = useState(true)
+
+    let cols = `${left_open?'20rem':'5rem'} 1fr ${right_open?'20rem':'5rem'}`;
+    let style = {
+        'display':'grid',
+        'gridTemplateColumns': cols
+    }
+
+    return <main style={style}>
+        <CollapsablePanel direction={'left'} open={left_open} onToggle={()=>set_left_open(!left_open)}>
+            <ExamplesPanel onSetDoc={(d)=>setDoc(d)}/>
+        </CollapsablePanel>
+        {children}
+        <CollapsablePanel direction={'right'} open={right_open} onToggle={()=>set_right_open(!right_open)}>
+            <SymbolsPanel scope={scope}/>
+        </CollapsablePanel>
+    </main>
+}
+
 function App() {
     const [doc, setDoc] = useState(realdoc)
     let entries = doc.map((entry,i) => <IOView key={i} entry={entry} onChange={(code)=>update_doc(doc,entry,code)} scope={scope}/>)
@@ -41,7 +62,7 @@ function App() {
         })
         setDoc(new_doc)
     }
-    return <main>
+    return <MainView setDoc={setDoc}>
         <header>
             Filament:
             <a href="https://apps.josh.earth/filament/tutorial.html" target="_blank">tutorial</a>
@@ -49,16 +70,10 @@ function App() {
             <a href="https://apps.josh.earth/filament/spec.html" target="_blank">spec</a>
             <a href="https://apps.josh.earth/filament/api.html" target="_blank">api</a>
         </header>
-        <CollapsablePanel direction={'left'}>
-            <ExamplesPanel onSetDoc={(d)=>setDoc(d)}/>
-        </CollapsablePanel>
         <div className={'entries'} >{entries}
         <button onClick={add_entry}>add</button>
         </div>
-        <CollapsablePanel direction={'right'}>
-            <SymbolsPanel scope={scope}/>
-        </CollapsablePanel>
-    </main>
+    </MainView>
 }
 
 export default App
