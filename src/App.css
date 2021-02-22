@@ -108,16 +108,6 @@ header a {
   padding: 0 1rem;
 }
 
-.examples {
-  display: flex;
-  flex-direction: column;
-}
-.examples button {
-  border: 0px solid red;
-  background-color: #eeeeee;
-  margin: 0.25em;
-  border-radius: 0.5em;
-}
 
 article {
   border: 1px dashed #daa;

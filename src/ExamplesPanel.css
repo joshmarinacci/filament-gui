@@ -22,3 +22,18 @@
 .accordion-group h3.closed:hover {
     background-color: aquamarine;
 }
+
+
+.accordion-group {
+    display: flex;
+    flex-direction: column;
+}
+.accordion-group button {
+    border: 0px solid red;
+    background-color: #eeeeee;
+    margin: 0.25em;
+    border-radius: 0.5em;
+}
+.accordion-group button:hover {
+    background-color: aqua;
+}
