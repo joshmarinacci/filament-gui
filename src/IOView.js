@@ -17,6 +17,8 @@ codemirror.defineSimpleMode("filament", {
         // groups must span the whole string in this case
         {regex: /(def)(\s+)([a-z$][\w$]*)/,
             token: ["keyword", null, "variable-2"]},
+        // comments
+        {regex: /\/\/.*/,token:"comment"},
         // Rules are matched in the order in which they appear, so there is
         // no ambiguity between this one and the one above
         {regex: /(?:function|def|var|return|if|for|while|else|do|this)\b/,

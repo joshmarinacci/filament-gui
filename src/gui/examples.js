@@ -1,7 +1,7 @@
 export const EXAMPLES = [
     {
         type:'group',
-        title:'Arithmetic',
+        title:'Arithmetic & Units',
         content:[
             {
                 title:'basic arithmetic',
@@ -27,6 +27,15 @@ export const EXAMPLES = [
                 title:'convert length to volume gallons',
                 code:`8ft * 9ft * 10ft as gallons`
             },
+            {
+                title:'make random number between 0 and 10',
+                code:`random(max:10)`
+            },
+            {
+                title:'make 10 random number between 5 and 10',
+                code:`//make 10 random numbers, each between 5 and 10
+range(10) >> map(range, with: x->random(min: 5, max:10))`
+            }
         ]
     },
     {
@@ -83,11 +92,11 @@ sum(data)/length(data)`
             },
             {
                 title:'alphabet data',
-                code: `dataset('alphabet')`
+                code: `//info on ever letter in the alphabet\ndataset('alphabet')`
             },
             {
                 title:'how many syllables in each letter',
-                code:`chart(dataset('alphabet'), x_label:'letter', y:'syllables')`
+                code:`dataset('alphabet') >> chart(x_label:'letter', y:'syllables')`
             },
             {
                 title:"elements number vs weight",
