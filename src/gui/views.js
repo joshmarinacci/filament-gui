@@ -25,6 +25,7 @@ const is_table = (result) => (result && result.type === 'table')?true:false
 const is_image = (result) => {
     if(result && result.width && result.height && result.data) return true
     if(result && result instanceof Image) return true
+    if(result && result instanceof HTMLCanvasElement) return true
     return false
 }
 
@@ -68,8 +69,12 @@ function ImageView({result}) {
                 if(result instanceof HTMLImageElement) {
                     let ctx = can.current.getContext('2d')
                     ctx.drawImage(result,0,0)
-                    let dt = ctx.getImageData(0,0,result.width,result.height)
-                    console.log("dt is",dt)
+                    // let dt = ctx.getImageData(0,0,result.width,result.height)
+                }
+                if(result instanceof HTMLCanvasElement) {
+                    let ctx = can.current.getContext('2d')
+                    ctx.drawImage(result,0,0)
+                    // let dt = ctx.getImageData(0,0,result.width,result.height)
                 }
             }
         }

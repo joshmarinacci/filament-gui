@@ -165,7 +165,7 @@ plot(y:quad)
     },
     {
         type:'group',
-        title:'images',
+        title:'Image manipulation',
         content:[
             {title:'make red image',
             code:`
@@ -175,33 +175,33 @@ make_image(width:100,height:100) >> map_image(with:(x,y) -> {
 `},
             {
                 title:'vertical stripes',
-                code:`{
-        red << [1,0,0]
-        green << [0,1,0]
-        make_image(width:100,height:100) >> map_image(with:(x,y,color) -> {
-           if x mod 2 = 0 then {red} else {green}
-        })
-        }`
+                code:`
+red << [1,0,0]
+green << [0,1,0]
+
+stripe << (x,y,color) -> {
+    if x mod 2 = 0 then red else green
+}
+
+// make red and green stripes
+make_image(width:100,height:100) >> map_image(with:stripe)
+        `
              },
 
 
             {
                 title:'whitenoise',
-                code:`{
-            rando << () -> { 5 }
-            make_image(width:100, height: 100)
-            >> mapimage(with:(x,y,color) -> {
-                n << random(min:0,max:1)
-                [n,n,n]
-            })
-                }`
+                code:`
+make_image(width:100, height: 100)
+    >> map_image(with:(x,y,color) -> {
+            n << random(min:0,max:1)
+            [n,n,n]
+    })`
             },
 
             {
                 title:'load remote image',
-                code:`load_image(
-        src:'https://placekitten.com/200/300')
-        `
+                code:`load_image(src:'https://placekitten.com/200/300')`
             }
 
         ]
