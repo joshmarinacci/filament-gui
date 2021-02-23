@@ -22,7 +22,11 @@ function ListResult({result}) {
 }
 
 const is_table = (result) => (result && result.type === 'table')?true:false
-const is_image = (result) => (result && result.width && result.height && result.data)
+const is_image = (result) => {
+    if(result && result.width && result.height && result.data) return true
+    if(result && result instanceof Image) return true
+    return false
+}
 
 function TableRow({item, schema}) {
     let cells = Object.keys(schema.properties).map(key => {
@@ -55,12 +59,19 @@ function ImageView({result}) {
     const can = useRef()
     useEffect(()=>{
         if(can.current) {
-            console.log("drawing to the canvas", result.data)
-            let arr = Uint8ClampedArray.from(result.data)
-            console.log("real array",arr)
-            let id = new ImageData(arr,result.width,result.height)
-            let ctx = can.current.getContext('2d')
-            ctx.putImageData(id,0,0)
+            if(result.data) {
+                let arr = Uint8ClampedArray.from(result.data)
+                let id = new ImageData(arr, result.width, result.height)
+                let ctx = can.current.getContext('2d')
+                ctx.putImageData(id, 0, 0)
+            } else {
+                if(result instanceof HTMLImageElement) {
+                    let ctx = can.current.getContext('2d')
+                    ctx.drawImage(result,0,0)
+                    let dt = ctx.getImageData(0,0,result.width,result.height)
+                    console.log("dt is",dt)
+                }
+            }
         }
     })
     return <div>
