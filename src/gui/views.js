@@ -22,6 +22,7 @@ function ListResult({result}) {
 }
 
 const is_table = (result) => (result && result.type === 'table')?true:false
+const is_image = (result) => (result && result.width && result.height && result.data)
 
 function TableRow({item, schema}) {
     let cells = Object.keys(schema.properties).map(key => {
@@ -50,6 +51,24 @@ function TableView({result}) {
     </table>
 }
 
+function ImageView({result}) {
+    const can = useRef()
+    useEffect(()=>{
+        if(can.current) {
+            console.log("drawing to the canvas", result.data)
+            let arr = Uint8ClampedArray.from(result.data)
+            console.log("real array",arr)
+            let id = new ImageData(arr,result.width,result.height)
+            let ctx = can.current.getContext('2d')
+            ctx.putImageData(id,0,0)
+        }
+    })
+    return <div>
+        <p>got an image {result.width} x {result.height}</p>
+        <canvas ref={can} width={result.width} height={result.height}/>
+    </div>
+}
+
 export function ResultArea({result}) {
     if (is_error_result(result)) return <ErrorResult result={result}/>
     if (is_scalar(result)) return <ScalarResult result={result}/>
@@ -58,6 +77,7 @@ export function ResultArea({result}) {
     if (is_list(result)) return <ListResult result={result}/>
     if (is_canvas_result(result)) return <CanvasView result={result}/>
     if (is_table(result)) return <TableView result={result}/>
+    if (is_image(result)) return  <ImageView result={result}/>
     if (result === null) return <div>result is <b>null</b></div>
     console.log('result is',result)
     return <div>unknown result here</div>
