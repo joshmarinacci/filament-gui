@@ -39,12 +39,19 @@ canvas {
   flex-wrap: wrap;
 }
 
+.table-wrapper {
+  max-height: 200px;
+  overflow: auto;
+}
 .table-result {
   border: 1px solid #333333;
   border-collapse: collapse;
+  width: 100%;
 }
 .table-result th {
   background-color: aliceblue;
+  position: sticky;
+  top:0;
 }
 .table-result td, .table-result th {
   border: 1px solid #333333;

@@ -46,14 +46,16 @@ function TableView({result}) {
     let items = result._map((it,n) => {
         return <TableRow key={n} item={it} schema={result.schema}/>
     })
-    return <table className={'table-result'}>
-        <thead>
-            <tr>{header}</tr>
-        </thead>
-        <tbody>
-        {items}
-        </tbody>
-    </table>
+    return <div class={'table-wrapper'}>
+        <table className={'table-result'}>
+            <thead>
+                <tr>{header}</tr>
+            </thead>
+            <tbody>
+            {items}
+            </tbody>
+        </table>
+    </div>
 }
 
 function ImageView({result}) {
