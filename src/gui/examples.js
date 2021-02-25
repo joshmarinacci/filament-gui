@@ -150,10 +150,7 @@ histogram(states)`
             {
                 title:'quadratic equation',
                 code:`
-def quad(x:?) {
-    x**2 - 3*x - 4
-}
-
+quad << (x) -> x**2 - 3*x - 4
 plot(y:quad)
 `
             },

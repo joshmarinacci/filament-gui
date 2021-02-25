@@ -7,5 +7,5 @@ export function CanvasView({result}) {
             result.cb(ref.current)
         }
     })
-    return <canvas width={600} height={300} ref={ref}/>
+    return <canvas width={1200} height={600} ref={ref}/>
 }
