@@ -94,9 +94,20 @@ header {
 }
 .collapse {
   border: 0px solid blue;
+  background-color: #f0f0f0;
   margin: 0 20px;
+  padding: 0.5rem;
   grid-row: 2/4;
   overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.collapse.left > button {
+  align-self: end;
+}
+.collapse.right > button {
+  align-self: start;
 }
 .entries {
   border: 0px solid green;
