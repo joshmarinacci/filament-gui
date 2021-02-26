@@ -40,6 +40,54 @@ range(10) >> map(range, with: x->random(min: 5, max:10))`
     },
     {
         type:'group',
+        title:'dates and times',
+        content:[
+            {
+                title:"make some dates",
+                code:`
+[
+    date("July 27 2021", format:"MMMM dd yyyy"),
+    date("8/8/08",       format:"MM/dd/yy"),
+    date(year:2021, month:7, day:27)
+]
+`,
+            },
+            {
+                title:"make some times",
+                code:`
+[
+    time("3:42",format:"kk:mm"),
+    time("14:42:33",format:"kk:mm:ss"),
+    time("3:42pm",format:"hh:mmaa")
+]
+            `
+            },
+            {
+                title:"duration math",
+                code:`
+[
+    23hours + 60minutes as days,
+    23min - 8s,
+    80min * 6
+]
+                `,
+            },
+            {
+                title:"math with dates and times",
+                code:`
+                [
+//days until next christmas
+date(month:12, day:25, year:2021) - today() as days,
+
+// 8pm - 2am
+time("8pm",format:"hhaa") - time("2am",format:"hhaa") as hours
+]
+`,
+            },
+        ]
+    },
+    {
+        type:'group',
         title:'Lists',
         content:[
             {

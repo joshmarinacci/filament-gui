@@ -8,6 +8,8 @@ const ErrorResult = ({result}) => <div>error!!! <b>{result.toString()}</b></div>
 const ScalarResult = ({result}) => <div><b>{result.toString()}</b></div>
 const StringResult = ({result}) => <div>String <b>{result.toString()}</b></div>
 const BooleanResult = ({result}) => <div><b>{result.toString()}</b></div>
+const StringView = ({result}) => <div><b>{result.toString()}</b></div>
+
 
 function ListResult({result}) {
     if(result.value.length > 100) {
@@ -28,6 +30,15 @@ const is_image = (result) => {
     if(result && result instanceof HTMLCanvasElement) return true
     return false
 }
+const is_date = (result) => {
+    if(result && result.type === 'date') return true
+    return false
+}
+const is_time = (result) => {
+    if(result && result.type === 'time') return true
+    return false
+}
+
 
 function TableRow({item, schema}) {
     let cells = Object.keys(schema.properties).map(key => {
@@ -87,6 +98,7 @@ function ImageView({result}) {
     </div>
 }
 
+
 export function ResultArea({result}) {
     if (is_error_result(result)) return <ErrorResult result={result}/>
     if (is_scalar(result)) return <ScalarResult result={result}/>
@@ -97,6 +109,8 @@ export function ResultArea({result}) {
     if (is_table(result)) return <TableView result={result}/>
     if (is_image(result)) return  <ImageView result={result}/>
     if (result === null) return <div>result is <b>null</b></div>
+    if (is_date(result)) return <StringView result={result}/>
+    if (is_time(result)) return <StringView result={result}/>
     console.log('result is',result)
     return <div>unknown result here</div>
 }
