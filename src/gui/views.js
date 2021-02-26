@@ -57,7 +57,7 @@ function TableView({result}) {
     let items = result._map((it,n) => {
         return <TableRow key={n} item={it} schema={result.schema}/>
     })
-    return <div class={'table-wrapper'}>
+    return <div className={'table-wrapper'}>
         <table className={'table-result'}>
             <thead>
                 <tr>{header}</tr>

@@ -44,7 +44,6 @@ codemirror.defineSimpleMode("filament", {
 });
 
 function synonyms(cm, option) {
-    console.log("syonmyms")
     return new Promise(function (accept) {
         setTimeout(function () {
             // console.log("cm is",cm)
@@ -78,6 +77,7 @@ export function IOView({entry, onChange, scope}) {
     const ref = useRef()
     const [editor, setEditor] = useState(null)
     const [result, setResult] = useState(null)
+    const [title, setTitle]   = useState("")
     const onEval = async (code) => {
         try {
             let grammar = await fetch(grammar_url).then(r => r.text())
@@ -111,17 +111,19 @@ export function IOView({entry, onChange, scope}) {
             })
             setEditor(ed)
             ed.setValue(entry.input)
+            setTitle(entry.title)
             ed.on('changes', () => onChange(ed.getValue()))
         }
         if (ref.current && editor !== null) {
             editor.setValue(entry.input)
+            setTitle(entry.title)
             setResult(entry.output)
         }
     }, [entry])
 
-
     return <article>
         {/*<h3>block</h3>*/}
+        <h4>{title}</h4>
         <textarea ref={ref}/>
         <div>
             <button onClick={() => onEval(editor.getValue())}>eval</button>

@@ -23,6 +23,7 @@ export function ExamplesPanel({onSetDoc}) {
                             return <button key={i}
                                     onClick={() => onSetDoc([{
                                         type: 'filament',
+                                        title:ex.title,
                                         input: ex.code.trim().split("\n")
                                             .filter(t => t.length > 0)
                                             .join("\n"),

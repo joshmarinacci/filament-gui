@@ -13,11 +13,13 @@ import {CollapsablePanel} from './gui/common.js'
 const realdoc = [
     {
         type:'filament',
-        input:"4+5",
+        title:'arithmetic',
+        input:"4+5+3",
         output:null,
     },
     {
         type:'filament',
+        title:'range',
         input:"range(10)",
         output:null,
     }
@@ -57,6 +59,7 @@ function App() {
         let new_doc = doc.slice()
         new_doc.push({
             type:'filament',
+            title:'title',
             input:'',
             output:null
         })
