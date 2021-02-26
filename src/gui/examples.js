@@ -156,7 +156,11 @@ sum(data)/length(data)`
                     `planets << dataset('planets')
 chart(planets, type:'scatter', 
                   x:'orbital_radius',
-                  y:'mean_radius')`
+                  y:'mean_radius',
+               size:'mean_radius',
+               name:'name'
+    )                  
+                  `
             },
             {
                 title:'5 tallest buildings. name vs height',
