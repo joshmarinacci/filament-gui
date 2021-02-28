@@ -208,8 +208,26 @@ plot(y:quad)
             },
             {
                 title:'sin() 0->10',
-                code:`plot(y: x->sin(x))`
+                code:`plot(y: x->sin(x),  min:-pi*4, max:pi*4)`
             },
+            {
+                title: 'lissajou',
+                code: `
+px2 << theta ->  sin(2*theta)
+py2 << theta ->  sin(3*theta)
+plot(x:px2,y:py2, zoom: 150)
+        `
+            },
+
+
+            {
+                title:'heart equation',
+                code:`
+px3 << t -> (16 * (sin(t)**3))/10
+py3 << t -> (13 * cos(t) - 5 * cos (2*t) - 2 * cos(3*t) - cos(4*t))/10
+plot(x:px3, y:py3, zoom:150)
+`
+            }
         ]
     },
     {
