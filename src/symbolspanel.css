@@ -1,0 +1,47 @@
+
+ul.symbols {
+    list-style: none;
+    margin:0;
+    padding:0;
+}
+ul.symbols > li {
+    /*margin-bottom: 2em;*/
+}
+ul.parameters {
+    list-style: none;
+}
+
+.accordion-item {
+    border: 0px solid blue;
+    margin-bottom: 0.25rem;
+}
+.accordion-button {
+    border: 0px inset #aaa;
+    border-width: 1px 0 0 0;
+    background-color: #eeeeee;
+    padding:0;
+    margin:0;
+    user-select: none;
+}
+.accordion-button:hover {
+    background-color: #fff;
+}
+.accordion-item.opened .accordion-content {
+    display: block;
+}
+.accordion-item.closed .accordion-content {
+    display: none;
+}
+
+.accordion-content .parameters {
+    border: 0px solid black;
+    background-color: #ffffff;
+}
+
+.accordion-content blockquote.example {
+    border: 1px solid #f5b981;
+    background-color: #efe1b8;
+    padding: 0.25em;
+    margin:0.25em;
+    white-space: pre-line;
+}
