@@ -71,7 +71,7 @@ function App() {
             <a href="https://apps.josh.earth/filament/tutorial.html" target="_blank">tutorial</a>
             <a href="https://apps.josh.earth/filament/intro.html" target="_blank">intro</a>
             <a href="https://apps.josh.earth/filament/spec.html" target="_blank">spec</a>
-            <a href="https://apps.josh.earth/filament/api.html" target="_blank">api</a>
+            <a href="https://apps.josh.earth/filament/api.generated.html" target="_blank">api</a>
         </header>
         <div className={'entries'} >{entries}
         <button onClick={add_entry}>add</button>

@@ -43,27 +43,56 @@ codemirror.defineSimpleMode("filament", {
     }
 });
 
+function findPreviousParen(start, line) {
+    while(true) {
+        start--
+        if(line.charAt(start) === '(') {
+            return start
+        }
+        if(start <= 0) {
+            return -1
+        }
+    }
+    return -1
+}
+
+function findPreviousFun(start, line) {
+    let end = start
+    while(start && /\w/.test(line.charAt(start-1))) --start
+    return line.slice(start,end)
+}
+
 function synonyms(cm, option) {
     return new Promise(function (accept) {
         setTimeout(function () {
-            // console.log("cm is",cm)
-            // console.log("option is",option)
-            // console.log("scope is")
-            let names = option.scope.names()
-            // console.log(names)
+            console.log("cm is",cm)
+            console.log("option is",option)
+            console.log("scope is")
+            let completions = option.scope.names()
+            // console.log(completions)
             // accept(null)
             var cursor = cm.getCursor(), line = cm.getLine(cursor.line)
             var start = cursor.ch, end = cursor.ch
-            // console.log("start",start,'end',end)
 
             while (start && /\w/.test(line.charAt(start - 1))) --start
             while (end < line.length && /\w/.test(line.charAt(end))) ++end
-            var word = line.slice(start, end).toLowerCase()
-            // console.log("word is",word)
-            // console.log("scope is",names)
-            let matches = names.filter(k => k.startsWith(word))
-            // let matches = ["foo","bar"]
-            // console.log("matches",matches)
+
+
+            // find function we are inside of to look up parameter names
+            let paren = findPreviousParen(start,line)
+            if(paren > 0) {
+                let fun_name = findPreviousFun(paren,line)
+                if(fun_name) {
+                    let matches = completions.filter(k => k === fun_name)
+                    if(matches.length > 0){
+                        let fun_obj = option.scope.lookup(matches[0])
+                        let params = Object.keys(fun_obj.params)
+                        completions = params.concat(completions)
+                    }
+                }
+            }
+            const word = line.slice(start, end).toLowerCase()
+            let matches = completions.filter(k => k.startsWith(word))
             return accept({
                 list: matches,
                 from: codemirror.Pos(cursor.line, start),
