@@ -18,7 +18,6 @@ function FunctionSymbol({symbol}) {
 }
 
 export function SymbolsPanel({scope}) {
-    console.log(scope)
     let names = scope.names().slice()
     names.sort()
     return <ul className={'symbols'}>

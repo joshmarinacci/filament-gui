@@ -62,6 +62,9 @@ function findPreviousFun(start, line) {
     return line.slice(start,end)
 }
 
+/*
+if theta, replace it with 'ø'. will it still parse?
+ */
 function synonyms(cm, option) {
     return new Promise(function (accept) {
         setTimeout(function () {
@@ -92,7 +95,9 @@ function synonyms(cm, option) {
                 }
             }
             const word = line.slice(start, end).toLowerCase()
+            //shortcuts for theta
             let matches = completions.filter(k => k.startsWith(word))
+            if(word === 'theta') matches.unshift('Θ')
             return accept({
                 list: matches,
                 from: codemirror.Pos(cursor.line, start),
