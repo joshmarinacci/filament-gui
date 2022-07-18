@@ -1,5 +1,5 @@
 import {tests} from './util.js'
-import {drop, length, max, reverse, sort, sum, take} from '../../filament-lang/src/lists.js'
+import {drop, length, max, reverse, sort, sum, take} from 'filament-lang'
 import {dataset} from '../../filament-lang/src/dataset.js'
 
 

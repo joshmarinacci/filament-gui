@@ -1,37 +1,4 @@
 {
-  "name": "notebook-lang",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.11.8",
-    "@testing-library/react": "^11.2.2",
-    "@testing-library/user-event": "^12.6.0",
-    "alphavantage": "^2.2.0",
-    "codemirror": "^5.59.1",
-    "date-fns": "^2.16.1",
-    "filament-lang": "^0.4.2",
-    "node-fetch": "^2.6.1",
-    "pureimage": "^0.2.5",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-scripts": "4.0.1",
-    "tinycolor": "^0.0.1",
-    "tinycolor2": "^1.4.2",
-    "web-vitals": "^0.2.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "parser": "node tests/langtests_all.js"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -44,8 +11,49 @@
       "last 1 safari version"
     ]
   },
-  "type": "module",
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.8",
+    "@testing-library/react": "^11.2.2",
+    "@testing-library/user-event": "^12.6.0",
+    "alphavantage": "^2.2.0",
+    "codemirror": "^5.59.1",
+    "date-fns": "^2.16.1",
+    "filament-lang": "^0.4.2",
+    "node-fetch": "^2.6.1",
+    "pureimage": "^0.2.5",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "@types/react": "^17.0.39",
+    "@types/react-dom": "^17.0.11",
+    "typescript": "^4.7.4",
+    "@types/node": "^18.0.6",
+    "tinycolor": "^0.0.1",
+    "tinycolor2": "^1.4.2",
+    "web-vitals": "^0.2.4"
+  },
   "devDependencies": {
+    "@types/codemirror": "^5.60.5",
     "tape-approximately": "^1.0.0"
-  }
+  },
+  "engines": {
+    "node": ">=15.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "name": "notebook-lang",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "parser": "node tests/langtests_all.js"
+  },
+  "type": "module",
+  "version": "0.2.0"
 }

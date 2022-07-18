@@ -1,12 +1,6 @@
-import {useEffect, useRef, useState} from 'react'
-import {default as grammar_url} from 'filament-lang/src/filament.ohm'
-import {eval_code, setup_parser} from 'filament-lang'
 import * as codemirror from 'codemirror'
-import "codemirror/addon/mode/simple.js"
-import "codemirror/addon/hint/show-hint.js"
-import "codemirror/addon/hint/show-hint.css"
-import {ResultArea} from './gui/views.js'
 
+// @ts-ignore
 codemirror.defineSimpleMode("filament", {
     // The start state contains the rules that are initially used
     start: [
@@ -16,6 +10,7 @@ codemirror.defineSimpleMode("filament", {
         // You can match multiple tokens at once. Note that the captured
         // groups must span the whole string in this case
         {regex: /(def)(\s+)([a-z$][\w$]*)/,
+            //@ts-ignore
             token: ["keyword", null, "variable-2"]},
         // comments
         {regex: /\/\/.*/,token:"comment"},
@@ -43,7 +38,7 @@ codemirror.defineSimpleMode("filament", {
     }
 });
 
-function findPreviousParen(start, line) {
+function findPreviousParen(start:number, line:string) {
     while(true) {
         start--
         if(line.charAt(start) === '(') {
@@ -56,7 +51,7 @@ function findPreviousParen(start, line) {
     return -1
 }
 
-function findPreviousFun(start, line) {
+function findPreviousFun(start:number, line:string) {
     let end = start
     while(start && /\w/.test(line.charAt(start-1))) --start
     return line.slice(start,end)
@@ -65,7 +60,7 @@ function findPreviousFun(start, line) {
 /*
 if theta, replace it with 'ø'. will it still parse?
  */
-function synonyms(cm, option) {
+export function synonyms(cm:any, option:any) {
     return new Promise(function (accept) {
         setTimeout(function () {
             console.log("cm is",cm)
@@ -86,7 +81,7 @@ function synonyms(cm, option) {
             if(paren > 0) {
                 let fun_name = findPreviousFun(paren,line)
                 if(fun_name) {
-                    let matches = completions.filter(k => k === fun_name)
+                    let matches = completions.filter((k:string) => k === fun_name)
                     if(matches.length > 0){
                         let fun_obj = option.scope.lookup(matches[0])
                         let params = Object.keys(fun_obj.params)
@@ -96,7 +91,7 @@ function synonyms(cm, option) {
             }
             const word = line.slice(start, end).toLowerCase()
             //shortcuts for theta
-            let matches = completions.filter(k => k.startsWith(word))
+            let matches = completions.filter((k:string) => k.startsWith(word))
             if(word === 'theta') matches.unshift('Θ')
             return accept({
                 list: matches,
@@ -105,63 +100,4 @@ function synonyms(cm, option) {
             })
         }, 100)
     })
-}
-
-export function IOView({entry, onChange, scope}) {
-    const ref = useRef()
-    const [editor, setEditor] = useState(null)
-    const [result, setResult] = useState(null)
-    const [title, setTitle]   = useState("")
-    const onEval = async (code) => {
-        try {
-            let grammar = await fetch(grammar_url).then(r => r.text())
-            // console.log("got the grammar", grammar)
-            await setup_parser(grammar)
-            code = "{" + code + "}"
-            let d = await eval_code(code,scope)
-            console.log("result is ", d)
-            setResult(d)
-            // console.log("done")
-        } catch (e) {
-            console.log("an error happened", e)
-            setResult(e)
-        }
-    }
-    useEffect(() => {
-        if (ref.current && editor === null) {
-            let ed = codemirror.fromTextArea(ref.current, {
-                value: 'some cool text',
-                lineNumbers: true,
-                viewportMargin: Infinity,
-                mode:'filament',
-                hintOptions: {hint: synonyms, completeSingle: false, scope:scope},
-                lineWrapping: true,
-                matchBrackets: true,
-                autoCloseBrackets: true,
-                extraKeys: {
-                    'Ctrl-Enter': () => onEval(ed.getValue()),
-                    "Ctrl-Space": "autocomplete"
-                }
-            })
-            setEditor(ed)
-            ed.setValue(entry.input)
-            setTitle(entry.title)
-            ed.on('changes', () => onChange(ed.getValue()))
-        }
-        if (ref.current && editor !== null) {
-            editor.setValue(entry.input)
-            setTitle(entry.title)
-            setResult(entry.output)
-        }
-    }, [entry])
-
-    return <article>
-        {/*<h3>block</h3>*/}
-        <h4>{title}</h4>
-        <textarea ref={ref}/>
-        <div>
-            <button onClick={() => onEval(editor.getValue())}>eval</button>
-        </div>
-        <ResultArea result={result}/>
-    </article>
 }
