@@ -1,4 +1,13 @@
-export const EXAMPLES = [
+export type ExampleGroup = {
+    type:string,
+    title:string,
+    content:Example[]
+}
+export type Example = {
+    title:string,
+    code:string,
+}
+export const EXAMPLES:ExampleGroup[] = [
     {
         type:'group',
         title:'Arithmetic & Units',

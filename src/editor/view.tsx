@@ -2,19 +2,41 @@ import {useEffect, useRef, useState} from 'react'
 import {default as grammar_url} from 'filament-lang/src/filament.ohm'
 import {eval_code, setup_parser} from 'filament-lang'
 import * as codemirror from 'codemirror'
+import {EditorFromTextArea} from 'codemirror'
 import "codemirror/addon/mode/simple.js"
 import "codemirror/addon/hint/show-hint.js"
 import "codemirror/addon/hint/show-hint.css"
-import {ResultArea} from '../gui/views'
+import {ResultArea} from '../examples/views'
 import {synonyms} from './editor'
-import {EditorFromTextArea} from "codemirror";
 
-export function View({entry, onChange, scope}) {
+type Entry = {
+    title: string;
+    input: string;
+    type:string,
+    output:any,
+}
+
+type ScopeType = {
+
+}
+
+type EdUpdate = ((instance:codemirror.Editor) => void)
+
+type OnChangeCB = ((code:string) => void)
+
+
+type ViewProps = {
+    entry:Entry,
+    onChange:OnChangeCB
+    scope:ScopeType,
+}
+
+export function View({entry, onChange, scope}:ViewProps) {
     const ref = useRef<HTMLTextAreaElement|undefined>()
     const [editor, setEditor] = useState<EditorFromTextArea|null>(null)
     const [result, setResult] = useState(null)
     const [title, setTitle]   = useState("")
-    const onEval = async (code:string) => {
+    const onEval = async (code:string):Promise<void> => {
         try {
             let grammar = await fetch(grammar_url).then(r => r.text())
             // console.log("got the grammar", grammar)
@@ -31,19 +53,21 @@ export function View({entry, onChange, scope}) {
     }
     useEffect(() => {
         if (ref.current && editor === null) {
+            const trigger_update:EdUpdate = () => onEval(ed.getValue())
             let ed:EditorFromTextArea = codemirror.fromTextArea(ref.current, {
                 value: 'some cool text',
                 lineNumbers: true,
                 viewportMargin: Infinity,
                 mode:'filament',
+                // @ts-ignore
                 hintOptions: {hint: synonyms, completeSingle: false, scope:scope},
                 lineWrapping: true,
                 matchBrackets: true,
                 autoCloseBrackets: true,
                 extraKeys: {
-                    'Ctrl-Enter': () => onEval(ed.getValue()),
-                    "Ctrl-Space": "autocomplete"
-                }
+                    "Ctrl-Space": "autocomplete",
+                    "Ctrl-Enter": trigger_update,
+                },
             })
             setEditor(ed)
             ed.setValue(entry.input)

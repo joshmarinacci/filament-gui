@@ -1,13 +1,28 @@
+
+// @ts-ignore
 import API_RAW from "filament-lang/src/api.json.js"
 import {useState} from 'react'
-import "./symbolspanel.css"
+import "./symbols.css"
 
-const API = JSON.parse(API_RAW)
-function Constant({symbol}) {
+type FSymbolAPI = {
+    "charts":FSymbol[],
+}
+
+type FSymbol = {
+    name:string,
+    params:object,
+    summary:string,
+    examples:string[]
+}
+const API:FSymbolAPI = JSON.parse(API_RAW)
+type ConstantProps = {
+    symbol:FSymbol
+}
+function Constant({symbol}:ConstantProps) {
     return <li><i>const</i> <b>{symbol.name}</b></li>
 }
 
-function search_doc(name) {
+function search_doc(name:string):FSymbol|null {
     for(let group of Object.values(API)) {
         for( let doc of group) {
             if(doc.name === name) {
@@ -18,13 +33,16 @@ function search_doc(name) {
     return null
 }
 
-function FunctionSymbol({symbol}) {
+type FunctionSymbolProps = {
+    symbol:FSymbol
+}
+function FunctionSymbol({symbol}:FunctionSymbolProps) {
     let [open, setOpen] = useState(false)
 
-    let rendered_doc = ""
+    let rendered_doc:JSX.Element
     let doc = search_doc(symbol.name)
     if(doc) {
-        console.log("matched a doc",doc)
+        // console.log("matched a doc",doc)
         let parms = Object.entries(doc.params).map(([name, val]) => {
             return <li>{name}:{val}</li>
         })
@@ -53,14 +71,16 @@ function FunctionSymbol({symbol}) {
     </li>
 }
 
-export function SymbolsPanel({scope}) {
-    let names = scope.names().slice()
+type SymbolsPanelProps = {
+    scope:any,
+}
+export function SymbolsPanel({scope}:SymbolsPanelProps) {
+    let names:string[] = scope.names().slice()
     names.sort()
     return <ul className={'symbols'}>
         {names.map((name) => {
             let fun = scope.funs[name]
             if(fun.type === 'scalar') return <Constant key={name} symbol={fun}/>
-            // console.log('symbol is',fun.type)
             return <FunctionSymbol key={name} symbol={fun}/>
         })}
     </ul>

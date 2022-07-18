@@ -60,7 +60,7 @@ function findPreviousFun(start:number, line:string) {
 /*
 if theta, replace it with 'ø'. will it still parse?
  */
-export function synonyms(cm:any, option:any) {
+function searchSynonyms(cm:any, option:any) {
     return new Promise(function (accept) {
         setTimeout(function () {
             console.log("cm is",cm)
@@ -101,3 +101,5 @@ export function synonyms(cm:any, option:any) {
         }, 100)
     })
 }
+
+export const synonyms:codemirror.HintFunction = searchSynonyms as codemirror.HintFunction
