@@ -3,10 +3,10 @@ import './App.css'
 import "codemirror/addon/hint/show-hint.css"
 import "codemirror/lib/codemirror.css"
 import {View} from './editor/view.tsx'
-import {ExamplesPanel} from './ExamplesPanel.js'
-import {make_standard_scope} from 'filament-lang/src/lang.js'
-import {SymbolsPanel} from './SymbolsPanel.js'
-import {CollapsablePanel} from './gui/comps'
+import {ExamplesPanel} from './examples/examples_panel.tsx'
+import {make_standard_scope} from 'filament-lang'
+import {SymbolsPanel} from './symbols/symbols_panel.tsx'
+import {CollapsablePanel} from './examples/comps'
 
 const realdoc = [
     {
@@ -52,7 +52,10 @@ function MainView({children, setDoc}) {
 
 function App() {
     const [doc, setDoc] = useState(realdoc)
-    let entries = doc.map((entry,i) => <View key={i} entry={entry} onChange={(code)=>update_doc(doc,entry,code)} scope={scope}/>)
+    let entries = doc.map((entry,i) => <View key={i}
+                                             entry={entry}
+                                             onChange={(code)=>update_doc(doc,entry,code)}
+                                             scope={scope}/>)
     const add_entry = () => {
         let new_doc = doc.slice()
         new_doc.push({

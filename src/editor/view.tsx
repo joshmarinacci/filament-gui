@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react'
-import {default as grammar_url} from 'filament-lang/src/filament.ohm'
+// import {default as grammar_url} from 'filament-lang/src/filament.ohm.js'
 import {eval_code, setup_parser} from 'filament-lang'
 import * as codemirror from 'codemirror'
 import {EditorFromTextArea} from 'codemirror'
@@ -32,15 +32,15 @@ type ViewProps = {
 }
 
 export function View({entry, onChange, scope}:ViewProps) {
-    const ref = useRef<HTMLTextAreaElement|undefined>()
+    const ref = useRef<HTMLTextAreaElement>(null)
     const [editor, setEditor] = useState<EditorFromTextArea|null>(null)
     const [result, setResult] = useState(null)
     const [title, setTitle]   = useState("")
     const onEval = async (code:string):Promise<void> => {
         try {
-            let grammar = await fetch(grammar_url).then(r => r.text())
+            // let grammar = await fetch(grammar_url).then(r => r.text())
             // console.log("got the grammar", grammar)
-            await setup_parser(grammar)
+            await setup_parser()
             code = "{" + code + "}"
             let d = await eval_code(code,scope)
             console.log("result is ", d)
